@@ -1,0 +1,5 @@
+# Arquivos e diretórios preservados em cada repositório filho de evento
+.github/workflows/
+data/
+config/dataset.config.json
+README.md

@@ -1,0 +1,30 @@
+name: Dispatch Downstream Template Sync
+
+on:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  notify-downstream-repos:
+    name: Notify Downstream Repositories of Template Update
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Template Repository
+        uses: actions/checkout@v4.2.2
+
+      - name: Broadcast Sync Trigger to BRAN Org Repos
+        env:
+          GH_TOKEN: ${{ secrets.ORGANIZATION_SYNC_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🚀 Notificando repositórios derivados da BRAN Org sobre o merge na main..."
+          # Lista de repositórios derivados da organização BRAN Org
+          REPOS=("BRAN-Org/EBBC-OpenData" "BRAN-Org/abec-open-database")
+          
+          for REPO in "${REPOS[@]}"; do
+            echo "📡 Enviando sinal de atualização para: $REPO"
+            gh api \
+              --method POST \
+              -H "Accept: application/vnd.github+json" \
+              /repos/$REPO/dispatches \
+              -f event_type='template_updated' || true
+          done

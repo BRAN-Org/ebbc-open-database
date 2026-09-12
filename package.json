@@ -1,0 +1,32 @@
+{
+  "name": "ebbc-open-database",
+  "version": "1.4.0",
+  "description": "Open REST API & Dashboard Interativo para os anais e dados bibliométricos do EBBC (2012-2024).",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "start:ebbc": "DATASET_DIR=mock/ebbc/data CONFIG_PATH=mock/ebbc/dataset.config.json node server.js",
+    "dev:ebbc": "DATASET_DIR=mock/ebbc/data CONFIG_PATH=mock/ebbc/dataset.config.json node --watch server.js",
+    "data:ebbc": "DATASET_DIR=mock/ebbc/data CONFIG_PATH=mock/ebbc/dataset.config.json node scripts/validate_dataset.js",
+    "test": "NODE_ENV=test node --test tests/unit.test.js tests/api.test.js",
+    "data:convert": "node scripts/convert_csv_to_json.js",
+    "data:validate": "node scripts/validate_dataset.js",
+    "init:event": "node scripts/init_event.js"
+  },
+  "keywords": [
+    "open-data",
+    "bran-org",
+    "api",
+    "academic-data",
+    "database-template",
+    "express"
+  ],
+  "author": "BRAN Org",
+  "license": "GPL-3.0-or-later AND CC-BY-NC-SA-4.0",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.0.0"
+  }
+}
