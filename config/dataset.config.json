@@ -21,10 +21,11 @@
     "secondaryKey": "id"
   },
   "schema": {
-    "searchFields": ["title", "abstract", "authors", "keywords", "tools", "data_sources"],
+    "searchFields": ["title", "abstract", "authors", "keywords", "tools", "data_sources", "usage_stages"],
     "facets": [
       { "key": "year", "label": "Edição / Ano", "type": "number", "multi": true, "targetField": "year" },
       { "key": "author", "label": "Autor", "type": "string", "targetField": "authors" },
+      { "key": "keyword", "label": "Palavra-chave / Tópico", "type": "string", "targetField": "keywords" },
       { "key": "tool", "label": "Ferramenta / Software", "type": "string", "targetField": "tools" },
       { "key": "source", "label": "Fonte de Dados", "type": "string", "targetField": "data_sources" },
       { "key": "stage", "label": "Etapa Metodológica", "type": "string", "targetField": "usage_stages" }
@@ -39,7 +40,8 @@
     "topLists": [
       { "key": "topTools", "label": "Principais Softwares Utilizados", "sourceField": "tools", "limit": 10 },
       { "key": "topSources", "label": "Principais Fontes de Dados", "sourceField": "data_sources", "limit": 10 },
-      { "key": "topAuthors", "label": "Autores Mais Frequentes", "sourceField": "authors", "limit": 10 }
+      { "key": "topAuthors", "label": "Autores Mais Frequentes", "sourceField": "authors", "limit": 10 },
+      { "key": "topKeywords", "label": "Palavras-chave & Tópicos", "sourceField": "keywords", "limit": 10 }
     ],
     "breakdowns": [
       { "key": "yearDistribution", "label": "Distribuição por Edição", "sourceField": "year" },

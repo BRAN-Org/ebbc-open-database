@@ -24,7 +24,15 @@ export function resolveArticleUrl(item) {
       !upperDoi.includes('0000000') &&
       cleanDoi !== ''
     ) {
-      return cleanDoi.startsWith('http') ? cleanDoi : `https://doi.org/${cleanDoi}`;
+      const doiPath = cleanDoi.replace(/^https?:\/\/doi\.org\//i, '').trim();
+      if (doiPath.startsWith('10.')) {
+        // Valida se o DOI contém a barra de sufixo obrigatória (ex: 10.XXXX/YYYY)
+        if (/^10\.\d{4,9}\/.+$/.test(doiPath)) {
+          return cleanDoi.startsWith('http') ? cleanDoi : `https://doi.org/${doiPath}`;
+        }
+      } else if (cleanDoi.startsWith('http')) {
+        return cleanDoi;
+      }
     }
   }
 
@@ -373,7 +381,29 @@ function populateSidebarOptions(stats) {
     }
   }
 
-  // 6. Autor / Pesquisador
+  // 6. Palavras-chave / Tópicos
+  const keywordSelect = document.getElementById('filter-keyword');
+  const keywordGroup = document.getElementById('filter-keyword-group');
+  const keywordsData = stats.topLists?.topKeywords?.data;
+  if (keywordSelect) {
+    if (keywordsData && keywordsData.length > 0) {
+      keywordSelect.innerHTML = '<option value="">Todas as palavras-chave</option>';
+      keywordsData.forEach(k => {
+        if (k.name && k.name !== 'N/A') {
+          const opt = document.createElement('option');
+          opt.value = k.name;
+          opt.textContent = `${k.name} (${k.count})`;
+          keywordSelect.appendChild(opt);
+        }
+      });
+      if (keywordGroup) keywordGroup.style.display = 'block';
+      keywordSelect.onchange = () => { currentOffset = 0; loadExplorerData(); };
+    } else {
+      if (keywordGroup) keywordGroup.style.display = 'none';
+    }
+  }
+
+  // 7. Autor / Pesquisador
   const authorSelect = document.getElementById('filter-author');
   if (authorSelect && stats.topLists?.topAuthors?.data) {
     authorSelect.innerHTML = '<option value="">Todos os autores</option>';
@@ -388,7 +418,7 @@ function populateSidebarOptions(stats) {
     authorSelect.onchange = () => { currentOffset = 0; loadExplorerData(); };
   }
 
-  // 7. Eixo Temático / Seção
+  // 8. Eixo Temático / Seção
   const sectionSelect = document.getElementById('filter-section');
   const sectionGroup = document.getElementById('filter-section-group');
   if (sectionSelect) {
@@ -416,7 +446,7 @@ function populateSidebarOptions(stats) {
     }
   }
 
-  // 8. Sort Select
+  // 9. Sort Select
   const sortSelect = document.getElementById('sort-select');
   if (sortSelect) {
     sortSelect.onchange = () => { currentOffset = 0; loadExplorerData(); };
@@ -460,6 +490,9 @@ async function loadExplorerData() {
 
   const stageVal = document.getElementById('filter-stage')?.value;
   if (stageVal) params.set('stage', stageVal);
+
+  const keywordVal = document.getElementById('filter-keyword')?.value;
+  if (keywordVal) params.set('keyword', keywordVal);
 
   const authorVal = document.getElementById('filter-author')?.value;
   if (authorVal) params.set('author', authorVal);
@@ -1041,6 +1074,9 @@ function initTabs() {
 
       const stageSelect = document.getElementById('filter-stage');
       if (stageSelect) stageSelect.value = '';
+
+      const keywordSelect = document.getElementById('filter-keyword');
+      if (keywordSelect) keywordSelect.value = '';
 
       const authorSelect = document.getElementById('filter-author');
       if (authorSelect) authorSelect.value = '';
