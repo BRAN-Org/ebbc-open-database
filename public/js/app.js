@@ -9,6 +9,38 @@ let currentSortDir = 'asc';
 
 const chartInstances = {};
 
+export function resolveArticleUrl(item) {
+  if (!item) return null;
+
+  const rawDoi = item.doi || item.id || '';
+  if (rawDoi && typeof rawDoi === 'string') {
+    const cleanDoi = rawDoi.trim();
+    const upperDoi = cleanDoi.toUpperCase();
+    if (
+      upperDoi !== 'N/A' &&
+      upperDoi !== 'NONE' &&
+      upperDoi !== 'UNDEFINED' &&
+      upperDoi !== 'NULL' &&
+      !upperDoi.includes('0000000') &&
+      cleanDoi !== ''
+    ) {
+      return cleanDoi.startsWith('http') ? cleanDoi : `https://doi.org/${cleanDoi}`;
+    }
+  }
+
+  if (item.url && typeof item.url === 'string') {
+    const cleanUrl = item.url.trim();
+    if (cleanUrl.startsWith('http') && cleanUrl.toUpperCase() !== 'N/A') return cleanUrl;
+  }
+
+  if (item.pdf_url && typeof item.pdf_url === 'string') {
+    const cleanPdf = item.pdf_url.trim();
+    if (cleanPdf.startsWith('http') && cleanPdf.toUpperCase() !== 'N/A') return cleanPdf;
+  }
+
+  return null;
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   initTabs();
   initModal();
@@ -73,7 +105,8 @@ function applyConfigToUI(config) {
   const footerDoi = document.getElementById('footer-doi-link');
 
   const rawDoi = config.dataset?.doi || config.organization?.doiUrl || '';
-  const isValidDoi = rawDoi && !rawDoi.includes('0000000') && rawDoi.trim() !== '';
+  const upperDoi = rawDoi ? rawDoi.trim().toUpperCase() : '';
+  const isValidDoi = rawDoi && !rawDoi.includes('0000000') && rawDoi.trim() !== '' && upperDoi !== 'N/A' && upperDoi !== 'NONE';
 
   if (isValidDoi) {
     const cleanDoi = rawDoi.replace('https://doi.org/', '');
@@ -133,7 +166,11 @@ async function loadStatsDashboard() {
     // Populate Metrics Summary Cards
     const totalCount = stats.totalRecords || 0;
     const yearCount = stats.breakdowns?.yearDistribution?.data ? Object.keys(stats.breakdowns.yearDistribution.data).length : 0;
-    const sectionCount = stats.topLists?.topSections?.data?.length || stats.breakdowns?.sectionBreakdown?.data ? Object.keys(stats.breakdowns?.sectionBreakdown?.data || {}).length : 0;
+    const sectionCount = stats.topLists?.topSections?.data?.length 
+      || (stats.breakdowns?.sectionBreakdown?.data ? Object.keys(stats.breakdowns.sectionBreakdown.data).length : 0)
+      || stats.topLists?.topSources?.data?.length 
+      || stats.topLists?.topTools?.data?.length 
+      || 0;
     const authorCount = stats.topLists?.topAuthors?.data?.length || 0;
 
     const totalEl = document.getElementById('stat-total-articles');
@@ -156,16 +193,64 @@ async function loadStatsDashboard() {
     const homeAuthors = document.getElementById('home-stat-authors');
     if (homeAuthors) homeAuthors.textContent = authorCount;
 
-    // Initialize 4 Universal Essential Chart Instances
+    // Fallbacks para Gráfico 2 (Eixos / Fontes / Etapas)
+    let sectionsData = stats.breakdowns?.sectionBreakdown?.data || stats.topLists?.topSections?.data;
+    let sectionsTitle = 'Distribuição por Eixo Temático / Seção';
+    let sectionsIcon = 'fa-layer-group';
+
+    if (!sectionsData || (Array.isArray(sectionsData) ? sectionsData.length === 0 : Object.keys(sectionsData).length === 0)) {
+      if (stats.topLists?.topSources?.data && stats.topLists.topSources.data.length > 0) {
+        sectionsData = stats.topLists.topSources.data;
+        sectionsTitle = stats.topLists.topSources.label || 'Principais Fontes de Dados';
+        sectionsIcon = 'fa-database';
+      } else if (stats.breakdowns?.stageBreakdown?.data && Object.keys(stats.breakdowns.stageBreakdown.data).length > 0) {
+        sectionsData = stats.breakdowns.stageBreakdown.data;
+        sectionsTitle = stats.breakdowns.stageBreakdown.label || 'Etapas Metodológicas';
+        sectionsIcon = 'fa-diagram-project';
+      } else if (stats.topLists?.topTools?.data && stats.topLists.topTools.data.length > 0) {
+        sectionsData = stats.topLists.topTools.data;
+        sectionsTitle = stats.topLists.topTools.label || 'Principais Softwares Utilizados';
+        sectionsIcon = 'fa-wrench';
+      }
+    }
+
+    const chart2Header = document.querySelector('[data-chart="sections"]')?.closest('.chart-header')?.querySelector('h3');
+    if (chart2Header) {
+      chart2Header.innerHTML = `<i class="fa-solid ${sectionsIcon}"></i> <span>${escapeHtml(sectionsTitle)}</span>`;
+    }
+
+    // Fallbacks para Gráfico 4 (Palavras-chave / Ferramentas / Fontes)
+    let keywordsData = stats.topLists?.topKeywords?.data;
+    let keywordsTitle = 'Palavras-chave & Tópicos em Alta';
+    let keywordsIcon = 'fa-tags';
+
+    if (!keywordsData || keywordsData.length === 0) {
+      if (stats.topLists?.topTools?.data && stats.topLists.topTools.data.length > 0) {
+        keywordsData = stats.topLists.topTools.data;
+        keywordsTitle = stats.topLists.topTools.label || 'Principais Softwares Utilizados';
+        keywordsIcon = 'fa-wrench';
+      } else if (stats.topLists?.topSources?.data && stats.topLists.topSources.data.length > 0) {
+        keywordsData = stats.topLists.topSources.data;
+        keywordsTitle = stats.topLists.topSources.label || 'Principais Fontes de Dados';
+        keywordsIcon = 'fa-database';
+      }
+    }
+
+    const chart4Header = document.querySelector('[data-chart="keywords"]')?.closest('.chart-header')?.querySelector('h3');
+    if (chart4Header) {
+      chart4Header.innerHTML = `<i class="fa-solid ${keywordsIcon}"></i> <span>${escapeHtml(keywordsTitle)}</span>`;
+    }
+
+    // Instanciar os 4 Gráficos Universais
     chartInstances['years'] = new SimpleChart('chart-years');
     chartInstances['sections'] = new SimpleChart('chart-sections');
     chartInstances['authors'] = new SimpleChart('chart-authors');
     chartInstances['keywords'] = new SimpleChart('chart-keywords');
 
     chartInstances['years_data'] = stats.breakdowns?.yearDistribution?.data;
-    chartInstances['sections_data'] = stats.breakdowns?.sectionBreakdown?.data || stats.topLists?.topSections?.data;
+    chartInstances['sections_data'] = sectionsData;
     chartInstances['authors_data'] = stats.topLists?.topAuthors?.data;
-    chartInstances['keywords_data'] = stats.topLists?.topKeywords?.data;
+    chartInstances['keywords_data'] = keywordsData;
 
     updateAllCharts();
     populateSidebarOptions(stats);
@@ -211,26 +296,37 @@ function populateSidebarOptions(stats) {
 
   const authorSelect = document.getElementById('filter-author');
   if (authorSelect && stats.topLists?.topAuthors?.data) {
+    authorSelect.innerHTML = '<option value="">Todos os autores</option>';
     stats.topLists.topAuthors.data.forEach(a => {
-      const opt = document.createElement('option');
-      opt.value = a.name;
-      opt.textContent = a.name;
-      authorSelect.appendChild(opt);
+      if (a.name && a.name !== 'N/A') {
+        const opt = document.createElement('option');
+        opt.value = a.name;
+        opt.textContent = a.name;
+        authorSelect.appendChild(opt);
+      }
     });
     authorSelect.addEventListener('change', () => { currentOffset = 0; loadExplorerData(); });
   }
 
   const sectionSelect = document.getElementById('filter-section');
-  if (sectionSelect && (stats.topLists?.topSections?.data || stats.breakdowns?.sectionBreakdown?.data)) {
-    const sections = stats.topLists?.topSections?.data 
-      ? stats.topLists.topSections.data.map(s => s.name)
-      : Object.keys(stats.breakdowns.sectionBreakdown.data);
+  if (sectionSelect) {
+    let sections = [];
+    if (stats.topLists?.topSections?.data) {
+      sections = stats.topLists.topSections.data.map(s => s.name);
+    } else if (stats.breakdowns?.sectionBreakdown?.data) {
+      sections = Object.keys(stats.breakdowns.sectionBreakdown.data);
+    } else if (stats.topLists?.topSources?.data) {
+      sections = stats.topLists.topSources.data.map(s => s.name);
+    }
 
+    sectionSelect.innerHTML = '<option value="">Todos os eixos / fontes</option>';
     sections.forEach(s => {
-      const opt = document.createElement('option');
-      opt.value = s;
-      opt.textContent = s;
-      sectionSelect.appendChild(opt);
+      if (s && s !== 'N/A') {
+        const opt = document.createElement('option');
+        opt.value = s;
+        opt.textContent = s;
+        sectionSelect.appendChild(opt);
+      }
     });
     sectionSelect.addEventListener('change', () => { currentOffset = 0; loadExplorerData(); });
   }
@@ -311,23 +407,46 @@ function renderArticleCards(items) {
     card.className = 'article-card';
 
     const year = item.year || item.ano || 'N/A';
-    const doi = (item.doi && item.doi !== 'N/A') ? item.doi : (item.id && item.id !== 'N/A' ? item.id : '');
     const title = item.title || item.titulo || 'Sem título';
     const authors = Array.isArray(item.authors) ? item.authors.join(', ') : (item.authors || 'N/A');
 
     let badgesHtml = '';
-    if (item.section) {
+    
+    // Eixo Temático / Seção
+    if (item.section && item.section !== 'N/A') {
       badgesHtml += `<span class="badge-source">${escapeHtml(item.section)}</span> `;
     }
 
-    if (Array.isArray(item.keywords)) {
-      item.keywords.forEach(kw => {
-        badgesHtml += `<span class="badge-tool">${escapeHtml(kw)}</span> `;
+    // Ferramentas / Softwares (EBBC)
+    if (Array.isArray(item.tools)) {
+      item.tools.forEach(t => {
+        if (t && t !== 'N/A') badgesHtml += `<span class="badge-tool"><i class="fa-solid fa-wrench"></i> ${escapeHtml(t)}</span> `;
       });
     }
 
-    const realArticleUrl = item.url || item.article_url || item.link || item.original_url || (item.doi ? (item.doi.startsWith('http') ? item.doi : `https://doi.org/${item.doi}`) : null);
-    const pdfUrl = item.pdf_url;
+    // Fontes de Dados (EBBC)
+    if (Array.isArray(item.data_sources)) {
+      item.data_sources.forEach(s => {
+        if (s && s !== 'N/A') badgesHtml += `<span class="badge-source"><i class="fa-solid fa-database"></i> ${escapeHtml(s)}</span> `;
+      });
+    }
+
+    // Etapas Metodológicas (EBBC)
+    if (Array.isArray(item.usage_stages)) {
+      item.usage_stages.forEach(st => {
+        if (st && st !== 'N/A') badgesHtml += `<span class="badge-year"><i class="fa-solid fa-diagram-project"></i> ${escapeHtml(st)}</span> `;
+      });
+    }
+
+    // Palavras-chave / Tópicos
+    if (Array.isArray(item.keywords)) {
+      item.keywords.forEach(kw => {
+        if (kw && kw !== 'N/A') badgesHtml += `<span class="badge-tool">${escapeHtml(kw)}</span> `;
+      });
+    }
+
+    const realArticleUrl = resolveArticleUrl(item);
+    const pdfUrl = (item.pdf_url && item.pdf_url !== 'N/A') ? item.pdf_url : null;
 
     let linksHeaderHtml = '';
     if (realArticleUrl) {
@@ -368,17 +487,38 @@ function openArticleModal(item) {
 
   const sectionsEl = document.getElementById('modal-sections');
   if (sectionsEl) {
-    sectionsEl.innerHTML = item.section ? `<span class="badge-source">${escapeHtml(item.section)}</span>` : 'N/A';
+    let secList = [];
+    if (item.section && item.section !== 'N/A') secList.push(`<span class="badge-source">${escapeHtml(item.section)}</span>`);
+    if (Array.isArray(item.usage_stages)) {
+      item.usage_stages.forEach(st => {
+        if (st && st !== 'N/A') secList.push(`<span class="badge-year"><i class="fa-solid fa-diagram-project"></i> ${escapeHtml(st)}</span>`);
+      });
+    }
+    sectionsEl.innerHTML = secList.length > 0 ? secList.join(' ') : 'Não especificado';
   }
 
   const keywordsEl = document.getElementById('modal-keywords');
   if (keywordsEl) {
-    keywordsEl.innerHTML = Array.isArray(item.keywords) && item.keywords.length > 0
-      ? item.keywords.map(k => `<span class="badge-tool">${escapeHtml(k)}</span>`).join(' ')
-      : 'N/A';
+    let kwList = [];
+    if (Array.isArray(item.tools)) {
+      item.tools.forEach(t => {
+        if (t && t !== 'N/A') kwList.push(`<span class="badge-tool"><i class="fa-solid fa-wrench"></i> ${escapeHtml(t)}</span>`);
+      });
+    }
+    if (Array.isArray(item.data_sources)) {
+      item.data_sources.forEach(s => {
+        if (s && s !== 'N/A') kwList.push(`<span class="badge-source"><i class="fa-solid fa-database"></i> ${escapeHtml(s)}</span>`);
+      });
+    }
+    if (Array.isArray(item.keywords)) {
+      item.keywords.forEach(k => {
+        if (k && k !== 'N/A') kwList.push(`<span class="badge-tool">${escapeHtml(k)}</span>`);
+      });
+    }
+    keywordsEl.innerHTML = kwList.length > 0 ? kwList.join(' ') : 'Não especificado';
   }
 
-  const realArticleUrl = item.url || item.article_url || item.link || item.original_url || (item.doi ? (item.doi.startsWith('http') ? item.doi : `https://doi.org/${item.doi}`) : null);
+  const realArticleUrl = resolveArticleUrl(item);
 
   const doiLink = document.getElementById('modal-doi-link');
   if (doiLink) {
@@ -393,7 +533,7 @@ function openArticleModal(item) {
 
   const pdfLink = document.getElementById('modal-pdf-link');
   if (pdfLink) {
-    if (item.pdf_url) {
+    if (item.pdf_url && item.pdf_url !== 'N/A') {
       pdfLink.href = item.pdf_url;
       pdfLink.style.display = 'inline-block';
     } else {
@@ -414,21 +554,21 @@ function updateCitationBox() {
   const authors = Array.isArray(item.authors) ? item.authors : (item.authors ? [item.authors] : ['Autor Desconhecido']);
   const year = item.year || '2024';
   const title = item.title || 'Sem título';
-  const doi = item.doi || item.id || '';
-  const doiUrl = doi.startsWith('http') ? doi : `https://doi.org/${doi}`;
-  const doiKey = doi.replace(/[^a-zA-Z0-9]/g, '_');
+  const rawDoi = (item.doi && item.doi !== 'N/A') ? item.doi : (item.id && item.id !== 'N/A' ? item.id : '');
+  const doiUrl = resolveArticleUrl(item) || (rawDoi ? `https://doi.org/${rawDoi}` : '');
+  const doiKey = rawDoi ? rawDoi.replace(/[^a-zA-Z0-9]/g, '_') : 'item_' + year;
 
   if (currentCitationFmt === 'bibtex') {
-    citationEl.textContent = `@article{${doiKey || 'item_' + year},\n  title     = {${title}},\n  author    = {${authors.join(' and ')}},\n  year      = {${year}},\n  url       = {${doiUrl}}\n}`;
+    citationEl.textContent = `@article{${doiKey},\n  title     = {${title}},\n  author    = {${authors.join(' and ')}},\n  year      = {${year}}${doiUrl ? `,\n  url       = {${doiUrl}}` : ''}\n}`;
   } else if (currentCitationFmt === 'apa') {
-    citationEl.textContent = `${authors.join(', ')} (${year}). ${title}. ${doiUrl}`;
+    citationEl.textContent = `${authors.join(', ')} (${year}). ${title}.${doiUrl ? ` ${doiUrl}` : ''}`;
   } else if (currentCitationFmt === 'abnt') {
     const abntAuthors = authors.map(a => {
       const parts = a.trim().split(' ');
       const last = parts.pop().toUpperCase();
       return `${last}, ${parts.join(' ')}`;
     }).join('; ');
-    citationEl.textContent = `${abntAuthors}. ${title}. ${year}. Disponível em: <${doiUrl}>.`;
+    citationEl.textContent = `${abntAuthors}. ${title}. ${year}.${doiUrl ? ` Disponível em: <${doiUrl}>.` : ''}`;
   }
 }
 
