@@ -293,14 +293,42 @@
               </div>
             </div>
 
-            <div class="filter-section">
+            <div class="filter-section" id="filter-tool-group" style="display: none;">
+              <label><i class="fa-solid fa-wrench"></i> Filtrar por Ferramenta</label>
+              <select id="filter-tool" class="filter-select">
+                <option value="">Todas as ferramentas</option>
+              </select>
+            </div>
+
+            <div class="filter-section" id="filter-source-group" style="display: none;">
+              <label><i class="fa-solid fa-database"></i> Fonte de Coleta de Dados</label>
+              <select id="filter-source" class="filter-select">
+                <option value="">Todas as fontes</option>
+              </select>
+            </div>
+
+            <div class="filter-section" id="filter-stage-group" style="display: none;">
+              <label><i class="fa-solid fa-diagram-project"></i> Etapa Metodológica</label>
+              <select id="filter-stage" class="filter-select">
+                <option value="">Qualquer etapa</option>
+              </select>
+            </div>
+
+            <div class="filter-section" id="filter-has-tools-group" style="display: none;">
+              <label class="checkbox-item" style="cursor: pointer; font-size: 13px;">
+                <input type="checkbox" id="filter-has-tools">
+                <span>Apenas artigos que usam ferramentas</span>
+              </label>
+            </div>
+
+            <div class="filter-section" id="filter-author-group">
               <label><i class="fa-solid fa-user"></i> Autor / Pesquisador</label>
               <select id="filter-author" class="filter-select">
                 <option value="">Todos os autores</option>
               </select>
             </div>
 
-            <div class="filter-section">
+            <div class="filter-section" id="filter-section-group">
               <label><i class="fa-solid fa-layer-group"></i> Eixo Temático / Seção</label>
               <select id="filter-section" class="filter-select">
                 <option value="">Todos os eixos</option>
@@ -495,18 +523,36 @@
       <p class="modal-authors" id="modal-authors">Autores</p>
 
       <div class="modal-section">
-        <h4>Resumo (Abstract)</h4>
+        <h4><i class="fa-solid fa-align-left"></i> Resumo (Abstract)</h4>
         <p id="modal-abstract" class="abstract-text">Resumo não disponível.</p>
       </div>
 
-      <div class="modal-section">
-        <h4>Eixo Temático / Seção</h4>
-        <div id="modal-sections" class="badge-list">N/A</div>
+      <!-- Grid de Metadados Curados -->
+      <div class="modal-meta-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+        <div class="modal-section" id="modal-tools-group">
+          <h4><i class="fa-solid fa-wrench"></i> Ferramentas Utilizadas</h4>
+          <div id="modal-tools" class="badge-list">Nenhuma ferramenta detectada</div>
+        </div>
+
+        <div class="modal-section" id="modal-sources-group">
+          <h4><i class="fa-solid fa-database"></i> Fontes de Coleta de Dados</h4>
+          <div id="modal-sources" class="badge-list">Nenhuma fonte especificada</div>
+        </div>
+
+        <div class="modal-section" id="modal-stages-group">
+          <h4><i class="fa-solid fa-diagram-project"></i> Etapas Metodológicas de Uso</h4>
+          <div id="modal-stages" class="badge-list">Não especificado</div>
+        </div>
+
+        <div class="modal-section" id="modal-sections-group">
+          <h4><i class="fa-solid fa-layer-group"></i> Eixo Temático / Seção</h4>
+          <div id="modal-sections" class="badge-list">Não especificado</div>
+        </div>
       </div>
 
-      <div class="modal-section">
-        <h4>Palavras-chave / Tópicos</h4>
-        <div id="modal-keywords" class="badge-list">N/A</div>
+      <div class="modal-section" id="modal-keywords-group">
+        <h4><i class="fa-solid fa-tags"></i> Palavras-chave</h4>
+        <div id="modal-keywords" class="badge-list">Não especificado</div>
       </div>
 
       <!-- Gerador de Citações Científicas -->
@@ -523,13 +569,18 @@
         </div>
       </div>
 
-      <div class="modal-section" style="margin-top: 24px; display: flex; gap: 0.75rem; flex-wrap: wrap;">
-        <a href="#" id="modal-doi-link" target="_blank" class="btn btn-primary" style="display: inline-block; text-decoration: none;">
-          <i class="fa-solid fa-arrow-up-right-from-square"></i> Acessar Publicação
-        </a>
-        <a href="#" id="modal-pdf-link" target="_blank" class="btn btn-secondary" style="display: none; text-decoration: none; background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.4); color: #f87171;">
-          <i class="fa-solid fa-file-pdf"></i> Baixar PDF
-        </a>
+      <div class="modal-section" style="margin-top: 24px; display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+        <div id="modal-doi-text-container" style="font-family: var(--font-mono); font-size: 13px; color: var(--text-secondary);">
+          <!-- Ex: DOI: https://doi.org/10.22477/ix.ebbc.260 -->
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+          <a href="#" id="modal-doi-link" target="_blank" class="btn btn-primary" style="display: inline-block; text-decoration: none;">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Acessar Publicação
+          </a>
+          <a href="#" id="modal-pdf-link" target="_blank" class="btn btn-secondary" style="display: none; text-decoration: none; background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.4); color: #f87171;">
+            <i class="fa-solid fa-file-pdf"></i> Baixar PDF
+          </a>
+        </div>
       </div>
     </div>
   </div>

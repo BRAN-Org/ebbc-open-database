@@ -274,6 +274,7 @@ function updateAllCharts() {
 }
 
 function populateSidebarOptions(stats) {
+  // 1. Edições (Ano)
   const yearContainer = document.getElementById('year-checkbox-list');
   if (yearContainer && stats.breakdowns?.yearDistribution?.data) {
     const years = Object.keys(stats.breakdowns.yearDistribution.data).sort((a, b) => b - a);
@@ -284,7 +285,7 @@ function populateSidebarOptions(stats) {
       label.className = 'checkbox-item';
       label.innerHTML = `
         <input type="checkbox" class="year-filter-cb" value="${yr}" checked>
-        <span>Edição ${yr}</span>
+        <span>EBBC ${yr}</span>
       `;
       label.querySelector('input').addEventListener('change', () => {
         currentOffset = 0;
@@ -294,6 +295,85 @@ function populateSidebarOptions(stats) {
     });
   }
 
+  // 2. Filtrar por Ferramenta
+  const toolSelect = document.getElementById('filter-tool');
+  const toolGroup = document.getElementById('filter-tool-group');
+  const toolsData = stats.topLists?.topTools?.data;
+  if (toolSelect) {
+    if (toolsData && toolsData.length > 0) {
+      toolSelect.innerHTML = '<option value="">Todas as ferramentas</option>';
+      toolsData.forEach(t => {
+        if (t.name && t.name !== 'N/A') {
+          const opt = document.createElement('option');
+          opt.value = t.name;
+          opt.textContent = `${t.name} (${t.count})`;
+          toolSelect.appendChild(opt);
+        }
+      });
+      if (toolGroup) toolGroup.style.display = 'block';
+      toolSelect.onchange = () => { currentOffset = 0; loadExplorerData(); };
+    } else {
+      if (toolGroup) toolGroup.style.display = 'none';
+    }
+  }
+
+  // 3. Fonte de Coleta de Dados
+  const sourceSelect = document.getElementById('filter-source');
+  const sourceGroup = document.getElementById('filter-source-group');
+  const sourcesData = stats.topLists?.topSources?.data;
+  if (sourceSelect) {
+    if (sourcesData && sourcesData.length > 0) {
+      sourceSelect.innerHTML = '<option value="">Todas as fontes</option>';
+      sourcesData.forEach(s => {
+        if (s.name && s.name !== 'N/A') {
+          const opt = document.createElement('option');
+          opt.value = s.name;
+          opt.textContent = `${s.name} (${s.count})`;
+          sourceSelect.appendChild(opt);
+        }
+      });
+      if (sourceGroup) sourceGroup.style.display = 'block';
+      sourceSelect.onchange = () => { currentOffset = 0; loadExplorerData(); };
+    } else {
+      if (sourceGroup) sourceGroup.style.display = 'none';
+    }
+  }
+
+  // 4. Etapa Metodológica
+  const stageSelect = document.getElementById('filter-stage');
+  const stageGroup = document.getElementById('filter-stage-group');
+  const stagesData = stats.breakdowns?.stageBreakdown?.data;
+  if (stageSelect) {
+    if (stagesData && Object.keys(stagesData).length > 0) {
+      stageSelect.innerHTML = '<option value="">Qualquer etapa</option>';
+      Object.entries(stagesData).forEach(([st, cnt]) => {
+        if (st && st !== 'N/A') {
+          const opt = document.createElement('option');
+          opt.value = st;
+          opt.textContent = `${st} (${cnt})`;
+          stageSelect.appendChild(opt);
+        }
+      });
+      if (stageGroup) stageGroup.style.display = 'block';
+      stageSelect.onchange = () => { currentOffset = 0; loadExplorerData(); };
+    } else {
+      if (stageGroup) stageGroup.style.display = 'none';
+    }
+  }
+
+  // 5. Checkbox: Apenas artigos que usam ferramentas
+  const hasToolsCb = document.getElementById('filter-has-tools');
+  const hasToolsGroup = document.getElementById('filter-has-tools-group');
+  if (hasToolsCb) {
+    if (toolsData && toolsData.length > 0) {
+      if (hasToolsGroup) hasToolsGroup.style.display = 'block';
+      hasToolsCb.onchange = () => { currentOffset = 0; loadExplorerData(); };
+    } else {
+      if (hasToolsGroup) hasToolsGroup.style.display = 'none';
+    }
+  }
+
+  // 6. Autor / Pesquisador
   const authorSelect = document.getElementById('filter-author');
   if (authorSelect && stats.topLists?.topAuthors?.data) {
     authorSelect.innerHTML = '<option value="">Todos os autores</option>';
@@ -305,45 +385,51 @@ function populateSidebarOptions(stats) {
         authorSelect.appendChild(opt);
       }
     });
-    authorSelect.addEventListener('change', () => { currentOffset = 0; loadExplorerData(); });
+    authorSelect.onchange = () => { currentOffset = 0; loadExplorerData(); };
   }
 
+  // 7. Eixo Temático / Seção
   const sectionSelect = document.getElementById('filter-section');
+  const sectionGroup = document.getElementById('filter-section-group');
   if (sectionSelect) {
     let sections = [];
     if (stats.topLists?.topSections?.data) {
       sections = stats.topLists.topSections.data.map(s => s.name);
     } else if (stats.breakdowns?.sectionBreakdown?.data) {
       sections = Object.keys(stats.breakdowns.sectionBreakdown.data);
-    } else if (stats.topLists?.topSources?.data) {
-      sections = stats.topLists.topSources.data.map(s => s.name);
     }
 
-    sectionSelect.innerHTML = '<option value="">Todos os eixos / fontes</option>';
-    sections.forEach(s => {
-      if (s && s !== 'N/A') {
-        const opt = document.createElement('option');
-        opt.value = s;
-        opt.textContent = s;
-        sectionSelect.appendChild(opt);
-      }
-    });
-    sectionSelect.addEventListener('change', () => { currentOffset = 0; loadExplorerData(); });
+    if (sections.length > 0) {
+      sectionSelect.innerHTML = '<option value="">Todos os eixos</option>';
+      sections.forEach(s => {
+        if (s && s !== 'N/A') {
+          const opt = document.createElement('option');
+          opt.value = s;
+          opt.textContent = s;
+          sectionSelect.appendChild(opt);
+        }
+      });
+      if (sectionGroup) sectionGroup.style.display = 'block';
+      sectionSelect.onchange = () => { currentOffset = 0; loadExplorerData(); };
+    } else {
+      if (sectionGroup) sectionGroup.style.display = 'none';
+    }
   }
 
+  // 8. Sort Select
   const sortSelect = document.getElementById('sort-select');
   if (sortSelect) {
-    sortSelect.addEventListener('change', () => { currentOffset = 0; loadExplorerData(); });
+    sortSelect.onchange = () => { currentOffset = 0; loadExplorerData(); };
   }
 
   const sortDirBtn = document.getElementById('btn-sort-dir');
   if (sortDirBtn) {
-    sortDirBtn.addEventListener('click', () => {
+    sortDirBtn.onclick = () => {
       currentSortDir = currentSortDir === 'asc' ? 'desc' : 'asc';
       sortDirBtn.innerHTML = currentSortDir === 'asc' ? '<i class="fa-solid fa-sort-amount-down"></i>' : '<i class="fa-solid fa-sort-amount-up"></i>';
       currentOffset = 0;
       loadExplorerData();
-    });
+    };
   }
 }
 
@@ -366,11 +452,25 @@ async function loadExplorerData() {
     params.set('year', selectedYears.join(','));
   }
 
+  const toolVal = document.getElementById('filter-tool')?.value;
+  if (toolVal) params.set('tool', toolVal);
+
+  const sourceVal = document.getElementById('filter-source')?.value;
+  if (sourceVal) params.set('source', sourceVal);
+
+  const stageVal = document.getElementById('filter-stage')?.value;
+  if (stageVal) params.set('stage', stageVal);
+
   const authorVal = document.getElementById('filter-author')?.value;
   if (authorVal) params.set('author', authorVal);
 
   const sectionVal = document.getElementById('filter-section')?.value;
   if (sectionVal) params.set('section', sectionVal);
+
+  const hasToolsCb = document.getElementById('filter-has-tools');
+  if (hasToolsCb && hasToolsCb.checked) {
+    params.set('has_tool', 'true');
+  }
 
   const sortVal = document.getElementById('sort-select')?.value;
   if (sortVal) params.set('sort', sortVal);
@@ -480,45 +580,129 @@ function openArticleModal(item) {
   const modal = document.getElementById('article-modal');
   if (!modal) return;
 
-  document.getElementById('modal-year').textContent = item.year || 'N/A';
-  document.getElementById('modal-title').textContent = item.title || 'Sem título';
+  document.getElementById('modal-year').textContent = item.year || item.ano || 'N/A';
+  document.getElementById('modal-title').textContent = item.title || item.titulo || 'Sem título';
   document.getElementById('modal-authors').textContent = Array.isArray(item.authors) ? item.authors.join(', ') : (item.authors || 'N/A');
   document.getElementById('modal-abstract').textContent = item.abstract || 'Resumo não disponível para este registro.';
 
-  const sectionsEl = document.getElementById('modal-sections');
-  if (sectionsEl) {
-    let secList = [];
-    if (item.section && item.section !== 'N/A') secList.push(`<span class="badge-source">${escapeHtml(item.section)}</span>`);
-    if (Array.isArray(item.usage_stages)) {
-      item.usage_stages.forEach(st => {
-        if (st && st !== 'N/A') secList.push(`<span class="badge-year"><i class="fa-solid fa-diagram-project"></i> ${escapeHtml(st)}</span>`);
-      });
-    }
-    sectionsEl.innerHTML = secList.length > 0 ? secList.join(' ') : 'Não especificado';
-  }
-
-  const keywordsEl = document.getElementById('modal-keywords');
-  if (keywordsEl) {
-    let kwList = [];
+  // 1. Ferramentas Utilizadas
+  const toolsEl = document.getElementById('modal-tools');
+  const toolsGroup = document.getElementById('modal-tools-group');
+  if (toolsEl) {
+    let list = [];
     if (Array.isArray(item.tools)) {
       item.tools.forEach(t => {
-        if (t && t !== 'N/A') kwList.push(`<span class="badge-tool"><i class="fa-solid fa-wrench"></i> ${escapeHtml(t)}</span>`);
+        if (t && String(t).toUpperCase() !== 'N/A') {
+          list.push(`<span class="badge-tool"><i class="fa-solid fa-wrench"></i> ${escapeHtml(t)}</span>`);
+        }
       });
     }
-    if (Array.isArray(item.data_sources)) {
-      item.data_sources.forEach(s => {
-        if (s && s !== 'N/A') kwList.push(`<span class="badge-source"><i class="fa-solid fa-database"></i> ${escapeHtml(s)}</span>`);
-      });
+    if (list.length > 0) {
+      toolsEl.innerHTML = list.join(' ');
+      if (toolsGroup) toolsGroup.style.display = 'block';
+    } else {
+      toolsEl.innerHTML = '<span style="color: var(--text-secondary); font-size: 13px;">Nenhuma ferramenta detectada</span>';
+      if (toolsGroup && (!item.tools || item.tools.length === 0)) {
+        toolsGroup.style.display = 'block';
+      }
     }
-    if (Array.isArray(item.keywords)) {
-      item.keywords.forEach(k => {
-        if (k && k !== 'N/A') kwList.push(`<span class="badge-tool">${escapeHtml(k)}</span>`);
-      });
-    }
-    keywordsEl.innerHTML = kwList.length > 0 ? kwList.join(' ') : 'Não especificado';
   }
 
+  // 2. Fontes de Coleta de Dados
+  const sourcesEl = document.getElementById('modal-sources');
+  const sourcesGroup = document.getElementById('modal-sources-group');
+  if (sourcesEl) {
+    let list = [];
+    if (Array.isArray(item.data_sources)) {
+      item.data_sources.forEach(s => {
+        if (s && String(s).toUpperCase() !== 'N/A') {
+          list.push(`<span class="badge-source"><i class="fa-solid fa-database"></i> ${escapeHtml(s)}</span>`);
+        }
+      });
+    }
+    if (list.length > 0) {
+      sourcesEl.innerHTML = list.join(' ');
+      if (sourcesGroup) sourcesGroup.style.display = 'block';
+    } else {
+      sourcesEl.innerHTML = '<span style="color: var(--text-secondary); font-size: 13px;">Nenhuma fonte especificada</span>';
+      if (sourcesGroup && (!item.data_sources || item.data_sources.length === 0)) {
+        sourcesGroup.style.display = 'none';
+      }
+    }
+  }
+
+  // 3. Etapas Metodológicas
+  const stagesEl = document.getElementById('modal-stages');
+  const stagesGroup = document.getElementById('modal-stages-group');
+  if (stagesEl) {
+    let list = [];
+    if (Array.isArray(item.usage_stages)) {
+      item.usage_stages.forEach(st => {
+        if (st && String(st).toUpperCase() !== 'N/A') {
+          list.push(`<span class="badge-year"><i class="fa-solid fa-diagram-project"></i> ${escapeHtml(st)}</span>`);
+        }
+      });
+    }
+    if (list.length > 0) {
+      stagesEl.innerHTML = list.join(' ');
+      if (stagesGroup) stagesGroup.style.display = 'block';
+    } else {
+      stagesEl.innerHTML = '<span style="color: var(--text-secondary); font-size: 13px;">Não especificado</span>';
+      if (stagesGroup && (!item.usage_stages || item.usage_stages.length === 0)) {
+        stagesGroup.style.display = 'none';
+      }
+    }
+  }
+
+  // 4. Eixo Temático / Seção
+  const sectionsEl = document.getElementById('modal-sections');
+  const sectionsGroup = document.getElementById('modal-sections-group');
+  if (sectionsEl) {
+    if (item.section && String(item.section).toUpperCase() !== 'N/A') {
+      sectionsEl.innerHTML = `<span class="badge-source">${escapeHtml(item.section)}</span>`;
+      if (sectionsGroup) sectionsGroup.style.display = 'block';
+    } else {
+      sectionsEl.innerHTML = '<span style="color: var(--text-secondary); font-size: 13px;">Não especificado</span>';
+      if (sectionsGroup && !item.section) sectionsGroup.style.display = 'none';
+    }
+  }
+
+  // 5. Palavras-chave
+  const keywordsEl = document.getElementById('modal-keywords');
+  const keywordsGroup = document.getElementById('modal-keywords-group');
+  if (keywordsEl) {
+    let list = [];
+    if (Array.isArray(item.keywords)) {
+      item.keywords.forEach(k => {
+        if (k && String(k).toUpperCase() !== 'N/A') {
+          list.push(`<span class="badge-tool">${escapeHtml(k)}</span>`);
+        }
+      });
+    }
+    if (list.length > 0) {
+      keywordsEl.innerHTML = list.join(' ');
+      if (keywordsGroup) keywordsGroup.style.display = 'block';
+    } else {
+      keywordsEl.innerHTML = '<span style="color: var(--text-secondary); font-size: 13px;">Não especificado</span>';
+      if (keywordsGroup && (!item.keywords || item.keywords.length === 0)) {
+        keywordsGroup.style.display = 'none';
+      }
+    }
+  }
+
+  // 6. DOI Text Container e Link
   const realArticleUrl = resolveArticleUrl(item);
+  const doiTextContainer = document.getElementById('modal-doi-text-container');
+  const rawDoi = (item.doi && String(item.doi).toUpperCase() !== 'N/A') ? item.doi : (item.id && String(item.id).toUpperCase() !== 'N/A' ? item.id : '');
+
+  if (doiTextContainer) {
+    if (rawDoi && !rawDoi.includes('0000000')) {
+      const doiHref = rawDoi.startsWith('http') ? rawDoi : `https://doi.org/${rawDoi}`;
+      doiTextContainer.innerHTML = `<i class="fa-solid fa-link"></i> DOI: <a href="${escapeHtml(doiHref)}" target="_blank" style="color: var(--color-primary); text-decoration: underline; word-break: break-all;">${escapeHtml(doiHref)}</a>`;
+    } else {
+      doiTextContainer.innerHTML = '';
+    }
+  }
 
   const doiLink = document.getElementById('modal-doi-link');
   if (doiLink) {
@@ -848,10 +1032,24 @@ function initTabs() {
       if (searchInput) searchInput.value = '';
       if (topSearchInput) topSearchInput.value = '';
       document.querySelectorAll('.year-filter-cb').forEach(cb => cb.checked = true);
+
+      const toolSelect = document.getElementById('filter-tool');
+      if (toolSelect) toolSelect.value = '';
+
+      const sourceSelect = document.getElementById('filter-source');
+      if (sourceSelect) sourceSelect.value = '';
+
+      const stageSelect = document.getElementById('filter-stage');
+      if (stageSelect) stageSelect.value = '';
+
       const authorSelect = document.getElementById('filter-author');
       if (authorSelect) authorSelect.value = '';
+
       const sectionSelect = document.getElementById('filter-section');
       if (sectionSelect) sectionSelect.value = '';
+
+      const hasToolsCb = document.getElementById('filter-has-tools');
+      if (hasToolsCb) hasToolsCb.checked = false;
 
       currentOffset = 0;
       loadExplorerData();
