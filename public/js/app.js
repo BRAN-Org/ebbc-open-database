@@ -9,41 +9,55 @@ let currentSortDir = 'asc';
 
 const chartInstances = {};
 
+export function getDoiStatus(rawDoi) {
+  if (!rawDoi || typeof rawDoi !== 'string') return { isValid: false, isPresent: false, statusText: 'Sem DOI' };
+  
+  const clean = rawDoi.replace(/^https?:\/\/doi\.org\//i, '').trim();
+  const upper = clean.toUpperCase();
+
+  if (!clean || upper === 'N/A' || upper === 'NONE' || upper === 'UNDEFINED' || upper === 'NULL' || clean.includes('0000000')) {
+    return { isValid: false, isPresent: false, statusText: 'Sem DOI' };
+  }
+
+  const rawUrl = rawDoi.startsWith('http') ? rawDoi : `https://doi.org/${clean}`;
+
+  // Check if DOI starts with 10. and has a slash / (standard CrossRef DOI format)
+  if (clean.startsWith('10.') && /^10\.\d{4,9}\/.+$/.test(clean)) {
+    return {
+      isValid: true,
+      isPresent: true,
+      cleanDoi: clean,
+      doiUrl: rawUrl,
+      statusText: 'DOI Verificado (CrossRef)',
+      badgeHtml: '<span class="badge-doi-status valid" title="DOI Verificado no CrossRef"><i class="fa-solid fa-circle-check"></i> DOI Verificado</span>'
+    };
+  }
+
+  // If DOI has dot instead of slash (e.g. 10.22477.109) or non-standard syntax issued on EBBC platform
+  return {
+    isValid: false,
+    isPresent: true,
+    cleanDoi: clean,
+    doiUrl: rawUrl,
+    statusText: 'DOI Original (Não Registrado no CrossRef)',
+    badgeHtml: '<span class="badge-doi-status warning" title="DOI original extraído da plataforma EBBC, porém não registrado no CrossRef"><i class="fa-solid fa-triangle-exclamation"></i> DOI Não Registrado</span>'
+  };
+}
+
 export function resolveArticleUrl(item) {
   if (!item) return null;
 
-  const rawDoi = item.doi || item.id || '';
-  if (rawDoi && typeof rawDoi === 'string') {
-    const cleanDoi = rawDoi.trim();
-    const upperDoi = cleanDoi.toUpperCase();
-    if (
-      upperDoi !== 'N/A' &&
-      upperDoi !== 'NONE' &&
-      upperDoi !== 'UNDEFINED' &&
-      upperDoi !== 'NULL' &&
-      !upperDoi.includes('0000000') &&
-      cleanDoi !== ''
-    ) {
-      const doiPath = cleanDoi.replace(/^https?:\/\/doi\.org\//i, '').trim();
-      if (doiPath.startsWith('10.')) {
-        // Valida se o DOI contém a barra de sufixo obrigatória (ex: 10.XXXX/YYYY)
-        if (/^10\.\d{4,9}\/.+$/.test(doiPath)) {
-          return cleanDoi.startsWith('http') ? cleanDoi : `https://doi.org/${doiPath}`;
-        }
-      } else if (cleanDoi.startsWith('http')) {
-        return cleanDoi;
-      }
-    }
+  const doiInfo = getDoiStatus(item.doi || item.id);
+  if (doiInfo.isPresent) {
+    return doiInfo.doiUrl;
   }
 
-  if (item.url && typeof item.url === 'string') {
-    const cleanUrl = item.url.trim();
-    if (cleanUrl.startsWith('http') && cleanUrl.toUpperCase() !== 'N/A') return cleanUrl;
+  if (item.url && typeof item.url === 'string' && item.url.startsWith('http') && item.url.toUpperCase() !== 'N/A') {
+    return item.url.trim();
   }
 
-  if (item.pdf_url && typeof item.pdf_url === 'string') {
-    const cleanPdf = item.pdf_url.trim();
-    if (cleanPdf.startsWith('http') && cleanPdf.toUpperCase() !== 'N/A') return cleanPdf;
+  if (item.pdf_url && typeof item.pdf_url === 'string' && item.pdf_url.startsWith('http') && item.pdf_url.toUpperCase() !== 'N/A') {
+    return item.pdf_url.trim();
   }
 
   return null;
@@ -578,13 +592,20 @@ function renderArticleCards(items) {
       });
     }
 
-    const realArticleUrl = resolveArticleUrl(item);
+    const doiInfo = getDoiStatus(item.doi || item.id);
     const pdfUrl = (item.pdf_url && item.pdf_url !== 'N/A') ? item.pdf_url : null;
 
     let linksHeaderHtml = '';
-    if (realArticleUrl) {
-      linksHeaderHtml += `<a href="${escapeHtml(realArticleUrl)}" target="_blank" onclick="event.stopPropagation();" class="card-action-link" title="Acessar Publicação"><i class="fa-solid fa-arrow-up-right-from-square"></i> Publicação</a> `;
+    if (doiInfo.isPresent) {
+      if (doiInfo.isValid) {
+        linksHeaderHtml += `<a href="${escapeHtml(doiInfo.doiUrl)}" target="_blank" onclick="event.stopPropagation();" class="card-action-link" title="DOI Verificado no CrossRef"><i class="fa-solid fa-link"></i> DOI Verificado</a> `;
+      } else {
+        linksHeaderHtml += `<a href="${escapeHtml(doiInfo.doiUrl)}" target="_blank" onclick="event.stopPropagation();" class="card-action-link warning" title="DOI Original EBBC (Não registrado no CrossRef)"><i class="fa-solid fa-triangle-exclamation"></i> DOI Não Registrado</a> `;
+      }
+    } else if (item.url && item.url.startsWith('http')) {
+      linksHeaderHtml += `<a href="${escapeHtml(item.url)}" target="_blank" onclick="event.stopPropagation();" class="card-action-link" title="Acessar Publicação"><i class="fa-solid fa-arrow-up-right-from-square"></i> Publicação</a> `;
     }
+
     if (pdfUrl) {
       linksHeaderHtml += `<a href="${escapeHtml(pdfUrl)}" target="_blank" onclick="event.stopPropagation();" class="card-action-link pdf" title="Baixar PDF"><i class="fa-solid fa-file-pdf"></i> Baixar PDF</a>`;
     }
@@ -724,23 +745,29 @@ function openArticleModal(item) {
   }
 
   // 6. DOI Text Container e Link
-  const realArticleUrl = resolveArticleUrl(item);
+  const doiInfo = getDoiStatus(item.doi || item.id);
   const doiTextContainer = document.getElementById('modal-doi-text-container');
-  const rawDoi = (item.doi && String(item.doi).toUpperCase() !== 'N/A') ? item.doi : (item.id && String(item.id).toUpperCase() !== 'N/A' ? item.id : '');
+  const doiLink = document.getElementById('modal-doi-link');
 
   if (doiTextContainer) {
-    if (rawDoi && !rawDoi.includes('0000000')) {
-      const doiHref = rawDoi.startsWith('http') ? rawDoi : `https://doi.org/${rawDoi}`;
-      doiTextContainer.innerHTML = `<i class="fa-solid fa-link"></i> DOI: <a href="${escapeHtml(doiHref)}" target="_blank" style="color: var(--color-primary); text-decoration: underline; word-break: break-all;">${escapeHtml(doiHref)}</a>`;
+    if (doiInfo.isPresent) {
+      doiTextContainer.innerHTML = `<i class="fa-solid fa-link"></i> DOI: <a href="${escapeHtml(doiInfo.doiUrl)}" target="_blank" style="color: var(--text-primary); text-decoration: underline; word-break: break-all;">https://doi.org/${escapeHtml(doiInfo.cleanDoi)}</a> ${doiInfo.badgeHtml}`;
     } else {
-      doiTextContainer.innerHTML = '';
+      doiTextContainer.innerHTML = '<span style="font-size: 12px; color: var(--text-secondary);"><i class="fa-solid fa-circle-info"></i> Sem DOI cadastrado</span>';
     }
   }
 
-  const doiLink = document.getElementById('modal-doi-link');
   if (doiLink) {
-    if (realArticleUrl) {
-      doiLink.href = realArticleUrl;
+    if (doiInfo.isPresent) {
+      doiLink.href = doiInfo.doiUrl;
+      doiLink.style.display = 'inline-block';
+      if (doiInfo.isValid) {
+        doiLink.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square"></i> Acessar DOI (CrossRef)`;
+      } else {
+        doiLink.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square"></i> Acessar DOI (Original EBBC)`;
+      }
+    } else if (item.url && item.url.startsWith('http')) {
+      doiLink.href = item.url;
       doiLink.style.display = 'inline-block';
       doiLink.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square"></i> Acessar Publicação`;
     } else {

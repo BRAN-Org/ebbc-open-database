@@ -914,6 +914,38 @@ body {
   font-weight: 500;
 }
 
+/* DOI Status Badges & Warning Action Links */
+.badge-doi-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+}
+.badge-doi-status.valid {
+  background: rgba(48, 209, 88, 0.1);
+  border: 1px solid rgba(48, 209, 88, 0.3);
+  color: #30d158;
+}
+.badge-doi-status.warning {
+  background: rgba(255, 159, 10, 0.12);
+  border: 1px solid rgba(255, 159, 10, 0.35);
+  color: #ff9f0a;
+}
+
+.card-action-link.warning {
+  color: #ff9f0a;
+  border-color: rgba(255, 159, 10, 0.3);
+  background: rgba(255, 159, 10, 0.08);
+}
+.card-action-link.warning:hover {
+  background: rgba(255, 159, 10, 0.18);
+  border-color: rgba(255, 159, 10, 0.5);
+}
+
 /* Main Content Container Flex */
 .main-content {
   flex: 1;
