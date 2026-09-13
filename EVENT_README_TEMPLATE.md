@@ -127,6 +127,14 @@ Se você utilizar estes dados em pesquisas acadêmicas ou software, por favor ci
 
 ---
 
+## 🏅 Confiabilidade e Auditagem dos Dados
+
+| Nível de Confiabilidade | Nota & Justificativa do Acervo |
+| :---: | :--- |
+| {{RELIABILITY_BADGE}} | {{RELIABILITY_JUSTIFICATION}} |
+
+---
+
 <p align="center">
   Mantido com ❤️ pela <strong><a href="https://github.com/BRAN-Org">BRAN Org</a></strong> e <strong>{{INSTITUTION_NAME}}</strong>
 </p>

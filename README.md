@@ -2,6 +2,7 @@
 
 <p align="center">
   <a href="https://github.com/BRAN-Org"><img src="https://img.shields.io/badge/BRAN%20Org-Open%20Data-blue.svg?style=for-the-badge&logo=github" alt="BRAN Org"></a>
+  <a href="https://github.com/BRAN-Org/.github#-%EF%B8%8F-n%C3%ADveis-de-confiabilidade-dos-dados"><img src="https://img.shields.io/badge/Confiabilidade-Fiel%20%C3%A0%20Fonte%20(Limita%C3%A7%C3%B5es)-yellow.svg?style=for-the-badge" alt="Confiabilidade Amarelo"></a>
   <a href="https://www.budapestopenaccessinitiative.org/"><img src="https://img.shields.io/badge/BOAI-Signatory-orange.svg?style=for-the-badge" alt="BOAI Signatory"></a>
   <a href="https://www.go-fair.org/fair-principles/"><img src="https://img.shields.io/badge/FAIR-Compliant-green.svg?style=for-the-badge" alt="FAIR Principles"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/Code_License-GPLv3-blue.svg?style=for-the-badge" alt="GPLv3"></a>
@@ -114,6 +115,14 @@ Se você utilizar estes dados em pesquisas acadêmicas ou software, por favor ci
   url          = {{{DOI_URL}}}
 }
 ```
+
+---
+
+## 🏅 Confiabilidade e Auditagem dos Dados
+
+| Nível de Confiabilidade | Nota & Justificativa do Acervo |
+| :---: | :--- |
+| [![Confiabilidade: Amarelo](https://img.shields.io/badge/Confiabilidade-Fiel%20%C3%A0%20Fonte%20(Limita%C3%A7%C3%B5es)-yellow.svg?style=for-the-badge)](https://github.com/BRAN-Org/.github) | **🟡 Amarelo (100% Fiel à Fonte com Limitações Nativas da Origem)**<br>Todos os 643 artigos disponíveis no site oficial do EBBC (2012-2024) foram extraídos com 100% de exatidão pelo scraper. O repositório possui classificação **Amarela** pois a fonte oficial apresenta limitações estruturais: ausência nativa de DOIs nos anais do evento e ausência das edições históricas iniciais que não foram disponibilizadas online pela organização original. |
 
 ---
 
