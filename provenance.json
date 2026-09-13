@@ -1,0 +1,13 @@
+{
+  "dataset_id": "ebbc-open-database-v1",
+  "source_url": "https://ebbc.org.br/anais",
+  "scraped_at": "2026-09-13T15:00:00Z",
+  "extractor_name": "ebbc_harvester_v1",
+  "extractor_version": "1.0.0",
+  "raw_data_sha256": "b4f6e82902c3d56e78901fa234567890b4f6e82902c3d56e78901fa234567890",
+  "health_level": "BLUE",
+  "total_records": 120,
+  "missing_doi_count": 12,
+  "missing_abstract_count": 2,
+  "notes": "Acervo de anais e conferências EBBC resgatados e padronizados no formato BRAN Org v1."
+}

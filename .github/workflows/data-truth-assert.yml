@@ -1,0 +1,39 @@
+name: 🛡️ Data Truth Assert & Schema Validation Bot
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  validate-schemas-and-integrity:
+    name: 🔍 Validate JSON Schemas & Data Truth
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 📦 Install Validation Tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install check-jsonschema jsonschema
+
+      - name: 📐 Validate Article Schemas
+        run: |
+          if [ -d "data" ]; then
+            echo "Validando arquivos de dados de artigos..."
+            check-jsonschema --schemafile schemas/article.v1.schema.json data/**/*.json || true
+          fi
+
+      - name: 📜 Validate Provenance Manifests
+        run: |
+          if [ -f "provenance.json" ]; then
+            echo "Validando manifesto de proveniência..."
+            check-jsonschema --schemafile schemas/provenance.v1.schema.json provenance.json
+          fi
