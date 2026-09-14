@@ -1,7 +1,7 @@
 {
-  "name": "ebbc-open-database",
-  "version": "1.4.0",
-  "description": "Open REST API & Dashboard Interativo para os anais e dados bibliométricos do EBBC (2012-2024).",
+  "name": "bran-web-database-template",
+  "version": "1.0.0",
+  "description": "Template leve e reproduzível para APIs REST públicas e Dashboards de bases de dados acadêmicas da BRAN Org.",
   "main": "server.js",
   "type": "module",
   "scripts": {
