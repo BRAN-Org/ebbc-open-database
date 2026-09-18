@@ -28,7 +28,7 @@ jobs:
         run: |
           if [ -d "data" ]; then
             echo "Validando arquivos de dados de artigos..."
-            check-jsonschema --schemafile schemas/article.v1.schema.json data/**/*.json
+            check-jsonschema --schemafile schemas/article.v1.schema.json data/*.json
           fi
 
       - name: 📜 Validate Provenance Manifests
@@ -36,4 +36,10 @@ jobs:
           if [ -f "provenance.json" ]; then
             echo "Validando manifesto de proveniência..."
             check-jsonschema --schemafile schemas/provenance.v1.schema.json provenance.json
+          fi
+
+      - name: 🛡️ Audit Cryptographic Hashes & Integrity
+        run: |
+          if [ -f "scripts/validate_data.py" ]; then
+            python3 scripts/validate_data.py
           fi
