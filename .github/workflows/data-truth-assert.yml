@@ -28,7 +28,7 @@ jobs:
         run: |
           if [ -d "data" ]; then
             echo "Validando arquivos de dados de artigos..."
-            check-jsonschema --schemafile schemas/article.v1.schema.json data/**/*.json || true
+            check-jsonschema --schemafile schemas/article.v1.schema.json data/**/*.json
           fi
 
       - name: 📜 Validate Provenance Manifests

@@ -344,9 +344,11 @@
 
             <div class="filter-section" style="margin-top: 1rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
               <label><i class="fa-solid fa-download"></i> Exportar Dados Filtrados</label>
-              <div style="display: flex; gap: 0.5rem; margin-top: 0.4rem;">
-                <a href="/api/v1/articles/export?format=json" target="_blank" class="btn btn-secondary btn-sm" id="btn-export-json" style="flex:1; text-align:center; text-decoration:none;">JSON</a>
-                <a href="/api/v1/articles/export?format=csv" target="_blank" class="btn btn-secondary btn-sm" id="btn-export-csv" style="flex:1; text-align:center; text-decoration:none;">CSV</a>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.4rem;">
+                <a href="/api/v1/articles/export?format=json" target="_blank" class="btn btn-secondary btn-sm" id="btn-export-json" style="text-align:center; text-decoration:none;"><i class="fa-solid fa-code"></i> JSON</a>
+                <a href="/api/v1/articles/export?format=csv" target="_blank" class="btn btn-secondary btn-sm" id="btn-export-csv" style="text-align:center; text-decoration:none;"><i class="fa-solid fa-file-csv"></i> CSV</a>
+                <a href="/api/v1/articles/export?format=bibtex" target="_blank" class="btn btn-secondary btn-sm" id="btn-export-bibtex" style="text-align:center; text-decoration:none;" title="Formato BibTeX para LaTeX e Zotero"><i class="fa-solid fa-book-bookmark"></i> BibTeX</a>
+                <a href="/api/v1/articles/export?format=ris" target="_blank" class="btn btn-secondary btn-sm" id="btn-export-ris" style="text-align:center; text-decoration:none;" title="Formato RIS para VOSviewer, Mendeley e EndNote"><i class="fa-solid fa-diagram-project"></i> RIS</a>
               </div>
             </div>
           </div>
@@ -481,7 +483,7 @@
                 <span class="badge-method get">GET</span>
                 <span class="endpoint-path">/api/v1/articles/export</span>
               </div>
-              <p class="doc-intro">Exporta o dataset completo ou filtrado em formato <code>JSON</code> ou <code>CSV</code> com suporte a streaming e BOM UTF-8.</p>
+              <p class="doc-intro">Exporta o dataset completo ou filtrado nos formatos <code>JSON</code>, <code>CSV</code> (com BOM UTF-8 para Excel), <code>BibTeX</code> (<code>.bib</code> para LaTeX/Zotero) ou <code>RIS</code> (para VOSviewer, Mendeley e bibliometrix).</p>
             </div>
 
             <!-- Doc 6: Config -->

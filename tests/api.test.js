@@ -79,6 +79,25 @@ describe('Integration Tests - REST API Endpoints', () => {
     assert.strictEqual(buf[2], 0xbf);
   });
 
+  test('GET /api/v1/articles/export?format=bibtex deve retornar arquivo BibTeX válido', async () => {
+    const res = await fetchApi('/api/v1/articles/export?format=bibtex');
+    assert.strictEqual(res.status, 200);
+    assert.ok(res.headers.get('content-type').includes('bibtex'));
+    const text = await res.text();
+    assert.ok(text.includes('@inproceedings{'));
+    assert.ok(text.includes('title = {'));
+  });
+
+  test('GET /api/v1/articles/export?format=ris deve retornar formato RIS com tags TY e ER', async () => {
+    const res = await fetchApi('/api/v1/articles/export?format=ris');
+    assert.strictEqual(res.status, 200);
+    assert.ok(res.headers.get('content-type').includes('research-info-systems'));
+    const text = await res.text();
+    assert.ok(text.includes('TY  - CONF'));
+    assert.ok(text.includes('TI  - '));
+    assert.ok(text.includes('ER  - '));
+  });
+
   test('GET /api/v1/articles/:key deve retornar item individual por ID', async () => {
     const resList = await fetchApi('/api/v1/articles?limit=1');
     const dataList = await resList.json();

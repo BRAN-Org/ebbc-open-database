@@ -1,13 +1,13 @@
 {
   "dataset_id": "ebbc-open-database-v1",
-  "source_url": "https://ebbc.org.br/anais",
+  "source_url": "https://ebbc.inf.br",
   "scraped_at": "2026-09-13T15:00:00Z",
   "extractor_name": "ebbc_harvester_v1",
-  "extractor_version": "1.0.0",
-  "raw_data_sha256": "b4f6e82902c3d56e78901fa234567890b4f6e82902c3d56e78901fa234567890",
-  "health_level": "BLUE",
-  "total_records": 120,
-  "missing_doi_count": 12,
-  "missing_abstract_count": 2,
-  "notes": "Acervo de anais e conferências EBBC resgatados e padronizados no formato BRAN Org v1."
+  "extractor_version": "1.4.0",
+  "raw_data_sha256": "8d33ad9d1024d393a5753eb9522f7c66d8cb351982a2c91ad6d60f23a24b00ea",
+  "health_level": "YELLOW",
+  "total_records": 643,
+  "missing_doi_count": 0,
+  "missing_abstract_count": 0,
+  "notes": "Acervo de anais e conferências EBBC (2012-2024) resgatados e padronizados no formato BRAN Org v1. Classificação Amarela (100% Fiel à Fonte com Limitações da Origem) devida à ausência nativa dos primeiros anais históricos não digitalizados online pela organização original."
 }

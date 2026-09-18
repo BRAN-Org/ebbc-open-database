@@ -917,6 +917,18 @@ function updateExportLinks(params) {
     exportParams.set('format', 'csv');
     csvBtn.href = `/api/v1/${entity}/export?${exportParams.toString()}`;
   }
+
+  const bibBtn = document.getElementById('btn-export-bibtex');
+  if (bibBtn) {
+    exportParams.set('format', 'bibtex');
+    bibBtn.href = `/api/v1/${entity}/export?${exportParams.toString()}`;
+  }
+
+  const risBtn = document.getElementById('btn-export-ris');
+  if (risBtn) {
+    exportParams.set('format', 'ris');
+    risBtn.href = `/api/v1/${entity}/export?${exportParams.toString()}`;
+  }
 }
 
 function initSandbox() {
