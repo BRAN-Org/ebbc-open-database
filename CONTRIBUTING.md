@@ -1,50 +1,53 @@
-# 📢 Guia de Colaboração e Report de Erros — Repositório de Dados Públicos
+# 🛠️ Guia de Contribuição e Manutenção do Template Base (`abec-open-database_template`)
+> **Instruções Oficiais para Alterações Estruturais, Frontend, Layouts e APIs das Bases de Dados**
 
-Bem-vindo ao repositório de dados abertos mantido pela **BRAN Org** (**Brazilian Research Archive Network**).
-
----
-
-## 🛑 Política de Contribuição e Pull Requests Externos
-
-Para preservar a **integridade**, a **proveniência auditável** e a **rigorosa fidelidade aos documentos originais**, este repositório de dados segue uma política restrita de governança:
-
-> ⚠️ **NÃO aceitamos Pull Requests externos diretos contendo alterações de dados ou códigos neste repositório.**
-
-Todas as atualizações na base de dados e no código deste acervo são executadas e validadas exclusivamente pelos **membros mantenedores da BRAN Org** após auditoria técnica na fonte de origem.
+Este repositório é o **TEMPLATE BASE OFICIAL** utilizado pela **BRAN Org** para instanciar e gerenciar bases de dados acadêmicas (como `abec-open-database`, `ebbc-open-database`, etc.).
 
 ---
 
-## 🐛 Encontrou um Erro nos DADOS? Abra uma Issue!
+## 🎯 Regra de Ouro da Arquitetura de Templates
 
-Se você identificou uma inconsistência em um dado que **já existe** nesta base:
-* Um artigo com título, autores ou ano incorretos;
-* Um DOI ou link de PDF quebrado;
-* Resumos com problemas de caractere ou dados ausentes;
+> ⚠️ **NUNCA altere o layout, estilos CSS, componentes de interface, servidor backend (`server.js`) ou scripts de infraestrutura diretamente em um repositório de base de dados final.**
+> 
+> **Todas as mudanças estruturais e visuais DEVEM ser realizadas NESTE REPOSITÓRIO TEMPLATE.**
 
-### Como Reportar Erro em Dado Existente:
-1. Acesse a aba **[Issues](../../issues)** deste repositório.
-2. Clique em **New Issue** e escolha o template **`🐛 Erro nos Dados`**.
-3. Forneça o link da fonte original e descreva a divergência encontrada.
+Quando uma alteração é aprovada e mesclada na branch `main` deste template, o robô de sincronização (*GitHub Template Sync*) propaga automaticamente as melhorias de código e layout para **TODAS** as bases de dados ativas da organização!
 
 ---
 
-## 📋 Quer Sugerir uma NOVA Fonte, Evento ou Acervo Acadêmico?
+## 🛠️ Como Contribuir com Mudanças no Template
 
-> ⚠️ **Sugestões de novos acervos, novos eventos ou periódicos NÃO devem ser feitas por Issues no GitHub.**
+### 1. Ambientes e Teste Local
+1. Clone este repositório template:
+   ```bash
+   git clone https://github.com/BRAN-Org/abec-open-database_template.git
+   cd abec-open-database_template
+   ```
+2. Instale as dependências e inicie o ambiente de desenvolvimento local:
+   ```bash
+   npm install
+   npm run dev
+   ```
+3. Teste os componentes de visualização com os dados de demonstração contidos na pasta `mock/` ou `data/`.
 
-Para organizar a triagem e inclusão de novas fontes acadêmicas brasileiras, utilize o nosso formulário oficial:
+### 2. Cuidados com o `.templatesyncignore`
+Ao adicionar novos arquivos de infraestrutura ao template, certifique-se de respeitar o arquivo `.templatesyncignore`:
+* Arquivos como `data/`, `provenance.json` e `health_check.json` contêm dados **específicos de cada evento/acervo** e são ignorados pelo sync para não sobrescrever os dados reais das bases de dados consumidoras.
 
-👉 [**📝 Enviar Sugestão de Nova Fonte Acadêmica via Google Forms**](https://forms.google.com) *(Formulário Oficial de Mapeamento da BRAN Org)*
+### 3. Submetendo Alterações no Template
+1. Crie uma branch descritiva a partir da `development`:
+   `git checkout -b feat/novo-header-responsivo development`
+2. Garanta que o servidor `server.js` e as rotas de API continuam funcionando perfeitamente.
+3. **Abertura do Pull Request**:
+   > ⚠️ **REGRA OBRIGATÓRIA**: Todo Pull Request DEVE ter como branch de destino a **`development`** (`base: development`).
+   > **NÃO abra Pull Request direto para a branch `main`.** O merge para a `main` é realizado exclusivamente pelos mantenedores após testes de homologação.
 
 ---
 
-## 🎨 Encontrou um Erro Visual, de Layout ou no Site?
+## 🔄 Fluxo de Propagação para as Bases de Dados
 
-> ⚠️ **Problemas de interface, botões, estilos visuais, bug de layout ou no servidor web NÃO devem ser reportados ou alterados diretamente neste repositório.**
+```text
+[1. PR Aprovado na branch development] ➔ [2. Homologação & Merge na branch main] ➔ [3. Template Sync Disparado] ➔ [4. Atualização Automática nas Bases de Dados]
+```
 
-- 🎯 **Onde direcionar erros de site/layout**: [**`BRAN-Org/bran-web-database-template`**](https://github.com/BRAN-Org/bran-web-database-template)
-- 💡 **Por que no Template?**: Corrigir ou aprimorar o layout no repositório **Template Base** faz com que a melhoria seja **propagada automaticamente para TODAS as bases de dados ativas da organização**, sanando o problema de uma só vez em todo o ecossistema da BRAN Org!
-
----
-
-Muito obrigado por colaborar com a transparência da ciência brasileira! 🇧🇷✨
+Obrigado por ajudar a evoluir a infraestrutura visual e tecnológica da BRAN Org! 🚀✨
