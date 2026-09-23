@@ -122,7 +122,10 @@ Se você utilizar estes dados em pesquisas acadêmicas ou software, por favor ci
 
 | Nível de Confiabilidade | Nota & Justificativa do Acervo |
 | :---: | :--- |
-| [🟡 Fiel à Fonte (Limitações)](https://github.com/BRAN-Org/.github#-%EF%B8%8F-n%C3%ADveis-de-confiabilidade-dos-dados) | **🟡 Amarelo (100% Fiel à Fonte com Limitações Nativas da Origem)**<br>Todos os 643 artigos disponíveis no site oficial do EBBC (2012-2024) foram extraídos com 100% de exatidão pelo scraper. O repositório possui classificação **Amarela** pois a fonte oficial apresenta limitações estruturais: ausência nativa de DOIs nos anais do evento e ausência das edições históricas iniciais que não foram disponibilizadas online pela organização original. |
+| [🟡 Fiel à Fonte / Cobertura Limitada](https://github.com/BRAN-Org/.github#-%EF%B8%8F-n%C3%ADveis-de-confiabilidade-dos-dados) | **🟡 Fiel à Fonte / Cobertura Limitada**<br>Todos os 643 artigos disponíveis no site oficial do EBBC (2012-2024) foram coletados fielmente. O repositório possui esta classificação pois existem lacunas originadas no próprio acervo: ausência de DOIs nos anais do evento e ausência das edições históricas iniciais que não foram digitalizadas online pela organização original. |
+
+> **Nota Metodológica Oficial:**  
+> *Os níveis de confiabilidade indicam o grau de auditoria, proveniência e validação dos dados, e não uma garantia absoluta de correção. A BRAN preserva divergências encontradas nas fontes originais e documenta correções realizadas durante o processo de curadoria.*
 
 ---
 
