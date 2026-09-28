@@ -133,8 +133,12 @@ Se você utilizar estes dados em pesquisas acadêmicas ou software, por favor ci
 | :---: | :--- |
 | {{RELIABILITY_BADGE}} | {{RELIABILITY_JUSTIFICATION}} |
 
+> **Nota Metodológica Oficial:**  
+> *Os níveis de confiabilidade indicam o grau de auditoria, proveniência e validação dos dados, e não uma garantia absoluta de correção. A BRAN preserva divergências encontradas nas fontes originais e documenta correções realizadas durante o processo de curadoria.*
+
 ---
 
 <p align="center">
-  Mantido com ❤️ pela <strong><a href="https://github.com/BRAN-Org">BRAN Org</a></strong> e <strong>{{INSTITUTION_NAME}}</strong>
+  Mantido pela <strong><a href="https://github.com/BRAN-Org">BRAN Org</a></strong> e <strong>{{INSTITUTION_NAME}}</strong>
 </p>
+
