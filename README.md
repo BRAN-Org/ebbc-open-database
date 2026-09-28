@@ -139,6 +139,14 @@ Se você utilizar estes dados em pesquisas acadêmicas ou software, por favor ci
 
 ---
 
+## 📬 Submissão de Dados
+
+Possui dados acadêmicos ou acervos científicos que gostaria de disponibilizar publicamente pela BRAN Org? Preencha o formulário de submissão:
+
+➡️ **[Formulário de Submissão de Datasets](https://forms.gle/jNBuP1mjyUXc6v1fA)**
+
+---
+
 <p align="center">
   Mantido com ❤️ pela <strong><a href="https://github.com/BRAN-Org">BRAN Org</a></strong> e <strong>Encontro Brasileiro de Bibliometria e Cientometria (EBBC 2012 - 2024)</strong>
 </p>
