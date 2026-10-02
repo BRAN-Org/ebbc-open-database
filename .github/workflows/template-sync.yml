@@ -24,6 +24,6 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           source_repo_path: BRAN-Org/bran-web-database-template
           upstream_branch: main
-          pr_title: "chore(sync): 🚀 Atualizações automáticas do BRAN Web Database Template"
+          pr_title: "chore(sync): Atualizações automáticas do BRAN Web Database Template"
           pr_commit_msg: "chore(sync): mesclar novidades do template central BRAN Org"
           pr_reviewers: "GabrielBaiano"
