@@ -1,19 +1,19 @@
-# 🏛️ EBBC Open Data - Acervo Histórico e Curadoria Metodológica
+# EBBC Open Data - Acervo Histórico e Curadoria Metodológica
 
 <p align="center">
-  <a href="https://github.com/BRAN-Org"><img src="https://img.shields.io/badge/BRAN%20Org-Open%20Data-blue.svg?style=for-the-badge&logo=github" alt="BRAN Org"></a>
-  <a href="https://github.com/BRAN-Org/.github#-%EF%B8%8F-n%C3%ADveis-de-confiabilidade-dos-dados"><img src="https://img.shields.io/badge/Confiabilidade-Fiel%20%C3%A0%20Fonte%20(Limita%C3%A7%C3%B5es)-yellow.svg?style=for-the-badge" alt="Confiabilidade Amarelo"></a>
-  <a href="https://www.budapestopenaccessinitiative.org/"><img src="https://img.shields.io/badge/BOAI-Signatory-orange.svg?style=for-the-badge" alt="BOAI Signatory"></a>
-  <a href="https://www.go-fair.org/fair-principles/"><img src="https://img.shields.io/badge/FAIR-Compliant-green.svg?style=for-the-badge" alt="FAIR Principles"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/Code_License-GPLv3-blue.svg?style=for-the-badge" alt="GPLv3"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/Data_License-CC_BY--NC--SA_4.0-lightgrey.svg?style=for-the-badge" alt="CC BY-NC-SA 4.0"></a>
+ <a href="https://github.com/BRAN-Org"><img src="https://img.shields.io/badge/BRAN%20Org-Open%20Data-blue.svg?style=for-the-badge&logo=github" alt="BRAN Org"></a>
+ <a href="https://github.com/BRAN-Org/.github#-%EF%B8%8F-n%C3%ADveis-de-confiabilidade-dos-dados"><img src="https://img.shields.io/badge/Confiabilidade-Fiel%20%C3%A0%20Fonte%20(Cobertura%20Incompleta)-yellow.svg?style=for-the-badge" alt="Confiabilidade Amarelo"></a>
+ <a href="https://www.budapestopenaccessinitiative.org/"><img src="https://img.shields.io/badge/BOAI-Signatory-orange.svg?style=for-the-badge" alt="BOAI Signatory"></a>
+ <a href="https://www.go-fair.org/fair-principles/"><img src="https://img.shields.io/badge/FAIR-Compliant-green.svg?style=for-the-badge" alt="FAIR Principles"></a>
+ <a href="LICENSE"><img src="https://img.shields.io/badge/Code_License-GPLv3-blue.svg?style=for-the-badge" alt="GPLv3"></a>
+ <a href="LICENSE"><img src="https://img.shields.io/badge/Data_License-CC_BY--NC--SA_4.0-lightgrey.svg?style=for-the-badge" alt="CC BY-NC-SA 4.0"></a>
 </p>
 
 Base de dados aberta contendo todos os anais das edições do Encontro Brasileiro de Bibliometria e Cientometria (EBBC) de 2012 a 2024, com mapeamento detalhado de softwares, fontes de dados e etapas metodológicas aplicadas nas pesquisas cientométricas no Brasil.
 
 ---
 
-## 📌 Visão Geral da Base de Dados
+## Visão Geral da Base de Dados
 
 - **Instituição / Evento**: Encontro Brasileiro de Bibliometria e Cientometria (EBBC 2012 - 2024)
 - **Entidade Principal**: `articles`
@@ -24,7 +24,7 @@ Base de dados aberta contendo todos os anais das edições do Encontro Brasileir
 
 ---
 
-## 🌐 Portal Web Interativo & REST API
+## Portal Web Interativo & REST API
 
 Esta base de dados fornece tanto uma interface web interativa (Dashboard) quanto uma **API REST pública de alta performance** sem necessidade de chave de API.
 
@@ -42,7 +42,7 @@ Esta base de dados fornece tanto uma interface web interativa (Dashboard) quanto
 
 ---
 
-## 💻 Exemplo de Consumo da API
+## Exemplo de Consumo da API
 
 ### cURL
 ```bash
@@ -68,7 +68,7 @@ print(f"Total de registros: {data['total']}")
 
 ---
 
-## 🚀 Como Rodar Localmente
+## Como Rodar Localmente
 
 ### 1. Clonar o Repositório
 ```bash
@@ -93,7 +93,7 @@ Acesse no navegador: `http://localhost:3000`
 
 ---
 
-## 🧪 Validação dos Dados
+## Validação dos Dados
 Para testar a integridade do schema antes do deploy:
 ```bash
 npm run data:validate
@@ -101,18 +101,18 @@ npm run data:validate
 
 ---
 
-## 📖 Como Citar Este Dataset
+## Como Citar Este Dataset
 
 Se você utilizar estes dados em pesquisas acadêmicas ou software, por favor cite:
 
 ```bibtex
 @misc{articles_2026,
-  author       = {Encontro Brasileiro de Bibliometria e Cientometria (EBBC 2012 - 2024) and BRAN Org},
-  title        = {EBBC Open Data - Acervo Histórico e Curadoria Metodológica},
-  year         = {2026},
-  publisher    = {Zenodo},
-  doi          = {{{DATASET_DOI}}},
-  url          = {{{DOI_URL}}}
+ author = {Encontro Brasileiro de Bibliometria e Cientometria (EBBC 2012 - 2024) and BRAN Org},
+ title = {EBBC Open Data - Acervo Histórico e Curadoria Metodológica},
+ year = {2026},
+ publisher = {Zenodo},
+ doi = {{{DATASET_DOI}}},
+ url = {{{DOI_URL}}}
 }
 ```
 
@@ -122,31 +122,32 @@ Se você utilizar estes dados em pesquisas acadêmicas ou software, por favor ci
 
 | Nível de Confiabilidade | Nota & Justificativa do Acervo |
 | :---: | :--- |
-| [🟡 Fiel à Fonte / Cobertura Limitada](https://github.com/BRAN-Org/.github#-%EF%B8%8F-n%C3%ADveis-de-confiabilidade-dos-dados) | **🟡 Fiel à Fonte / Cobertura Limitada**<br>Todos os 643 artigos disponíveis no site oficial do EBBC (2012-2024) foram coletados fielmente. O repositório possui esta classificação pois existem lacunas originadas no próprio acervo: ausência de DOIs nos anais do evento e ausência das edições históricas iniciais que não foram digitalizadas online pela organização original. |
+| [🟡 Fiel à Fonte (Cobertura Incompleta)](https://github.com/BRAN-Org/.github#-%EF%B8%8F-n%C3%ADveis-de-confiabilidade-dos-dados) | **🟡 Fiel à Fonte / Cobertura Incompleta**<br>Todos os 643 artigos disponíveis no portal oficial do EBBC (2012-2024) foram extraídos com 100% de paridade. O repositório possui esta classificação pois existem lacunas na própria fonte original: ausência de anos de anais históricos que não foram digitalizados pela organização e ausência de DOIs na origem. Foi formalizada comunicação junto à comissão organizadora para averiguação e recuperação dessas edições. |
 
-> **Nota Metodológica Oficial:**  
-> *Os níveis de confiabilidade indicam o grau de auditoria, proveniência e validação dos dados, e não uma garantia absoluta de correção. A BRAN preserva divergências encontradas nas fontes originais e documenta correções realizadas durante o processo de curadoria.*
+> **Nota Metodológica Oficial:** 
+> *A BRAN preserva a fidelidade estrita à fonte de origem e nunca inventa dados inexistentes. Discrepâncias e lacunas identificadas nos portais oficiais são registradas nos relatórios de auditoria e tratadas via averiguação ativa e contato direto com as instituições organizadoras.*
+
 
 ---
 
-## 📜 Princípios e Licença
+## Princípios e Licença
 
 - **[Princípios FAIR](https://www.go-fair.org/fair-principles/)**: Dados *Findable, Accessible, Interoperable, Reusable*.
 - **[BOAI](https://www.budapestopenaccessinitiative.org/)**: Livre acesso à informação e produção acadêmica.
 - **Licenciamento Duplo**:
-  - **Código-fonte & Engine**: [GNU General Public License v3.0 (GPL-3.0)](https://www.gnu.org/licenses/gpl-3.0.html) — Garante Ciência Aberta e código livre livre de fechamentos proprietários.
-  - **Dataset Científico & Metadados (`data/`)**: [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 (CC BY-NC-SA 4.0)](https://creativecommons.org/licenses/by-nc-sa/4.0/) — Permite uso e distribuição exclusivamente para pesquisa não-comercial, proibindo expressamente a raspagem ou ingestão para treinamento comercial de modelos de Inteligência Artificial sem autorização prévia.
+ - **Código-fonte & Engine**: [GNU General Public License v3.0 (GPL-3.0)](https://www.gnu.org/licenses/gpl-3.0.html) — Garante Ciência Aberta e código livre livre de fechamentos proprietários.
+ - **Dataset Científico & Metadados (`data/`)**: [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 (CC BY-NC-SA 4.0)](https://creativecommons.org/licenses/by-nc-sa/4.0/) — Permite uso e distribuição exclusivamente para pesquisa não-comercial, proibindo expressamente a raspagem ou ingestão para treinamento comercial de modelos de Inteligência Artificial sem autorização prévia.
 
 ---
 
-## 📬 Submissão de Dados
+## Submissão de Dados
 
 Possui dados acadêmicos ou acervos científicos que gostaria de disponibilizar publicamente pela BRAN Org? Preencha o formulário de submissão:
 
-➡️ **[Formulário de Submissão de Datasets](https://forms.gle/jNBuP1mjyUXc6v1fA)**
+ **[Formulário de Submissão de Datasets](https://forms.gle/jNBuP1mjyUXc6v1fA)**
 
 ---
 
 <p align="center">
-  Mantido com ❤️ pela <strong><a href="https://github.com/BRAN-Org">BRAN Org</a></strong> e <strong>Encontro Brasileiro de Bibliometria e Cientometria (EBBC 2012 - 2024)</strong>
+ Mantido pela <strong><a href="https://github.com/BRAN-Org">BRAN Org</a></strong> e <strong>Encontro Brasileiro de Bibliometria e Cientometria (EBBC 2012 - 2024)</strong>
 </p>
