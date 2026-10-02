@@ -1,27 +1,25 @@
 {
-  "name": "bran-web-database-template",
+  "name": "ebbc-open-database",
   "version": "1.5.0",
-  "description": "Template leve e reproduzível para APIs REST públicas e Dashboards de bases de dados acadêmicas da BRAN Org.",
+  "description": "Base de dados bibliométrica aberta e API REST pública dos anais do EBBC (2012-2024).",
   "main": "server.js",
   "type": "module",
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "start:ebbc": "DATASET_DIR=mock/ebbc/data CONFIG_PATH=mock/ebbc/dataset.config.json node server.js",
-    "dev:ebbc": "DATASET_DIR=mock/ebbc/data CONFIG_PATH=mock/ebbc/dataset.config.json node --watch server.js",
-    "data:ebbc": "DATASET_DIR=mock/ebbc/data CONFIG_PATH=mock/ebbc/dataset.config.json node scripts/validate_dataset.js",
     "test": "NODE_ENV=test node --test tests/unit.test.js tests/api.test.js",
     "data:convert": "node scripts/convert_csv_to_json.js",
-    "data:validate": "node scripts/validate_dataset.js",
-    "init:event": "node scripts/init_event.js"
+    "data:validate": "node scripts/validate_dataset.js"
   },
   "keywords": [
     "open-data",
-    "bran-org",
-    "api",
+    "bibliometrics",
+    "scientometrics",
+    "ebbc",
     "academic-data",
-    "database-template",
-    "express"
+    "rest-api",
+    "research-infrastructure",
+    "bran-org"
   ],
   "author": "BRAN Org",
   "license": "GPL-3.0-or-later AND CC-BY-NC-SA-4.0",
