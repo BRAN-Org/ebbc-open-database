@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this dataset or software, please cite it as below."
+title: "EBBC Open Database: Anais Abertos do Encontro Brasileiro de Bibliometria e Cientometria (2012-2024)"
+version: 1.5.0
+date-released: 2026-10-02
+url: "https://github.com/BRAN-Org/ebbc-open-database"
+repository-code: "https://github.com/BRAN-Org/ebbc-open-database"
+license: GPL-3.0-or-later
+authors:
+  - name: "Encontro Brasileiro de Bibliometria e Cientometria (EBBC)"
+  - name: "BRAN Org"
+    website: "https://github.com/BRAN-Org"
+keywords:
+  - open-data
+  - bibliometrics
+  - scientometrics
+  - ebbc
+  - academic-data
+  - research-infrastructure

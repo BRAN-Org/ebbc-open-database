@@ -122,7 +122,7 @@ Se você utilizar estes dados em pesquisas acadêmicas ou software, por favor ci
 
 | Nível de Confiabilidade | Nota & Justificativa do Acervo |
 | :---: | :--- |
-| [🟡 Fiel à Fonte (Cobertura Incompleta)](https://github.com/BRAN-Org/.github#-%EF%B8%8F-n%C3%ADveis-de-confiabilidade-dos-dados) | **🟡 Fiel à Fonte / Cobertura Incompleta**<br>Todos os 643 artigos disponíveis no portal oficial do EBBC (2012-2024) foram extraídos com 100% de paridade. O repositório possui esta classificação pois existem lacunas na própria fonte original: ausência de anos de anais históricos que não foram digitalizados pela organização e ausência de DOIs na origem. Foi formalizada comunicação junto à comissão organizadora para averiguação e recuperação dessas edições. |
+| [Fiel à Fonte (Cobertura Incompleta)](https://github.com/BRAN-Org/.github#-%EF%B8%8F-n%C3%ADveis-de-confiabilidade-dos-dados) | **Fiel à Fonte / Cobertura Incompleta**<br>Todos os 643 artigos disponíveis no portal oficial do EBBC (2012-2024) foram extraídos com 100% de paridade. O repositório possui esta classificação pois existem lacunas na própria fonte original: ausência de anos de anais históricos que não foram digitalizados pela organização e ausência de DOIs na origem. Foi formalizada comunicação junto à comissão organizadora para averiguação e recuperação dessas edições. |
 
 > **Nota Metodológica Oficial:** 
 > *A BRAN preserva a fidelidade estrita à fonte de origem e nunca inventa dados inexistentes. Discrepâncias e lacunas identificadas nos portais oficiais são registradas nos relatórios de auditoria e tratadas via averiguação ativa e contato direto com as instituições organizadoras.*
