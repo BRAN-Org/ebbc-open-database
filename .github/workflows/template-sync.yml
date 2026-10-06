@@ -21,7 +21,7 @@ jobs:
       - name: Actions Template Sync
         uses: AndreasAugustin/actions-template-sync@v2
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.TEMPLATE_SYNC_TOKEN || secrets.GITHUB_TOKEN }}
           source_repo_path: BRAN-Org/bran-web-database-template
           upstream_branch: main
           pr_title: "chore(sync): Atualizações automáticas do BRAN Web Database Template"
