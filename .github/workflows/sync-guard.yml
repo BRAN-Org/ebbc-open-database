@@ -1,0 +1,86 @@
+name: Template Sync Guard
+
+# Roda nos PRs abertos pelo template-sync e compara a API e os dados da
+# branch do sync com a branch base. Falha se algo quebrar.
+#
+# Obs: PRs criados com o GITHUB_TOKEN padrão não disparam workflows.
+# Defina o secret TEMPLATE_SYNC_TOKEN (PAT) para o sync abrir PRs que rodem este check,
+# ou dispare manualmente em Actions > Template Sync Guard > Run workflow.
+
+on:
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      head_ref:
+        description: 'Branch do sync a verificar (ex: chore/template_sync_65d9441)'
+        required: true
+      base_ref:
+        description: 'Branch base'
+        required: false
+        default: 'main'
+
+permissions:
+  contents: read
+
+jobs:
+  sync-guard:
+    name: API & Data Integrity (base vs sync)
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      startsWith(github.head_ref, 'chore/template_sync')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve refs
+        id: refs
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "head=${{ inputs.head_ref }}" >> "$GITHUB_OUTPUT"
+            echo "base=${{ inputs.base_ref }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "head=${{ github.event.pull_request.head.sha }}" >> "$GITHUB_OUTPUT"
+            echo "base=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout base
+        uses: actions/checkout@v4.2.2
+        with:
+          ref: ${{ steps.refs.outputs.base }}
+          path: base
+
+      - name: Checkout sync branch
+        uses: actions/checkout@v4.2.2
+        with:
+          ref: ${{ steps.refs.outputs.head }}
+          path: head
+
+      - uses: actions/setup-node@v4.2.0
+        with:
+          node-version: 20.x
+
+      - name: Install dependencies (base)
+        working-directory: base
+        run: npm ci
+
+      - name: Install dependencies (sync branch)
+        working-directory: head
+        run: npm ci
+
+      - name: Syntax check (sync branch)
+        working-directory: head
+        run: |
+          for f in server.js src/*.js public/js/*.js scripts/*.js; do
+            node --check "$f"
+          done
+
+      - name: Dataset validation (sync branch)
+        working-directory: head
+        run: npm run data:validate
+
+      - name: Test suite (sync branch)
+        working-directory: head
+        run: npm test
+
+      - name: Compare API contract and data (base vs sync)
+        working-directory: head
+        run: node scripts/sync_guard.js compare ../base .
