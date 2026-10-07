@@ -1,6 +1,6 @@
-# Descrição Detalhada das Mudanças — BRAN Web Database Template
+# Changelog — EBBC Open Database
 
-Este documento detalha a arquitetura, arquivos criados e funcionalidades implementadas no **`bran-web-database-template`**, alinhada aos padrões da **BRAN Org** e inspirada no projeto **EBBC-OpenData**.
+Registro de versões, auditorias e atualizações da base de dados do **Encontro Brasileiro de Bibliometria e Cientometria (EBBC)** mantida pela **BRAN Org**.
 
 ---
 
