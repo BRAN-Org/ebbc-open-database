@@ -1,7 +1,7 @@
 {
   "name": "ebbc-open-database",
   "version": "1.5.0",
-  "description": "Base de dados bibliométrica aberta e API REST pública dos anais do EBBC (2012-2024).",
+  "description": "Base de dados bibliométrica aberta e API REST pública dos anais do EBBC (2013-2024).",
   "main": "server.js",
   "type": "module",
   "scripts": {
@@ -9,13 +9,14 @@
     "dev": "node --watch server.js",
     "test": "NODE_ENV=test node --test tests/unit.test.js tests/api.test.js",
     "data:convert": "node scripts/convert_csv_to_json.js",
-    "data:validate": "node scripts/validate_dataset.js"
+    "data:validate": "node scripts/validate_dataset.js",
+    "init:event": "node scripts/init_event.js"
   },
   "keywords": [
     "open-data",
     "bibliometrics",
     "scientometrics",
-    "ebbc",
+    "ebbc-brasil",
     "academic-data",
     "rest-api",
     "research-infrastructure",
