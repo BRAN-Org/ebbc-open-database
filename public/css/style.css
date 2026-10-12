@@ -441,13 +441,29 @@ body {
   letter-spacing: 0.5px;
   margin-bottom: 0.4rem;
 }
+.stat-card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.2rem;
+}
 .stat-value {
   font-family: var(--font-mono);
   font-size: 1.9rem;
   font-weight: 700;
-  margin-bottom: 0.2rem;
   color: var(--text-primary);
   letter-spacing: -0.5px;
+}
+.stat-sparkline {
+  width: 96px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.stat-sparkline svg {
+  display: block;
 }
 .stat-footer {
   font-size: 0.75rem;
@@ -537,16 +553,25 @@ body {
 .chart-card h3 i {
   color: var(--text-secondary);
 }
+.chart-export-group {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
 .chart-container {
   position: relative;
-  height: 260px;
+  min-height: 260px;
   width: 100%;
   flex: 1;
-  overflow: hidden;
+  overflow: visible;
 }
-.chart-container canvas {
-  width: 100% !important;
-  height: 100% !important;
+.chart-container .chart-svg-wrapper {
+  width: 100%;
+  height: 100%;
+  min-height: 260px;
+  position: relative;
+}
+.chart-container svg {
   display: block;
 }
 
