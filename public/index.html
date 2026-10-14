@@ -147,7 +147,7 @@
           <div class="feature-card glass-panel">
             <div class="feature-icon"><i class="fa-solid fa-chart-pie"></i></div>
             <h3>Métricas & Gráficos Universais</h3>
-            <p>Gráficos interativos em Canvas de evolução histórica, distribuição por eixos temáticos, ranking de autores e palavras-chave mais citadas.</p>
+            <p>Gráficos vetoriais interativos em SVG de evolução histórica, distribuição por eixos temáticos, ranking de autores e palavras-chave mais citadas.</p>
           </div>
         </div>
 
@@ -161,7 +161,10 @@
             <div class="stat-icon"><i class="fa-solid fa-file-invoice"></i></div>
             <div class="stat-info">
               <h3>Total de Trabalhos</h3>
-              <p class="stat-value" id="stat-total-articles">-</p>
+              <div class="stat-card-row">
+                <p class="stat-value" id="stat-total-articles">-</p>
+                <div class="stat-sparkline" id="sparkline-total"></div>
+              </div>
             </div>
             <div class="stat-footer">Publicações no acervo</div>
           </div>
@@ -170,7 +173,10 @@
             <div class="stat-icon"><i class="fa-solid fa-calendar-days"></i></div>
             <div class="stat-info">
               <h3>Edições Catalogadas</h3>
-              <p class="stat-value" id="stat-unique-years">-</p>
+              <div class="stat-card-row">
+                <p class="stat-value" id="stat-unique-years">-</p>
+                <div class="stat-sparkline" id="sparkline-years"></div>
+              </div>
             </div>
             <div class="stat-footer">Anos cobertos pelo evento</div>
           </div>
@@ -179,7 +185,10 @@
             <div class="stat-icon"><i class="fa-solid fa-layer-group"></i></div>
             <div class="stat-info">
               <h3>Eixos Temáticos</h3>
-              <p class="stat-value" id="stat-unique-sections">-</p>
+              <div class="stat-card-row">
+                <p class="stat-value" id="stat-unique-sections">-</p>
+                <div class="stat-sparkline" id="sparkline-sections"></div>
+              </div>
             </div>
             <div class="stat-footer">Seções e categorias</div>
           </div>
@@ -188,7 +197,10 @@
             <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
             <div class="stat-info">
               <h3>Pesquisadores</h3>
-              <p class="stat-value" id="stat-unique-authors">-</p>
+              <div class="stat-card-row">
+                <p class="stat-value" id="stat-unique-authors">-</p>
+                <div class="stat-sparkline" id="sparkline-authors"></div>
+              </div>
             </div>
             <div class="stat-footer">Autores catalogados</div>
           </div>
@@ -203,20 +215,22 @@
             <div class="toolbar-control">
               <label for="chart-theme-select"><i class="fa-solid fa-palette"></i> <span>Paleta:</span></label>
               <select id="chart-theme-select" class="toolbar-select">
-                <option value="simeon">Simeon Dark OS</option>
-                <option value="apple">Apple Minimalist</option>
-                <option value="monochrome">Monocromático Sleek</option>
-                <option value="neon">Neon Cyberpunk</option>
-                <option value="pastel">Pastel Suave</option>
+                <option value="tokyonight" selected>Tokyo Night OS (Reativo)</option>
+                <option value="cyberpunk">Cyberpunk Neon</option>
+                <option value="glass">Glassmorphism Emerald</option>
+                <option value="default">Indigo Slate Clean</option>
+                <option value="paper">Paper Minimalist (Claro)</option>
+                <option value="terminal">Terminal Hacker (Verde)</option>
               </select>
             </div>
             
             <div class="toolbar-control">
               <label for="chart-type-select"><i class="fa-solid fa-chart-bar"></i> <span>Tipo de Gráfico:</span></label>
               <select id="chart-type-select" class="toolbar-select">
-                <option value="bar">Barras / Colunas</option>
-                <option value="line">Linhas / Conexões</option>
-                <option value="radar">Radar (Teia)</option>
+                <option value="auto" selected>Automático (Tipos Ideais)</option>
+                <option value="bar">Forçar Todos em Barras</option>
+                <option value="line">Forçar Todos em Linhas</option>
+                <option value="donut">Forçar Todos em Rosca</option>
               </select>
             </div>
           </div>
@@ -228,10 +242,13 @@
           <div class="chart-card">
             <div class="chart-header">
               <h3><i class="fa-solid fa-calendar-days"></i> <span>Publicações por Edição (Histórico)</span></h3>
-              <button class="btn-chart-export" data-chart="years" title="Exportar Imagem PNG"><i class="fa-solid fa-download"></i> PNG</button>
+              <div class="chart-export-group">
+                <button class="btn-chart-export" data-chart="years" data-format="svg" title="Exportar Vetor SVG"><i class="fa-solid fa-file-code"></i> SVG</button>
+                <button class="btn-chart-export" data-chart="years" data-format="png" title="Exportar Imagem PNG"><i class="fa-solid fa-download"></i> PNG</button>
+              </div>
             </div>
             <div class="chart-container">
-              <canvas id="chart-years"></canvas>
+              <div id="chart-years" class="chart-svg-wrapper"></div>
             </div>
           </div>
           
@@ -239,10 +256,13 @@
           <div class="chart-card">
             <div class="chart-header">
               <h3><i class="fa-solid fa-layer-group"></i> <span>Distribuição por Eixo Temático / Seção</span></h3>
-              <button class="btn-chart-export" data-chart="sections" title="Exportar Imagem PNG"><i class="fa-solid fa-download"></i> PNG</button>
+              <div class="chart-export-group">
+                <button class="btn-chart-export" data-chart="sections" data-format="svg" title="Exportar Vetor SVG"><i class="fa-solid fa-file-code"></i> SVG</button>
+                <button class="btn-chart-export" data-chart="sections" data-format="png" title="Exportar Imagem PNG"><i class="fa-solid fa-download"></i> PNG</button>
+              </div>
             </div>
             <div class="chart-container">
-              <canvas id="chart-sections"></canvas>
+              <div id="chart-sections" class="chart-svg-wrapper"></div>
             </div>
           </div>
 
@@ -250,10 +270,13 @@
           <div class="chart-card">
             <div class="chart-header">
               <h3><i class="fa-solid fa-users"></i> <span>Principais Autores / Pesquisadores</span></h3>
-              <button class="btn-chart-export" data-chart="authors" title="Exportar Imagem PNG"><i class="fa-solid fa-download"></i> PNG</button>
+              <div class="chart-export-group">
+                <button class="btn-chart-export" data-chart="authors" data-format="svg" title="Exportar Vetor SVG"><i class="fa-solid fa-file-code"></i> SVG</button>
+                <button class="btn-chart-export" data-chart="authors" data-format="png" title="Exportar Imagem PNG"><i class="fa-solid fa-download"></i> PNG</button>
+              </div>
             </div>
             <div class="chart-container">
-              <canvas id="chart-authors"></canvas>
+              <div id="chart-authors" class="chart-svg-wrapper"></div>
             </div>
           </div>
 
@@ -261,10 +284,13 @@
           <div class="chart-card">
             <div class="chart-header">
               <h3><i class="fa-solid fa-tags"></i> <span>Palavras-chave & Tópicos em Alta</span></h3>
-              <button class="btn-chart-export" data-chart="keywords" title="Exportar Imagem PNG"><i class="fa-solid fa-download"></i> PNG</button>
+              <div class="chart-export-group">
+                <button class="btn-chart-export" data-chart="keywords" data-format="svg" title="Exportar Vetor SVG"><i class="fa-solid fa-file-code"></i> SVG</button>
+                <button class="btn-chart-export" data-chart="keywords" data-format="png" title="Exportar Imagem PNG"><i class="fa-solid fa-download"></i> PNG</button>
+              </div>
             </div>
             <div class="chart-container">
-              <canvas id="chart-keywords"></canvas>
+              <div id="chart-keywords" class="chart-svg-wrapper"></div>
             </div>
           </div>
         </div>

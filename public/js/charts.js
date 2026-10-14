@@ -1,508 +1,257 @@
 /**
- * Componente de Gráficos Leves em Canvas HTML5 (Zero-Dependency)
- * Visual OS inspirado em simeon.sh com fonte Geist & Geist Mono.
- * Suporta tooltips responsivos no mouse-hover (com texto completo)
- * e exportação PNG de alta resolução com Nomes Completos (sem truncamento ..).
+ * Componente de Gráficos Vetoriais Nativos em SVG (Zero-Dependency)
+ * Desenvolvido para o ecossistema BRAN Org com tecnologia pure-svg-charts.
+ * Suporta Barras, Linhas Suaves (Catmull-Rom Bézier), Rosca (Donut),
+ * Sparklines KPI, temas visuais reativos e exportação direta em vetor SVG e imagem PNG (2x).
  */
+import {
+  mountChart,
+  unmountChart,
+  renderBarChart,
+  renderLineChart,
+  renderDonutChart,
+  renderSparkline,
+  CHART_VARIANTS,
+  exportChartAsImage
+} from './pure-svg-charts.bundle.js';
+
+const PALETTE_MAP = {
+  tokyonight: 'tokyonight',
+  cyberpunk: 'cyberpunk',
+  glass: 'glass',
+  default: 'default',
+  paper: 'paper',
+  terminal: 'terminal',
+  // Mapeamentos retrocompatíveis
+  simeon: 'tokyonight',
+  neon: 'cyberpunk',
+  pastel: 'glass',
+  apple: 'default',
+  monochrome: 'terminal'
+};
+
 export class SimpleChart {
-  constructor(canvasId) {
-    this.canvas = typeof canvasId === 'string' ? document.getElementById(canvasId) : canvasId;
-    if (!this.canvas) return;
-    this.ctx = this.canvas.getContext('2d');
-    this.palette = 'simeon';
-    this.chartType = 'bar';
+  constructor(containerId) {
+    this.containerId = typeof containerId === 'string' ? containerId : (containerId?.id || '');
+    this.container = typeof containerId === 'string' ? document.getElementById(containerId) : containerId;
+    if (!this.container) return;
+
+    this.palette = 'tokyonight';
+    this.chartType = 'auto'; // 'auto' usa o melhor tipo conceitual para o dado
     this.lastData = null;
     this.lastLabelKey = 'name';
     this.lastValueKey = 'count';
-    this.hoverIndex = -1;
-    this.barBounds = []; // Guarda as coordenadas das barras para interatividade do mouse
-
-    this.initTooltip();
-    this.initMouseEvents();
   }
 
   setPalette(paletteName) {
-    this.palette = paletteName || 'simeon';
+    this.palette = PALETTE_MAP[paletteName] || (CHART_VARIANTS[paletteName] ? paletteName : 'tokyonight');
   }
 
   setChartType(type) {
-    this.chartType = type || 'bar';
+    this.chartType = type || 'auto';
   }
 
-  getPaletteColors() {
-    switch (this.palette) {
-      case 'neon':
-        return ['#00f0ff', '#ff007f', '#00ff66', '#ff00ff', '#ffff00'];
-      case 'pastel':
-        return ['#a7f3d0', '#fef08a', '#fbcfe8', '#bae6fd', '#c084fc'];
-      case 'monochrome':
-        return ['#ffffff', '#d4d4d4', '#a3a3a3', '#737373', '#525252'];
-      case 'apple':
-        return ['#ffffff', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
-      case 'simeon':
-      default:
-        return ['#ffffff', '#3064ff', '#30d158', '#ff9f0a', '#fe257f', '#b59aff'];
+  getResolvedChartType() {
+    if (this.chartType !== 'auto') {
+      if (this.chartType === 'radar') return 'donut';
+      return this.chartType;
     }
+
+    // Modo Automático (Smart Defaults cientométricos):
+    // - Histórico de Anos: Linha Bézier contínua com gradiente
+    // - Seções / Eixos: Rosca / Donut proporcional
+    // - Autores / Pesquisadores: Barras de ranking de frequência
+    // - Palavras-chave: Barras de frequência
+    if (this.containerId === 'chart-years') return 'line';
+    if (this.containerId === 'chart-sections') return 'donut';
+    if (this.containerId === 'chart-authors') return 'bar';
+    if (this.containerId === 'chart-keywords') return 'bar';
+    return 'bar';
   }
 
-  initTooltip() {
-    let tooltip = document.getElementById('chart-global-tooltip');
-    if (!tooltip) {
-      tooltip = document.createElement('div');
-      tooltip.id = 'chart-global-tooltip';
-      tooltip.style.cssText = `
-        position: absolute;
-        display: none;
-        pointer-events: none;
-        background: rgba(12, 16, 24, 0.95);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(10px);
-        color: #ffffff;
-        padding: 8px 12px;
-        border-radius: 8px;
-        font-family: "Geist Mono", monospace;
-        font-size: 12px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-        z-index: 99999;
-        transition: opacity 0.1s ease;
-        max-width: 320px;
-        word-break: break-word;
-      `;
-      document.body.appendChild(tooltip);
-    }
-    this.tooltip = tooltip;
-  }
-
-  initMouseEvents() {
-    if (!this.canvas) return;
-
-    this.canvas.addEventListener('mousemove', (e) => {
-      if (!this.barBounds || this.barBounds.length === 0) return;
-
-      const rect = this.canvas.getBoundingClientRect();
-      const mouseX = e.clientX - rect.left;
-      const mouseY = e.clientY - rect.top;
-
-      let foundIndex = -1;
-      for (let i = 0; i < this.barBounds.length; i++) {
-        const b = this.barBounds[i];
-        if (mouseX >= b.x && mouseX <= b.x + b.w && mouseY >= b.y && mouseY <= b.y + b.h) {
-          foundIndex = i;
-          break;
-        }
-      }
-
-      if (foundIndex !== -1) {
-        const bound = this.barBounds[foundIndex];
-        this.canvas.style.cursor = 'pointer';
-        this.showTooltip(e.pageX, e.pageY, bound.fullLabel, bound.val);
-
-        if (this.hoverIndex !== foundIndex) {
-          this.hoverIndex = foundIndex;
-          this.render(this.lastData, this.lastLabelKey, this.lastValueKey);
-        }
-      } else {
-        this.canvas.style.cursor = 'default';
-        this.hideTooltip();
-        if (this.hoverIndex !== -1) {
-          this.hoverIndex = -1;
-          this.render(this.lastData, this.lastLabelKey, this.lastValueKey);
-        }
-      }
-    });
-
-    this.canvas.addEventListener('mouseleave', () => {
-      this.canvas.style.cursor = 'default';
-      this.hideTooltip();
-      if (this.hoverIndex !== -1) {
-        this.hoverIndex = -1;
-        this.render(this.lastData, this.lastLabelKey, this.lastValueKey);
-      }
-    });
-  }
-
-  showTooltip(pageX, pageY, fullLabel, val) {
-    if (!this.tooltip) return;
-    this.tooltip.innerHTML = `<div style="font-weight: 700; color: #30d158; margin-bottom: 2px;">${val} trabalho(s)</div><div style="color: #e2e8f0; line-height: 1.3;">${this.escapeHtml(fullLabel)}</div>`;
-    this.tooltip.style.left = `${pageX + 14}px`;
-    this.tooltip.style.top = `${pageY + 14}px`;
-    this.tooltip.style.display = 'block';
-    this.tooltip.style.opacity = '1';
-  }
-
-  hideTooltip() {
-    if (this.tooltip) {
-      this.tooltip.style.display = 'none';
-      this.tooltip.style.opacity = '0';
-    }
-  }
-
-  setupCanvas() {
-    const dpr = window.devicePixelRatio || 1;
-    const parent = this.canvas.parentElement;
-
-    let width = parent ? parent.clientWidth : this.canvas.getBoundingClientRect().width;
-    let height = parent ? parent.clientHeight : this.canvas.getBoundingClientRect().height;
-
-    if (!width || width <= 0) width = 400;
-    if (!height || height <= 0) height = 260;
-
-    this.canvas.width = Math.floor(width * dpr);
-    this.canvas.height = Math.floor(height * dpr);
-    this.canvas.style.width = `${width}px`;
-    this.canvas.style.height = `${height}px`;
-
-    if (typeof this.ctx.resetTransform === 'function') {
-      this.ctx.resetTransform();
-    } else {
-      this.ctx.setTransform(1, 0, 0, 1, 0, 0);
-    }
-    this.ctx.scale(dpr, dpr);
-    return { width, height };
+  getContainerHeight() {
+    if (!this.container) return 240;
+    const h = this.container.clientHeight || this.container.offsetHeight;
+    return h > 50 ? h : 240;
   }
 
   render(data, labelKey = 'name', valueKey = 'count') {
-    if (!this.ctx || !data) return;
+    if (!this.container || !data) return;
     this.lastData = data;
     this.lastLabelKey = labelKey;
     this.lastValueKey = valueKey;
 
-    if (this.chartType === 'radar') {
-      this.renderRadarChart(data, labelKey, valueKey);
-    } else if (this.chartType === 'line') {
-      this.renderLineChart(data, labelKey, valueKey);
-    } else {
-      this.renderBarChart(data, labelKey, valueKey);
+    const resolvedType = this.getResolvedChartType();
+    const height = this.getContainerHeight();
+
+    // 1. Suporte a Séries Múltiplas Empilhadas (Multi-Series Stacked)
+    if (data.series && Array.isArray(data.series)) {
+      const formattedSeries = data.series.map((s, idx) => ({
+        id: s.id || `series-${idx}`,
+        name: s.name,
+        color: s.color,
+        data: s.data.map(d => ({
+          label: String(d.year || d.label || d[labelKey]),
+          value: Number(d.count ?? d.value ?? 0)
+        }))
+      }));
+
+      if (resolvedType === 'bar') {
+        renderBarChart(this.container, {
+          series: formattedSeries,
+          stacked: true,
+          showLegend: true,
+          variant: this.palette,
+          card: false,
+          responsive: true,
+          height,
+          radius: 6,
+          valueFormatter: (v) => `${Number(v).toLocaleString()} trab.`
+        });
+      } else {
+        renderLineChart(this.container, {
+          series: formattedSeries,
+          stacked: true,
+          showLegend: true,
+          variant: this.palette,
+          card: false,
+          responsive: true,
+          height,
+          smooth: true,
+          curvature: 0.25,
+          fillGradient: true,
+          crosshair: true,
+          valueFormatter: (v) => `${Number(v).toLocaleString()} trab.`
+        });
+      }
+      return;
     }
-  }
 
-  renderBarChart(data, labelKey = 'name', valueKey = 'count') {
-    const { ctx } = this;
-    const { width, height } = this.setupCanvas();
-    ctx.clearRect(0, 0, width, height);
-
-    const items = Array.isArray(data) ? data : Object.entries(data).map(([name, count]) => ({ name, count }));
-    if (items.length === 0) return;
-
-    this.barBounds = [];
-    const colors = this.getPaletteColors();
-    const maxVal = Math.max(...items.map(d => d[valueKey] || d.count || 0), 1);
-    const barHeight = Math.min(24, Math.floor((height - 20) / items.length - 6));
-    const startX = Math.min(145, Math.floor(width * 0.32));
-    const rightMargin = 45;
-    const chartWidth = Math.max(width - startX - rightMargin, 50);
-
-    items.forEach((item, index) => {
-      const fullLabel = String(item[labelKey] || item.name || '');
-      const val = item[valueKey] ?? item.count ?? 0;
-      const y = 10 + index * (barHeight + 6);
-      const barW = Math.min((val / maxVal) * chartWidth, chartWidth);
-
-      // Salvar limites para mouse hover em toda a linha
-      this.barBounds.push({
-        x: 0,
-        y: y - 2,
-        w: width,
-        h: barHeight + 4,
-        fullLabel,
-        val,
-        index
+    // 2. Normalização de dados univariados
+    let items = [];
+    if (Array.isArray(data)) {
+      items = data.map((item, idx) => {
+        if (typeof item === 'number') {
+          return { label: `Item ${idx + 1}`, value: item };
+        }
+        const label = String(item[labelKey] || item.name || item.label || `Item ${idx + 1}`);
+        const val = Number(item[valueKey] ?? item.count ?? item.value ?? 0);
+        return { label, value: Number.isFinite(val) ? val : 0 };
       });
+    } else if (typeof data === 'object') {
+      items = Object.entries(data).map(([key, val]) => ({
+        label: String(key),
+        value: Number.isFinite(Number(val)) ? Number(val) : 0
+      }));
+    }
 
-      const isHovered = this.hoverIndex === index;
+    if (items.length === 0) {
+      unmountChart(this.container);
+      return;
+    }
 
-      // Label (com truncamento suave na tela para caber no grid)
-      ctx.fillStyle = isHovered ? '#ffffff' : '#8a9390';
-      ctx.font = isHovered ? '600 11px "Geist Mono", monospace' : '500 11px "Geist Mono", monospace';
-      ctx.textAlign = 'right';
-      ctx.textBaseline = 'middle';
-      const truncatedLabel = fullLabel.length > 17 ? fullLabel.substring(0, 15) + '..' : fullLabel;
-      ctx.fillText(truncatedLabel, startX - 8, y + barHeight / 2);
-
-      // Track
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
-      this.drawRoundedRect(startX, y, chartWidth, barHeight, 4);
-      ctx.fill();
-
-      // Bar Fill
-      ctx.fillStyle = colors[index % colors.length];
-      if (barW > 0) {
-        this.drawRoundedRect(startX, y, Math.max(barW, 4), barHeight, 4);
-        ctx.fill();
-
-        if (isHovered) {
-          ctx.strokeStyle = '#ffffff';
-          ctx.lineWidth = 1.5;
-          ctx.stroke();
+    // 3. Renderização conforme tipo resolvido
+    if (resolvedType === 'line') {
+      renderLineChart(this.container, {
+        data: items,
+        variant: this.palette,
+        card: false,
+        responsive: true,
+        height,
+        smooth: true,
+        curvature: 0.25,
+        fillGradient: true,
+        crosshair: true,
+        showZeroLine: true,
+        animated: true,
+        valueFormatter: (v) => `${Number(v).toLocaleString()} trab.`
+      });
+    } else if (resolvedType === 'donut') {
+      // Rosca: agrupa a partir do 8º item em "Outros" para legibilidade
+      const maxSlices = 7;
+      let donutSlices = items.slice(0, maxSlices).map(it => ({
+        label: it.label,
+        value: it.value
+      }));
+      if (items.length > maxSlices) {
+        const othersCount = items.slice(maxSlices).reduce((acc, curr) => acc + curr.value, 0);
+        if (othersCount > 0) {
+          donutSlices.push({ label: 'Outros', value: othersCount });
         }
       }
+      const totalCount = donutSlices.reduce((acc, curr) => acc + curr.value, 0);
 
-      // Value text
-      ctx.fillStyle = isHovered ? '#30d158' : '#ffffff';
-      ctx.font = '700 11px "Geist Mono", monospace';
-      ctx.textAlign = 'left';
-      ctx.fillText(String(val), startX + barW + 6, y + barHeight / 2);
-    });
-  }
-
-  renderLineChart(data, labelKey = 'name', valueKey = 'count') {
-    const { ctx } = this;
-    const { width, height } = this.setupCanvas();
-    ctx.clearRect(0, 0, width, height);
-
-    const items = Array.isArray(data) ? data : Object.entries(data).map(([name, count]) => ({ name, count }));
-    if (items.length === 0) return;
-
-    this.barBounds = [];
-    const colors = this.getPaletteColors();
-    const padding = 40;
-    const chartW = Math.max(width - padding * 2, 50);
-    const chartH = Math.max(height - padding * 2, 50);
-    const maxVal = Math.max(...items.map(d => d[valueKey] || d.count || 0), 1);
-
-    ctx.beginPath();
-    ctx.strokeStyle = colors[0];
-    ctx.lineWidth = 3;
-
-    const points = [];
-    items.forEach((item, idx) => {
-      const fullLabel = String(item[labelKey] || item.name || '');
-      const val = item[valueKey] ?? item.count ?? 0;
-      const x = padding + (idx / (items.length - 1 || 1)) * chartW;
-      const y = height - padding - (val / maxVal) * chartH;
-      points.push({ x, y, fullLabel, val, index: idx });
-
-      this.barBounds.push({
-        x: x - 15,
-        y: 0,
-        w: 30,
-        h: height,
-        fullLabel,
-        val,
-        index: idx
+      renderDonutChart(this.container, {
+        data: donutSlices,
+        variant: this.palette,
+        card: false,
+        size: Math.min(height, 240),
+        innerRadiusRatio: 0.65,
+        centerLabel: 'Total',
+        centerValue: String(totalCount),
+        showLegend: true,
+        animated: true,
+        valueFormatter: (v) => `${Number(v).toLocaleString()} trab.`
       });
-
-      if (idx === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    });
-    ctx.stroke();
-
-    points.forEach(p => {
-      const isHovered = this.hoverIndex === p.index;
-      ctx.fillStyle = isHovered ? '#ffffff' : (colors[1] || colors[0]);
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, isHovered ? 7 : 5, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = isHovered ? '#ffffff' : '#8a9390';
-      ctx.font = '500 11px "Geist Mono", monospace';
-      ctx.textAlign = 'center';
-      const truncated = p.fullLabel.length > 10 ? p.fullLabel.substring(0, 8) + '..' : p.fullLabel;
-      ctx.fillText(truncated, p.x, height - 15);
-      ctx.fillText(String(p.val), p.x, p.y - 10);
-    });
-  }
-
-  renderRadarChart(data, labelKey = 'name', valueKey = 'count') {
-    const { ctx } = this;
-    const { width, height } = this.setupCanvas();
-    ctx.clearRect(0, 0, width, height);
-
-    const items = Array.isArray(data) ? data : Object.entries(data).map(([name, count]) => ({ name, count }));
-    if (items.length === 0) return;
-
-    this.barBounds = [];
-    const colors = this.getPaletteColors();
-    const centerX = width / 2;
-    const centerY = height / 2;
-    const radius = Math.max(Math.min(centerX, centerY) - 35, 20);
-    const total = items.length;
-    const maxVal = Math.max(...items.map(d => d[valueKey] || d.count || 0), 1);
-
-    for (let r = 1; r <= 3; r++) {
-      const rad = (radius / 3) * r;
-      ctx.beginPath();
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-      ctx.arc(centerX, centerY, rad, 0, Math.PI * 2);
-      ctx.stroke();
+    } else {
+      // Barras (ranking / contagem)
+      renderBarChart(this.container, {
+        data: items,
+        variant: this.palette,
+        card: false,
+        responsive: true,
+        height,
+        radius: 6,
+        showValues: items.length <= 12,
+        showZeroLine: true,
+        animated: true,
+        valueFormatter: (v) => `${Number(v).toLocaleString()} trab.`
+      });
     }
+  }
 
-    const points = [];
-    items.forEach((item, i) => {
-      const angle = (Math.PI * 2 / total) * i - Math.PI / 2;
-      const val = item[valueKey] ?? item.count ?? 0;
-      const fullLabel = String(item[labelKey] || item.name || '');
-      const dist = (val / maxVal) * radius;
-      const x = centerX + Math.cos(angle) * dist;
-      const y = centerY + Math.sin(angle) * dist;
-      points.push({ x, y, fullLabel, angle, dist, val, index: i });
+  async exportSVG(filename = 'grafico.svg') {
+    if (!this.container) return;
+    const baseName = filename.replace(/\.svg$/i, '');
+    await exportChartAsImage(this.container, 'svg', baseName);
+  }
 
-      this.barBounds.push({
-        x: x - 15,
-        y: y - 15,
-        w: 30,
-        h: 30,
-        fullLabel,
-        val,
-        index: i
-      });
-    });
-
-    ctx.beginPath();
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.12)';
-    ctx.strokeStyle = colors[0];
-    ctx.lineWidth = 2;
-
-    points.forEach((p, i) => {
-      if (i === 0) ctx.moveTo(p.x, p.y);
-      else ctx.lineTo(p.x, p.y);
-    });
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-
-    points.forEach(p => {
-      const lx = centerX + Math.cos(p.angle) * (radius + 18);
-      const ly = centerY + Math.sin(p.angle) * (radius + 18);
-      const isHovered = this.hoverIndex === p.index;
-
-      ctx.fillStyle = isHovered ? '#ffffff' : '#8a9390';
-      ctx.font = isHovered ? '600 11px "Geist Mono", monospace' : '500 11px "Geist Mono", monospace';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      const truncated = p.fullLabel.length > 10 ? p.fullLabel.substring(0, 8) + '..' : p.fullLabel;
-      ctx.fillText(truncated, lx, ly);
+  async exportPNG(chartTitle = 'Gráfico Estatístico', filename = 'grafico.png') {
+    if (!this.container) return;
+    const baseName = filename.replace(/\.png$/i, '');
+    const isLight = this.palette === 'paper';
+    const bg = isLight ? '#f8fafc' : '#0b0f17';
+    await exportChartAsImage(this.container, 'png', baseName, {
+      scale: 2,
+      background: bg
     });
   }
 
-  /**
-   * EXPORTAÇÃO PNG DE ALTA RESOLUÇÃO COM NOMES 100% COMPLETOS (SEM TRUNCAMENTO)
-   */
-  exportPNG(chartTitle = 'Gráfico Estatístico', filename = 'grafico-estatistico.png') {
-    if (!this.lastData) return;
-
-    const data = this.lastData;
-    const items = Array.isArray(data) ? data : Object.entries(data).map(([name, count]) => ({ name, count }));
-    if (items.length === 0) return;
-
-    // Criar canvas offscreen de alta definição (1400px x 800px)
-    const offCanvas = document.createElement('canvas');
-    const exportWidth = 1400;
-    const exportHeight = 120 + items.length * 48 + 80;
-    offCanvas.width = exportWidth;
-    offCanvas.height = exportHeight;
-
-    const ctx = offCanvas.getContext('2d');
-
-    // Fundo escuro premium
-    ctx.fillStyle = '#0b0f17';
-    ctx.fillRect(0, 0, exportWidth, exportHeight);
-
-    // Borda elegante
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-    ctx.lineWidth = 2;
-    this.drawRoundedRectOnCtx(ctx, 16, 16, exportWidth - 32, exportHeight - 32, 12);
-    ctx.stroke();
-
-    // Título do Gráfico no PNG
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '700 24px "Geist Mono", monospace';
-    ctx.textAlign = 'left';
-    ctx.fillText(chartTitle, 40, 56);
-
-    ctx.fillStyle = '#8a9390';
-    ctx.font = '500 14px "Geist Mono", monospace';
-    ctx.fillText('BRAN Org OpenData OS — FAIR & BOAI Open Access', 40, 84);
-
-    // Linha divisória
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-    ctx.beginPath();
-    ctx.moveTo(40, 102);
-    ctx.lineTo(exportWidth - 40, 102);
-    ctx.stroke();
-
-    // Encontrar o maior comprimento de texto em pixels para calcular o recuo ideal (zero truncamento)
-    ctx.font = '500 15px "Geist Mono", monospace';
-    let maxLabelWidth = 180;
-    items.forEach(item => {
-      const fullLabel = String(item[this.lastLabelKey] || item.name || '');
-      const measured = ctx.measureText(fullLabel).width;
-      if (measured > maxLabelWidth) maxLabelWidth = measured;
-    });
-
-    const startX = Math.min(Math.max(260, Math.ceil(maxLabelWidth + 60)), 500);
-    const rightMargin = 80;
-    const chartWidth = exportWidth - startX - rightMargin;
-    const colors = this.getPaletteColors();
-    const maxVal = Math.max(...items.map(d => d[this.lastValueKey] || d.count || 0), 1);
-    const barH = 32;
-
-    items.forEach((item, index) => {
-      const fullLabel = String(item[this.lastLabelKey] || item.name || '');
-      const val = item[this.lastValueKey] ?? item.count ?? 0;
-      const y = 125 + index * (barH + 14);
-      const barW = Math.min((val / maxVal) * chartWidth, chartWidth);
-
-      // Nome 100% Completo
-      ctx.fillStyle = '#cbd5e1';
-      ctx.font = '500 15px "Geist Mono", monospace';
-      ctx.textAlign = 'right';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(fullLabel, startX - 16, y + barH / 2);
-
-      // Track de fundo
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
-      this.drawRoundedRectOnCtx(ctx, startX, y, chartWidth, barH, 6);
-      ctx.fill();
-
-      // Barra colorida
-      ctx.fillStyle = colors[index % colors.length];
-      if (barW > 0) {
-        this.drawRoundedRectOnCtx(ctx, startX, y, Math.max(barW, 6), barH, 6);
-        ctx.fill();
-      }
-
-      // Valor no PNG
-      ctx.fillStyle = '#ffffff';
-      ctx.font = '700 16px "Geist Mono", monospace';
-      ctx.textAlign = 'left';
-      ctx.fillText(`${val} trabalho(s)`, startX + barW + 12, y + barH / 2);
-    });
-
-    // Rodapé de marca d'água no PNG
-    ctx.fillStyle = '#64748b';
-    ctx.font = '500 13px "Geist Mono", monospace';
-    ctx.textAlign = 'center';
-    ctx.fillText('Gerado via BRAN Org OpenData Platform (https://github.com/BRAN-Org)', exportWidth / 2, exportHeight - 28);
-
-    // Download da imagem PNG
-    const link = document.createElement('a');
-    link.download = filename;
-    link.href = offCanvas.toDataURL('image/png');
-    link.click();
-  }
-
-  drawRoundedRectOnCtx(targetCtx, x, y, w, h, r) {
-    if (w < 2 * r) r = w / 2;
-    if (h < 2 * r) r = h / 2;
-    targetCtx.beginPath();
-    targetCtx.moveTo(x + r, y);
-    targetCtx.arcTo(x + w, y, x + w, y + h, r);
-    targetCtx.arcTo(x + w, y + h, x, y + h, r);
-    targetCtx.arcTo(x, y + h, x, y, r);
-    targetCtx.arcTo(x, y, x + w, y, r);
-    targetCtx.closePath();
-  }
-
-  drawRoundedRect(x, y, w, h, r) {
-    this.drawRoundedRectOnCtx(this.ctx, x, y, w, h, r);
-  }
-
-  escapeHtml(str) {
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
+  destroy() {
+    if (this.container) {
+      unmountChart(this.container);
+    }
   }
 }
+
+/**
+ * Utilitário para renderizar mini-gráficos de tendência (Sparklines)
+ * em cards de KPIs e painéis resumidos.
+ */
+export function renderMiniSparkline(containerId, data = [], color = '#7aa2f7') {
+  const container = typeof containerId === 'string' ? document.getElementById(containerId) : containerId;
+  if (!container || !data || data.length === 0) return;
+
+  renderSparkline(container, {
+    data,
+    width: 96,
+    height: 32,
+    color,
+    smooth: true,
+    fillArea: true,
+    showEndDot: true
+  });
+}
+
+export const PureSvgChart = SimpleChart;
+export { CHART_VARIANTS, exportChartAsImage, renderSparkline };
