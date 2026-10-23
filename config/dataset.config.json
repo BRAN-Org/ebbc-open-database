@@ -5,14 +5,14 @@
     "logo": "https://avatars.githubusercontent.com/u/328064865?v=4",
     "institutionName": "Encontro Brasileiro de Bibliometria e Cientometria (EBBC 2012 - 2024)",
     "githubUrl": "https://github.com/BRAN-Org/ebbc-open-database",
-    "doiUrl": "",
+    "doiUrl": "https://doi.org/10.5281/zenodo.23593513",
     "issuesUrl": "https://github.com/BRAN-Org/ebbc-open-database/issues"
   },
   "dataset": {
     "title": "EBBC Open Data - Acervo Histórico e Curadoria Metodológica",
     "description": "Base de dados aberta contendo todos os anais das edições do Encontro Brasileiro de Bibliometria e Cientometria (EBBC) de 2012 a 2024, com mapeamento detalhado de softwares, fontes de dados e etapas metodológicas aplicadas nas pesquisas cientométricas no Brasil.",
     "version": "1.4.0",
-    "doi": "",
+    "doi": "10.5281/zenodo.23593513",
     "license": "Code: GNU GPLv3 | Data: CC BY-NC-SA 4.0 (Não-Comercial & Sem Treino Comercial de IA)",
     "entityName": "articles",
     "singularName": "Artigo",
