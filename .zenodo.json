@@ -1,0 +1,40 @@
+{
+  "title": "EBBC Open Data: Acervo Histórico e Curadoria Metodológica do Encontro Brasileiro de Bibliometria e Cientometria (2012-2024)",
+  "description": "<p>Base de dados aberta contendo todos os anais das edições do Encontro Brasileiro de Bibliometria e Cientometria (EBBC) de 2012 a 2024 (643 artigos), com mapeamento detalhado de softwares, fontes de dados e etapas metodológicas aplicadas nas pesquisas cientométricas no Brasil, disponibilizado pela BRAN Org sob princípios FAIR e BOAI em formatos JSON, CSV, BibTeX, RIS e SQLite.</p>",
+  "upload_type": "dataset",
+  "creators": [
+    {
+      "name": "Encontro Brasileiro de Bibliometria e Cientometria (EBBC)",
+      "type": "organization"
+    },
+    {
+      "name": "BRAN Org",
+      "affiliation": "Brazilian Research Archive Network"
+    }
+  ],
+  "access_right": "open",
+  "license": "cc-by-nc-sa-4.0",
+  "keywords": [
+    "open-data",
+    "bibliometrics",
+    "scientometrics",
+    "ebbc",
+    "methodology",
+    "academic-data",
+    "fair-data",
+    "brazil"
+  ],
+  "communities": [
+    {
+      "identifier": "bran-org"
+    }
+  ],
+  "publication_date": "2026-10-22",
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/BRAN-Org/ebbc-open-database",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}
