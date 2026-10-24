@@ -43,7 +43,7 @@ function formatBibtexAuthors(authors) {
  * Gera arquivo de exportação no formato BibTeX (.bib)
  */
 function generateBibtex(items, config) {
-  const defaultBooktitle = config.organization?.institutionName || config.dataset?.title || 'BRAN Academic Open Data';
+  const defaultBooktitle = config.dataset?.title || config.organization?.name || 'BRAN Academic Open Data';
   
   return items.map((item, idx) => {
     const citeKey = getCiteKey(item, idx);
@@ -81,7 +81,7 @@ function generateBibtex(items, config) {
  * Gera arquivo de exportação no formato RIS (.ris) para VOSviewer, Zotero, Mendeley
  */
 function generateRis(items, config) {
-  const defaultSecondaryTitle = config.organization?.institutionName || config.dataset?.title || 'BRAN Academic Open Data';
+  const defaultSecondaryTitle = config.dataset?.title || config.organization?.name || 'BRAN Academic Open Data';
 
   return items.map(item => {
     const yr = item.year || item.publication_year || '';

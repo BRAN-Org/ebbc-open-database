@@ -89,27 +89,23 @@ function applyConfigToUI(config) {
   if (!config) return;
   const title = config.dataset?.title || 'OpenData OS';
   const orgName = config.organization?.name || 'BRAN Org';
-  const instName = config.organization?.institutionName || 'Faculdade / Periódico / Evento Científico';
+  const subtitle = config.dataset?.subtitle || 'Acervo e Base de Dados Abertos';
   const description = config.dataset?.description || '';
 
-  document.title = title;
+  document.title = `${title} | ${orgName}`;
 
   // Header Title & Subtitle
   const headerTitle = document.getElementById('header-title');
   if (headerTitle) {
-    if (orgName && orgName !== 'BRAN Org') {
-      headerTitle.innerHTML = `${escapeHtml(orgName)} <span>OpenData</span>`;
-    } else {
-      headerTitle.innerHTML = `<span>OpenData</span> OS`;
-    }
+    headerTitle.innerHTML = `<span>BRAN</span> OpenData`;
   }
 
   const headerSub = document.getElementById('header-subtitle');
-  if (headerSub) headerSub.textContent = instName;
+  if (headerSub) headerSub.textContent = subtitle;
 
   // Home Hero Section
   const homeOrgName = document.getElementById('home-org-name');
-  if (homeOrgName) homeOrgName.textContent = instName;
+  if (homeOrgName) homeOrgName.textContent = 'BRAN Org';
 
   const homeDatasetTitle = document.getElementById('home-dataset-title');
   if (homeDatasetTitle) homeDatasetTitle.textContent = title;
@@ -119,10 +115,10 @@ function applyConfigToUI(config) {
 
   // Footer Info
   const footerOrg = document.getElementById('footer-org-name');
-  if (footerOrg) footerOrg.textContent = instName;
+  if (footerOrg) footerOrg.textContent = 'BRAN Org';
 
   const footerInst = document.getElementById('footer-inst-name');
-  if (footerInst) footerInst.textContent = '';
+  if (footerInst) footerInst.textContent = '(Brazilian Research Archive Network)';
 
   // Badges & External Links (Exibe DOI APENAS se um DOI valido for fornecido)
   const doiText = document.getElementById('badge-doi-text');

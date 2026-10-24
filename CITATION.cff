@@ -8,7 +8,6 @@ url: "https://github.com/BRAN-Org/ebbc-open-database"
 repository-code: "https://github.com/BRAN-Org/ebbc-open-database"
 license: GPL-3.0-or-later
 authors:
-  - name: "Encontro Brasileiro de Bibliometria e Cientometria (EBBC)"
   - name: "BRAN Org"
     website: "https://github.com/BRAN-Org"
 keywords:

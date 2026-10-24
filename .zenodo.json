@@ -4,10 +4,6 @@
   "upload_type": "dataset",
   "creators": [
     {
-      "name": "Encontro Brasileiro de Bibliometria e Cientometria (EBBC)",
-      "type": "organization"
-    },
-    {
       "name": "BRAN Org",
       "affiliation": "Brazilian Research Archive Network"
     }

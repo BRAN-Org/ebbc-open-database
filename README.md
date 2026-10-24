@@ -16,7 +16,7 @@ Base de dados aberta contendo todos os anais das edições do Encontro Brasileir
 
 ## Visão Geral da Base de Dados
 
-- **Instituição / Evento**: Encontro Brasileiro de Bibliometria e Cientometria (EBBC 2012 - 2024)
+- **Acervo / Fonte Primária**: Encontro Brasileiro de Bibliometria e Cientometria (EBBC 2012 - 2024)
 - **Entidade Principal**: `articles`
 - **Total de Registros**: Configurado e indexado dinamicamente
 - **Licença dos Dados**: Code: GNU GPLv3 | Data: CC BY-NC-SA 4.0 (Não-Comercial & Sem Treino Comercial de IA)
@@ -107,13 +107,13 @@ npm run data:validate
 Se você utilizar estes dados em pesquisas acadêmicas ou software, por favor cite:
 
 ```bibtex
-@misc{articles_2026,
- author = {Encontro Brasileiro de Bibliometria e Cientometria (EBBC 2012 - 2024) and BRAN Org},
- title = {EBBC Open Data - Acervo Histórico e Curadoria Metodológica},
- year = {2026},
- publisher = {Zenodo},
- doi = {{{DATASET_DOI}}},
- url = {{{DOI_URL}}}
+@misc{ebbc_open_database_2026,
+  author = {BRAN Org},
+  title = {EBBC Open Data - Acervo Histórico e Curadoria Metodológica},
+  year = {2026},
+  publisher = {Zenodo},
+  doi = {10.5281/zenodo.23593513},
+  url = {https://doi.org/10.5281/zenodo.23593513}
 }
 ```
 
@@ -123,10 +123,10 @@ Se você utilizar estes dados em pesquisas acadêmicas ou software, por favor ci
 
 | Nível de Confiabilidade | Nota & Justificativa do Acervo |
 | :---: | :--- |
-| [Fiel à Fonte (Cobertura Incompleta)](https://github.com/BRAN-Org/.github#-%EF%B8%8F-n%C3%ADveis-de-confiabilidade-dos-dados) | **Fiel à Fonte / Cobertura Incompleta**<br>Todos os 643 artigos disponíveis no portal oficial do EBBC (2012-2024) foram extraídos com 100% de paridade. O repositório possui esta classificação pois existem lacunas na própria fonte original: ausência de anos de anais históricos que não foram digitalizados pela organização e ausência de DOIs na origem. Foi formalizada comunicação junto à comissão organizadora para averiguação e recuperação dessas edições. |
+| [Fiel à Fonte (Cobertura Incompleta)](https://github.com/BRAN-Org/.github#-%EF%B8%8F-n%C3%ADveis-de-confiabilidade-dos-dados) | **Fiel à Fonte / Cobertura Incompleta**<br>Todos os 643 artigos disponíveis no portal oficial do EBBC (2012-2024) foram extraídos com 100% de paridade. O repositório possui esta classificação pois existem lacunas na própria fonte original: ausência de anos de anais históricos que não foram digitalizados pela organização e ausência de DOIs na origem. |
 
 > **Nota Metodológica Oficial:** 
-> *A BRAN preserva a fidelidade estrita à fonte de origem e nunca inventa dados inexistentes. Discrepâncias e lacunas identificadas nos portais oficiais são registradas nos relatórios de auditoria e tratadas via averiguação ativa e contato direto com as instituições organizadoras.*
+> *A BRAN preserva a fidelidade estrita à fonte de origem e nunca inventa dados inexistentes. Discrepâncias e lacunas identificadas nos portais de origem são registradas e tratadas tecnicamente nos relatórios de auditoria.*
 
 
 ---
@@ -150,5 +150,5 @@ Possui dados acadêmicos ou acervos científicos que gostaria de disponibilizar 
 ---
 
 <p align="center">
- Mantido pela <strong><a href="https://github.com/BRAN-Org">BRAN Org</a></strong> e <strong>Encontro Brasileiro de Bibliometria e Cientometria (EBBC 2012 - 2024)</strong>
+  Mantido pela <strong><a href="https://github.com/BRAN-Org">BRAN Org</a></strong>
 </p>
