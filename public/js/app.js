@@ -63,9 +63,11 @@ export function resolveArticleUrl(item) {
   return null;
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-  initTabs();
-  initModal();
+if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', async () => {
+    initTabs();
+    initModal();
+    initDatasetCitationCard();
 
   try {
     const resConfig = await fetch('/api/v1/config');
@@ -81,6 +83,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('⚠️ Falha na inicialização do portal:', err);
   }
 });
+}
 
 function applyConfigToUI(config) {
   if (!config) return;
@@ -141,6 +144,50 @@ function applyConfigToUI(config) {
     if (footerDoi) footerDoi.style.display = 'none';
   }
 
+  // Zenodo DOI & Archival Data
+  const rawZenodoDoi = config.dataset?.zenodoDoi
+    || (config.dataset?.doi && config.dataset.doi.toLowerCase().includes('zenodo') ? config.dataset.doi : '')
+    || (config.organization?.doiUrl && config.organization.doiUrl.toLowerCase().includes('zenodo') ? config.organization.doiUrl.replace(/^https?:\/\/doi\.org\//i, '') : '');
+  const cleanZenodoDoi = rawZenodoDoi ? rawZenodoDoi.replace(/^https?:\/\/doi\.org\//i, '').trim() : '';
+  const zenodoUrl = config.dataset?.zenodoUrl
+    || (cleanZenodoDoi ? `https://doi.org/${cleanZenodoDoi}` : '')
+    || (config.organization?.doiUrl && config.organization.doiUrl.toLowerCase().includes('zenodo') ? config.organization.doiUrl : '');
+
+  const badgeZenodo = document.getElementById('badge-zenodo-link');
+  const badgeZenodoText = document.getElementById('badge-zenodo-text');
+  const homeZenodoCard = document.getElementById('home-zenodo-card');
+  const homeZenodoBtn = document.getElementById('home-zenodo-btn');
+  const homeZenodoDoiText = document.getElementById('home-zenodo-doi-text');
+  const homeCitationCard = document.getElementById('home-citation-card');
+  const docZenodoBtn = document.getElementById('doc-zenodo-btn');
+  const footerZenodo = document.getElementById('footer-zenodo-link');
+
+  if (cleanZenodoDoi) {
+    if (badgeZenodo) {
+      badgeZenodo.href = zenodoUrl;
+      badgeZenodo.style.display = 'inline-flex';
+    }
+    if (badgeZenodoText) {
+      badgeZenodoText.innerHTML = `<i class="fa-solid fa-box-archive"></i> Zenodo: ${escapeHtml(cleanZenodoDoi)}`;
+    }
+    if (homeZenodoCard) homeZenodoCard.style.display = 'block';
+    if (homeZenodoBtn) homeZenodoBtn.href = zenodoUrl;
+    if (homeZenodoDoiText) homeZenodoDoiText.textContent = `DOI: ${cleanZenodoDoi}`;
+    if (homeCitationCard) homeCitationCard.style.display = 'block';
+    if (docZenodoBtn) docZenodoBtn.href = zenodoUrl;
+    if (footerZenodo) {
+      footerZenodo.href = zenodoUrl;
+      footerZenodo.style.display = 'inline-block';
+    }
+
+    renderDatasetCitation(config, cleanZenodoDoi, zenodoUrl);
+  } else {
+    if (badgeZenodo) badgeZenodo.style.display = 'none';
+    if (homeZenodoCard) homeZenodoCard.style.display = 'none';
+    if (homeCitationCard) homeCitationCard.style.display = 'none';
+    if (footerZenodo) footerZenodo.style.display = 'none';
+  }
+
   const githubLink = document.getElementById('badge-github-link');
   const footerGithub = document.getElementById('footer-github-link');
   if (config.organization?.githubUrl) {
@@ -154,9 +201,11 @@ function applyConfigToUI(config) {
   }
 }
 
-window.addEventListener('resize', debounce(() => {
-  updateAllCharts();
-}, 150));
+if (typeof window !== 'undefined') {
+  window.addEventListener('resize', debounce(() => {
+    updateAllCharts();
+  }, 150));
+}
 
 function initToolbarControls() {
   const paletteSelect = document.getElementById('chart-theme-select');
@@ -654,6 +703,8 @@ function renderArticleCards(items) {
 
 let currentModalItem = null;
 let currentCitationFmt = 'bibtex';
+let currentCitationMode = 'item'; // 'item' or 'dataset'
+let currentDatasetCitationFmt = 'bibtex';
 
 function openArticleModal(item) {
   currentModalItem = item;
@@ -811,8 +862,63 @@ function openArticleModal(item) {
     }
   }
 
+  // Reset modal citation mode to item
+  currentCitationMode = 'item';
+  const btnCiteModeItem = document.getElementById('btn-cite-mode-item');
+  const btnCiteModeDataset = document.getElementById('btn-cite-mode-dataset');
+  if (btnCiteModeItem && btnCiteModeDataset) {
+    btnCiteModeItem.classList.add('active');
+    btnCiteModeItem.style.background = 'rgba(255,255,255,0.08)';
+    btnCiteModeItem.style.color = 'var(--text-primary)';
+    btnCiteModeDataset.classList.remove('active');
+    btnCiteModeDataset.style.background = 'transparent';
+    btnCiteModeDataset.style.color = 'var(--text-secondary)';
+  }
+
+  const rawZenodoDoi = appConfig?.dataset?.zenodoDoi
+    || (appConfig?.dataset?.doi && appConfig.dataset.doi.toLowerCase().includes('zenodo') ? appConfig.dataset.doi : '')
+    || (appConfig?.organization?.doiUrl && appConfig.organization.doiUrl.toLowerCase().includes('zenodo') ? appConfig.organization.doiUrl.replace(/^https?:\/\/doi\.org\//i, '') : '');
+  const cleanZenodoDoi = rawZenodoDoi ? rawZenodoDoi.replace(/^https?:\/\/doi\.org\//i, '').trim() : '';
+  const zenodoUrl = appConfig?.dataset?.zenodoUrl
+    || (cleanZenodoDoi ? `https://doi.org/${cleanZenodoDoi}` : '');
+
+  const modalZenodoNote = document.getElementById('modal-zenodo-archive-note');
+  const modalZenodoLink = document.getElementById('modal-zenodo-archive-link');
+  if (cleanZenodoDoi && modalZenodoNote && modalZenodoLink) {
+    modalZenodoLink.href = zenodoUrl;
+    modalZenodoLink.textContent = `DOI: ${cleanZenodoDoi}`;
+    modalZenodoNote.style.display = 'block';
+  } else if (modalZenodoNote) {
+    modalZenodoNote.style.display = 'none';
+  }
+
   updateCitationBox();
   modal.classList.add('active');
+}
+
+export function generateDatasetCitation(config, zenodoDoi, zenodoUrl, fmt = 'bibtex') {
+  const title = config?.dataset?.title || 'Academic Open Database';
+  const orgName = config?.organization?.name || 'BRAN Org';
+  const year = '2026';
+  const doi = zenodoDoi || '10.5281/zenodo.23593583';
+  const url = zenodoUrl || `https://doi.org/${doi}`;
+  const citeKey = `bran_${doi.replace(/[^a-zA-Z0-9]/g, '_')}`;
+
+  if (fmt === 'bibtex') {
+    return `@misc{${citeKey},\n  title        = {${title}},\n  author       = {${orgName}},\n  year         = {${year}},\n  howpublished = {Zenodo},\n  doi          = {${doi}},\n  url          = {${url}},\n  note         = {Preservação permanente de banco relacional SQLite3, CSV, JSON e textos completos em PDF}\n}`;
+  } else if (fmt === 'apa') {
+    return `${orgName}. (${year}). ${title} [Data set]. Zenodo. ${url}`;
+  } else if (fmt === 'abnt') {
+    const orgUpper = orgName.toUpperCase();
+    return `${orgUpper}. ${title}: base de dados aberta e preservação integral. Genebra: CERN / Zenodo, ${year}. DOI: ${doi}. Disponível em: <${url}>.`;
+  }
+  return '';
+}
+
+function renderDatasetCitation(config, zenodoDoi, zenodoUrl) {
+  const contentEl = document.getElementById('dataset-citation-content');
+  if (!contentEl) return;
+  contentEl.textContent = generateDatasetCitation(config, zenodoDoi, zenodoUrl, currentDatasetCitationFmt);
 }
 
 function updateCitationBox() {
@@ -821,24 +927,65 @@ function updateCitationBox() {
   const citationEl = document.getElementById('citation-content');
   if (!citationEl) return;
 
+  const rawZenodoDoi = appConfig?.dataset?.zenodoDoi
+    || (appConfig?.dataset?.doi && appConfig.dataset.doi.toLowerCase().includes('zenodo') ? appConfig.dataset.doi : '')
+    || (appConfig?.organization?.doiUrl && appConfig.organization.doiUrl.toLowerCase().includes('zenodo') ? appConfig.organization.doiUrl.replace(/^https?:\/\/doi\.org\//i, '') : '');
+  const cleanZenodoDoi = rawZenodoDoi ? rawZenodoDoi.replace(/^https?:\/\/doi\.org\//i, '').trim() : '';
+  const zenodoUrl = appConfig?.dataset?.zenodoUrl
+    || (cleanZenodoDoi ? `https://doi.org/${cleanZenodoDoi}` : '')
+    || (appConfig?.organization?.doiUrl && appConfig.organization.doiUrl.toLowerCase().includes('zenodo') ? appConfig.organization.doiUrl : '');
+
+  // Mode: Cite Dataset on Zenodo
+  if (currentCitationMode === 'dataset') {
+    citationEl.textContent = generateDatasetCitation(appConfig, cleanZenodoDoi, zenodoUrl, currentCitationFmt);
+    return;
+  }
+
+  // Mode: Cite Item
   const authors = Array.isArray(item.authors) ? item.authors : (item.authors ? [item.authors] : ['Autor Desconhecido']);
-  const year = item.year || '2024';
-  const title = item.title || 'Sem título';
+  const year = item.year || item.ano || '2024';
+  const title = item.title || item.titulo || 'Sem título';
   const rawDoi = (item.doi && item.doi !== 'N/A') ? item.doi : (item.id && item.id !== 'N/A' ? item.id : '');
-  const doiUrl = resolveArticleUrl(item) || (rawDoi ? `https://doi.org/${rawDoi}` : '');
+  const doiInfo = getDoiStatus(rawDoi);
+  const doiUrl = resolveArticleUrl(item) || (doiInfo.isPresent ? doiInfo.doiUrl : (cleanZenodoDoi ? zenodoUrl : ''));
   const doiKey = rawDoi ? rawDoi.replace(/[^a-zA-Z0-9]/g, '_') : 'item_' + year;
 
   if (currentCitationFmt === 'bibtex') {
-    citationEl.textContent = `@article{${doiKey},\n  title     = {${title}},\n  author    = {${authors.join(' and ')}},\n  year      = {${year}}${doiUrl ? `,\n  url       = {${doiUrl}}` : ''}\n}`;
+    let bib = `@article{${doiKey},\n  title     = {${title}},\n  author    = {${authors.join(' and ')}},\n  year      = {${year}}`;
+    if (doiInfo.isValid) {
+      bib += `,\n  doi       = {${doiInfo.cleanDoi}}`;
+    } else if (cleanZenodoDoi) {
+      bib += `,\n  doi       = {${cleanZenodoDoi}}`;
+    }
+    if (doiUrl) {
+      bib += `,\n  url       = {${doiUrl}}`;
+    }
+    if (cleanZenodoDoi) {
+      bib += `,\n  note      = {Acervo completo preservado no CERN/Zenodo sob DOI ${cleanZenodoDoi}}`;
+    }
+    bib += `\n}`;
+    citationEl.textContent = bib;
   } else if (currentCitationFmt === 'apa') {
-    citationEl.textContent = `${authors.join(', ')} (${year}). ${title}.${doiUrl ? ` ${doiUrl}` : ''}`;
+    let apa = `${authors.join(', ')} (${year}). ${title}.`;
+    if (doiUrl) apa += ` ${doiUrl}`;
+    if (!doiInfo.isValid && cleanZenodoDoi) {
+      apa += ` (Zenodo Archive: ${cleanZenodoDoi})`;
+    }
+    citationEl.textContent = apa;
   } else if (currentCitationFmt === 'abnt') {
     const abntAuthors = authors.map(a => {
-      const parts = a.trim().split(' ');
+      const parts = String(a).trim().split(' ');
       const last = parts.pop().toUpperCase();
       return `${last}, ${parts.join(' ')}`;
     }).join('; ');
-    citationEl.textContent = `${abntAuthors}. ${title}. ${year}.${doiUrl ? ` Disponível em: <${doiUrl}>.` : ''}`;
+    let abnt = `${abntAuthors}. ${title}. ${year}.`;
+    if (doiUrl) {
+      abnt += ` Disponível em: <${doiUrl}>.`;
+    }
+    if (cleanZenodoDoi) {
+      abnt += ` Preservado no Zenodo sob DOI: ${cleanZenodoDoi}.`;
+    }
+    citationEl.textContent = abnt;
   }
 }
 
@@ -850,6 +997,34 @@ function initModal() {
     closeBtn.addEventListener('click', () => modal.classList.remove('active'));
     modal.addEventListener('click', (e) => {
       if (e.target === modal) modal.classList.remove('active');
+    });
+  }
+
+  // Citation mode buttons (Artigo vs Dataset no Zenodo)
+  const btnCiteModeItem = document.getElementById('btn-cite-mode-item');
+  const btnCiteModeDataset = document.getElementById('btn-cite-mode-dataset');
+
+  if (btnCiteModeItem && btnCiteModeDataset) {
+    btnCiteModeItem.addEventListener('click', () => {
+      currentCitationMode = 'item';
+      btnCiteModeItem.classList.add('active');
+      btnCiteModeItem.style.background = 'rgba(255,255,255,0.08)';
+      btnCiteModeItem.style.color = 'var(--text-primary)';
+      btnCiteModeDataset.classList.remove('active');
+      btnCiteModeDataset.style.background = 'transparent';
+      btnCiteModeDataset.style.color = 'var(--text-secondary)';
+      updateCitationBox();
+    });
+
+    btnCiteModeDataset.addEventListener('click', () => {
+      currentCitationMode = 'dataset';
+      btnCiteModeDataset.classList.add('active');
+      btnCiteModeDataset.style.background = 'rgba(255,255,255,0.08)';
+      btnCiteModeDataset.style.color = 'var(--text-primary)';
+      btnCiteModeItem.classList.remove('active');
+      btnCiteModeItem.style.background = 'transparent';
+      btnCiteModeItem.style.color = 'var(--text-secondary)';
+      updateCitationBox();
     });
   }
 
@@ -871,6 +1046,52 @@ function initModal() {
         navigator.clipboard.writeText(citationEl.textContent);
         copyCitationBtn.innerHTML = '<i class="fa-solid fa-check"></i> Copiado!';
         setTimeout(() => copyCitationBtn.innerHTML = '<i class="fa-regular fa-copy"></i> Copiar Citação', 2000);
+      }
+    });
+  }
+}
+
+function initDatasetCitationCard() {
+  const datasetCitationTabs = document.querySelectorAll('.dataset-citation-tab');
+  datasetCitationTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      datasetCitationTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentDatasetCitationFmt = tab.getAttribute('data-fmt');
+      if (appConfig) {
+        const rawZenodoDoi = appConfig.dataset?.zenodoDoi
+          || (appConfig.dataset?.doi && appConfig.dataset.doi.toLowerCase().includes('zenodo') ? appConfig.dataset.doi : '')
+          || (appConfig.organization?.doiUrl && appConfig.organization.doiUrl.toLowerCase().includes('zenodo') ? appConfig.organization.doiUrl.replace(/^https?:\/\/doi\.org\//i, '') : '');
+        const cleanZenodoDoi = rawZenodoDoi ? rawZenodoDoi.replace(/^https?:\/\/doi\.org\//i, '').trim() : '';
+        const zenodoUrl = appConfig.dataset?.zenodoUrl
+          || (cleanZenodoDoi ? `https://doi.org/${cleanZenodoDoi}` : '')
+          || (appConfig.organization?.doiUrl && appConfig.organization.doiUrl.toLowerCase().includes('zenodo') ? appConfig.organization.doiUrl : '');
+        renderDatasetCitation(appConfig, cleanZenodoDoi, zenodoUrl);
+      }
+    });
+  });
+
+  const copyDatasetBtn = document.getElementById('btn-copy-dataset-citation');
+  if (copyDatasetBtn) {
+    copyDatasetBtn.addEventListener('click', () => {
+      const el = document.getElementById('dataset-citation-content');
+      if (el) {
+        navigator.clipboard.writeText(el.textContent);
+        copyDatasetBtn.innerHTML = '<i class="fa-solid fa-check"></i> Citação Copiada!';
+        setTimeout(() => copyDatasetBtn.innerHTML = '<i class="fa-regular fa-copy"></i> Copiar Citação do Dataset', 2000);
+      }
+    });
+  }
+
+  const copyZenodoDoiBtn = document.getElementById('btn-copy-zenodo-doi');
+  if (copyZenodoDoiBtn) {
+    copyZenodoDoiBtn.addEventListener('click', () => {
+      const doiTextEl = document.getElementById('home-zenodo-doi-text');
+      if (doiTextEl) {
+        const clean = doiTextEl.textContent.replace('DOI: ', '').trim();
+        navigator.clipboard.writeText(clean);
+        copyZenodoDoiBtn.innerHTML = '<i class="fa-solid fa-check"></i>';
+        setTimeout(() => copyZenodoDoiBtn.innerHTML = '<i class="fa-regular fa-copy"></i>', 2000);
       }
     });
   }

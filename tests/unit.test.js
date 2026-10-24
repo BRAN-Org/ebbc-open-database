@@ -8,6 +8,7 @@ import {
   calculateScatterData, 
   calculateParetoData 
 } from '../src/statsEngine.js';
+import { getDoiStatus, generateDatasetCitation } from '../public/js/app.js';
 
 describe('Unit Tests - DataManager & StatsEngine', () => {
   test('normalizeString deve remover acentos e converter para caixa baixa', () => {
@@ -77,5 +78,40 @@ describe('Unit Tests - DataManager & StatsEngine', () => {
     const paretoData = calculateParetoData('authors', 5);
     assert.ok(Array.isArray(paretoData.data));
     assert.ok(paretoData.totalOccurrences >= 0);
+  });
+
+  test('getDoiStatus deve validar e sanitizar DOIs CrossRef e Zenodo', () => {
+    const crossref = getDoiStatus('10.22477/ix.ebbc.260');
+    assert.strictEqual(crossref.isValid, true);
+    assert.strictEqual(crossref.cleanDoi, '10.22477/ix.ebbc.260');
+
+    const zenodo = getDoiStatus('https://doi.org/10.5281/zenodo.23593583');
+    assert.strictEqual(zenodo.isValid, true);
+    assert.strictEqual(zenodo.cleanDoi, '10.5281/zenodo.23593583');
+
+    const invalid = getDoiStatus('N/A');
+    assert.strictEqual(invalid.isValid, false);
+    assert.strictEqual(invalid.isPresent, false);
+  });
+
+  test('generateDatasetCitation deve formatar citação do Zenodo em BibTeX, APA e ABNT', () => {
+    const dummyConfig = {
+      dataset: { title: 'EBBC Open Data' },
+      organization: { name: 'BRAN Org' }
+    };
+    const doi = '10.5281/zenodo.23593513';
+    const url = 'https://doi.org/10.5281/zenodo.23593513';
+
+    const bibtex = generateDatasetCitation(dummyConfig, doi, url, 'bibtex');
+    assert.ok(bibtex.includes('@misc{'));
+    assert.ok(bibtex.includes('10.5281/zenodo.23593513'));
+    assert.ok(bibtex.includes('EBBC Open Data'));
+
+    const apa = generateDatasetCitation(dummyConfig, doi, url, 'apa');
+    assert.ok(apa.includes('BRAN Org. (2026). EBBC Open Data [Data set]. Zenodo.'));
+
+    const abnt = generateDatasetCitation(dummyConfig, doi, url, 'abnt');
+    assert.ok(abnt.includes('BRAN ORG. EBBC Open Data:'));
+    assert.ok(abnt.includes('DOI: 10.5281/zenodo.23593513'));
   });
 });

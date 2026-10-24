@@ -46,6 +46,9 @@
         <a href="#" id="badge-doi-link" class="badge-link" title="Acessar DOI" style="display: none;">
           <span class="badge-pill" id="badge-doi-text"><i class="fa-solid fa-link"></i> DOI</span>
         </a>
+        <a href="#" id="badge-zenodo-link" class="badge-link" title="Acervo Permanente no CERN/Zenodo" target="_blank" style="display: none;">
+          <span class="badge-pill" id="badge-zenodo-text" style="color: #60a5fa; border-color: rgba(59, 130, 246, 0.4);"><i class="fa-solid fa-box-archive"></i> Zenodo</span>
+        </a>
         <a href="https://github.com/BRAN-Org/bran-web-database-template" target="_blank" id="badge-github-link" class="badge-link" title="Repositório GitHub">
           <span class="badge-pill"><i class="fa-brands fa-github"></i> GitHub</span>
         </a>
@@ -88,6 +91,45 @@
             <p id="home-description-text">
               Infraestrutura aberta de dados acadêmicos e científicos. Este portal disponibiliza acervos públicos de anais, edições e periódicos em formatos limpos e padronizados, com API REST pública e ferramentas para análise estatística no Brasil.
             </p>
+          </div>
+        </div>
+
+        <!-- Zenodo Permanent Archival Banner -->
+        <div id="home-zenodo-card" class="glass-panel" style="margin-top: 1.5rem; padding: 1.5rem; border-color: rgba(59, 130, 246, 0.35); background: linear-gradient(135deg, rgba(30, 58, 138, 0.12), rgba(15, 23, 42, 0.4)); display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+            <div style="flex: 1; min-width: 280px;">
+              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                <span class="badge-pill" style="border-color: rgba(59, 130, 246, 0.5); color: #93c5fd; font-size: 0.72rem; padding: 0.2rem 0.6rem;">
+                  <i class="fa-solid fa-shield-halved"></i> Preservação Permanente FAIR
+                </span>
+                <span class="badge-pill" style="border-color: rgba(16, 185, 129, 0.4); color: #6ee7b7; font-size: 0.72rem; padding: 0.2rem 0.6rem;">
+                  <i class="fa-solid fa-database"></i> CERN / Zenodo
+                </span>
+              </div>
+              <h3 style="font-size: 1.15rem; font-weight: 700; color: #f8fafc; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-box-archive" style="color: #60a5fa;"></i> Base de Dados Completa Preservada no Zenodo
+              </h3>
+              <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.75rem;">
+                Todos os arquivos brutos desta base de dados acadêmica — incluindo o banco relacional completo <strong>SQLite3</strong> (<code>.sqlite</code> / <code>.db</code>), planilhas consolidadas <strong>CSV</strong>, exportações estruturadas <strong>JSON</strong>, metadados <strong>BibTeX/RIS</strong> e os <strong>PDFs originais em texto completo</strong> — estão preservados de forma imutável e com acesso aberto no Zenodo (CERN) sob DOI permanente registrado.
+              </p>
+              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; font-size: 0.75rem; color: var(--text-secondary);">
+                <span class="badge-pill"><i class="fa-solid fa-database"></i> SQLite3 Relacional</span>
+                <span class="badge-pill"><i class="fa-solid fa-table"></i> CSV UTF-8 BOM</span>
+                <span class="badge-pill"><i class="fa-solid fa-file-pdf"></i> Textos Completos (PDF)</span>
+                <span class="badge-pill"><i class="fa-solid fa-quote-right"></i> BibTeX &amp; RIS</span>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.6rem; align-self: center;">
+              <a href="#" id="home-zenodo-btn" target="_blank" class="btn btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; background: #2563eb; border-color: #3b82f6; white-space: nowrap;">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> Acessar no Zenodo
+              </a>
+              <div style="display: flex; align-items: center; gap: 0.4rem; justify-content: center;">
+                <code id="home-zenodo-doi-text" style="font-size: 0.76rem; color: #93c5fd; background: rgba(0,0,0,0.4); padding: 0.25rem 0.5rem; border-radius: 4px; border: 1px solid rgba(59, 130, 246, 0.3);">DOI</code>
+                <button id="btn-copy-zenodo-doi" class="btn" style="padding: 0.25rem 0.55rem; font-size: 0.75rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color);" title="Copiar DOI do Zenodo">
+                  <i class="fa-regular fa-copy"></i>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -148,6 +190,29 @@
             <div class="feature-icon"><i class="fa-solid fa-chart-pie"></i></div>
             <h3>Métricas & Gráficos Universais</h3>
             <p>Gráficos vetoriais interativos em SVG de evolução histórica, distribuição por eixos temáticos, ranking de autores e palavras-chave mais citadas.</p>
+          </div>
+        </div>
+
+        <!-- Como Citar este Dataset / Base de Dados -->
+        <div id="home-citation-card" class="glass-panel" style="margin-top: 1.5rem; padding: 1.5rem; display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem;">
+            <div>
+              <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-quote-left" style="color: var(--accent-emerald);"></i> Como Citar esta Base de Dados (Zenodo DOI)
+              </h3>
+              <p style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.2rem;">
+                Ao utilizar estes dados em pesquisas acadêmicas, relatórios ou teses, cite o acervo completo pelo DOI permanente do Zenodo:
+              </p>
+            </div>
+            <div class="citation-tabs" style="margin-bottom: 0;">
+              <button class="dataset-citation-tab active" data-fmt="bibtex">BibTeX</button>
+              <button class="dataset-citation-tab" data-fmt="apa">APA 7th</button>
+              <button class="dataset-citation-tab" data-fmt="abnt">ABNT</button>
+            </div>
+          </div>
+          <div class="citation-box">
+            <button class="copy-btn" id="btn-copy-dataset-citation"><i class="fa-regular fa-copy"></i> Copiar Citação do Dataset</button>
+            <pre><code id="dataset-citation-content"></code></pre>
           </div>
         </div>
 
@@ -472,6 +537,7 @@
               <li><a href="#" class="docs-menu-link" data-doc="doc-stats"><span class="badge-method get">GET</span> <span>/articles/stats</span></a></li>
               <li><a href="#" class="docs-menu-link" data-doc="doc-export"><span class="badge-method get">GET</span> <span>/export</span></a></li>
               <li><a href="#" class="docs-menu-link" data-doc="doc-config"><span class="badge-method get">GET</span> <span>/config</span></a></li>
+              <li><a href="#" class="docs-menu-link" data-doc="doc-zenodo"><span class="badge-method get" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; border-color: rgba(59, 130, 246, 0.4);">FAIR</span> <span>/zenodo</span></a></li>
             </ul>
           </div>
 
@@ -520,6 +586,29 @@
               </div>
               <p class="doc-intro">Retorna a configuração pública do dataset, metadados da instituição, facetas e esquemas de busca.</p>
             </div>
+
+            <!-- Doc 7: Zenodo FAIR Archive & Raw Data -->
+            <div class="doc-card glass-panel" id="doc-zenodo">
+              <div class="endpoint-header">
+                <span class="badge-method get" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; border-color: rgba(59, 130, 246, 0.4);">FAIR DATA</span>
+                <span class="endpoint-path">CERN Zenodo Archive &amp; Full Raw Data</span>
+              </div>
+              <p class="doc-intro">Preservação permanente e imutável de todos os artefatos originais e brutos da base no repositório CERN/Zenodo sob DOI permanente registrado.</p>
+              <div class="doc-details" style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;">
+                <p>O pacote completo arquivado no Zenodo inclui:</p>
+                <ul style="margin: 0.5rem 0 1rem 1.5rem;">
+                  <li><strong>SQLite3 (banco relacional completo):</strong> esquema normalizado com todas as tabelas e índices para consultas analíticas SQL diretas offline.</li>
+                  <li><strong>CSV consolidado (UTF-8 com BOM):</strong> compatível imediatamente com Microsoft Excel, LibreOffice Calc, SPSS, R e Python (pandas).</li>
+                  <li><strong>JSON estruturado:</strong> exportação bruta do catálogo em lote para ingestão em pipelines de dados e NoSQL.</li>
+                  <li><strong>Textos completos em PDF:</strong> cópias digitais íntegras de todos os artigos do acervo para mineração textual (text mining) e NLP acadêmico.</li>
+                </ul>
+                <div style="margin-top: 1rem;">
+                  <a href="#" id="doc-zenodo-btn" target="_blank" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir Acervo Completo no Zenodo
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -541,6 +630,9 @@
           </a>
           <a href="#" id="footer-doi-link" target="_blank" style="display: none;">
             <i class="fa-solid fa-link"></i> DOI
+          </a>
+          <a href="#" id="footer-zenodo-link" target="_blank" style="display: none;">
+            <i class="fa-solid fa-box-archive"></i> Zenodo
           </a>
         </div>
       </div>
@@ -592,7 +684,13 @@
 
       <!-- Gerador de Citações Científicas -->
       <div class="modal-section citation-section">
-        <h4><i class="fa-solid fa-quote-left"></i> Citar este Trabalho</h4>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <h4 style="margin: 0;"><i class="fa-solid fa-quote-left"></i> Citar este Trabalho</h4>
+          <div style="display: flex; gap: 0.35rem; font-size: 0.75rem;">
+            <button class="citation-mode-btn active" id="btn-cite-mode-item" style="background: rgba(255,255,255,0.08); border: 1px solid var(--border-color); border-radius: 4px; padding: 2px 8px; color: var(--text-primary); cursor: pointer;">Artigo</button>
+            <button class="citation-mode-btn" id="btn-cite-mode-dataset" style="background: transparent; border: 1px solid transparent; border-radius: 4px; padding: 2px 8px; color: var(--text-secondary); cursor: pointer;">Base (Zenodo)</button>
+          </div>
+        </div>
         <div class="citation-tabs">
           <button class="citation-tab active" data-fmt="bibtex">BibTeX</button>
           <button class="citation-tab" data-fmt="apa">APA 7th</button>
@@ -601,6 +699,9 @@
         <div class="citation-box">
           <button class="copy-btn" id="btn-copy-citation"><i class="fa-regular fa-copy"></i> Copiar Citação</button>
           <pre><code id="citation-content"></code></pre>
+        </div>
+        <div id="modal-zenodo-archive-note" style="margin-top: 0.5rem; font-size: 0.76rem; color: var(--text-secondary); display: none;">
+          <i class="fa-solid fa-box-archive" style="color: #60a5fa;"></i> Dados brutos, SQLite3 e textos completos preservados no Zenodo: <a href="#" id="modal-zenodo-archive-link" target="_blank" style="color: #93c5fd; text-decoration: underline;"></a>
         </div>
       </div>
 
