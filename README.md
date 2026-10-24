@@ -2,6 +2,7 @@
 
 <p align="center">
   <a href="https://doi.org/10.5281/zenodo.23593513"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.23593513.svg" alt="Zenodo DOI"></a>
+  <a href="#️-confiabilidade-e-governança"><img src="https://img.shields.io/badge/Confiabilidade-Fiel%20%C3%A0%20Fonte%20(Incompleto)-yellow?style=for-the-badge" alt="Confiabilidade"></a>
   <a href="https://www.go-fair.org/fair-principles/"><img src="https://img.shields.io/badge/FAIR-Compliant-green.svg?style=for-the-badge" alt="FAIR Principles"></a>
   <a href="https://www.budapestopenaccessinitiative.org/"><img src="https://img.shields.io/badge/BOAI-Signatory-orange.svg?style=for-the-badge" alt="BOAI Signatory"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/Data_License-CC_BY--NC--SA_4.0-lightgrey.svg?style=for-the-badge" alt="CC BY-NC-SA 4.0"></a>
@@ -14,8 +15,13 @@ Base de dados aberta contendo todos os anais das edições do Encontro Brasileir
 
 ## 📊 Acervo em Números
 
+> [!NOTE]
+> **Status de Confiabilidade:** 🟡 **Fiel à Fonte (Cobertura Incompleta)**  
+> 📌 **Por que este acervo recebeu esta nota:** Todos os 643 artigos disponibilizados no portal oficial do evento (edições 3ª a 9ª, 2012–2024) foram catalogados com 100% de integridade e fidelidade aos dados públicos. A classificação amarela documenta lacunas na própria fonte primária original do evento — ausência de atribuição de DOIs na origem e anais das primeiras edições (1ª e 2ª edições) nunca digitalizados pela organização. Textos completos em processo de resgate documental independente.
+
 | Métrica / Atributo | Detalhes do Acervo |
 | :--- | :--- |
+| **Confiabilidade dos Dados** | 🟡 **Fiel à Fonte (Cobertura Incompleta)** ([Ver critérios e auditoria](#️-confiabilidade-e-governança)) |
 | **Período Histórico** | 2012–2024 (Edições 3ª a 9ª) |
 | **Total de Artigos** | **643 trabalhos científicos catalogados** |
 | **Textos Completos (PDF)** | 643 artigos catalogados (textos completos em processo de resgate documental) |
@@ -118,9 +124,21 @@ Se você utilizar estes dados em pesquisas acadêmicas, teses ou softwares, por 
 
 ## 🛡️ Confiabilidade e Governança
 
-- **Classificação**: 🟡 **Fiel à Fonte (Cobertura Incompleta)** — Todos os artigos do portal oficial foram catalogados com 100% de paridade. A classificação amarela documenta lacunas na própria fonte primária original (ausência de DOIs e de anais históricos não digitalizados pela organização).
-- **Auditoria Independente**: Verificação e catalogação executada com rigor metodológico, conferência contra publicações e integridade criptográfica.
-- **Calendário de Curadoria**: Acompanhe os ciclos de atualização no repositório [BRAN-Org/.github](https://github.com/BRAN-Org/.github/blob/main/CALENDAR.md).
+<p align="center">
+  <a href="https://github.com/BRAN-Org/.github#níveis-de-confiabilidade-dos-dados">
+    <img src="https://img.shields.io/badge/Confiabilidade-Fiel%20%C3%A0%20Fonte%20(Incompleto)-yellow?style=for-the-badge" alt="Selo de Confiabilidade">
+  </a>
+</p>
+
+| Dimensão de Governança | Avaliação da Curadoria Independente |
+| :--- | :--- |
+| **Classificação Oficial** | 🟡 **Fiel à Fonte (Cobertura Incompleta)** |
+| **Diagnóstico Técnico (Por que recebeu esta nota)** | Todos os 643 artigos disponibilizados no portal oficial do evento (edições 3ª a 9ª, 2012–2024) foram catalogados com 100% de integridade e fidelidade aos dados públicos. A classificação amarela documenta lacunas na própria fonte primária original do evento — ausência de atribuição de DOIs na origem e anais das primeiras edições (1ª e 2ª edições) nunca digitalizados pela organização. Textos completos em processo de resgate documental independente. |
+| **Método de Auditoria** | Verificação independente com hash criptográfico SHA-256 por arquivo, conferência direta contra publicações originais e rastreabilidade estrita. |
+| **Ciclo de Atualização** | Acompanhe as revisões periódicas no repositório [BRAN-Org/.github](https://github.com/BRAN-Org/.github/blob/main/CALENDAR.md). |
+
+> [!IMPORTANT]
+> **Transparência da Curadoria:** A BRAN Org preserva a fidelidade estrita à fonte primária e não inventa dados ou metadados inexistentes. Lacunas ou inconsistências presentes na origem são documentadas tecnicamente para assegurar integridade em análises cienciométricas.
 
 ---
 

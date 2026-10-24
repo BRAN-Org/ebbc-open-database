@@ -119,14 +119,25 @@ function initEventReadme() {
 
   // Confiabilidade por repositório
   let reliabilityBadge = '🟢 **Auditado e Validado**';
+  let reliabilityShield = 'https://img.shields.io/badge/Confiabilidade-Auditado%20e%20Validado-brightgreen?style=for-the-badge';
   let reliabilityJustification = 'Dados auditados e validados com rigor metodológico, integridade criptográfica SHA-256 e conferência direta contra as publicações de origem.';
 
-  if (repoName.includes('ebbc')) {
+  if (repoName.includes('enancib')) {
+    reliabilityBadge = '🟢 **Auditado e Validado**';
+    reliabilityShield = 'https://img.shields.io/badge/Confiabilidade-Auditado%20e%20Validado-brightgreen?style=for-the-badge';
+    reliabilityJustification = 'Acervo exaustivo cobrindo todas as 25 edições históricas do ENANCIB (1994–2026). Todos os 6.998 artigos científicos foram catalogados com integridade criptográfica SHA-256 individual, 6.965 textos completos em PDF preservados localmente (3,49 GB) com conferência direta contra os anais originais, 96,5% de cobertura de resumos e mapeamento canônico dos 12 Grupos de Trabalho (GT 1 ao GT 12).';
+  } else if (repoName.includes('datagramazero')) {
+    reliabilityBadge = '🟢 **Auditado e Validado**';
+    reliabilityShield = 'https://img.shields.io/badge/Confiabilidade-Auditado%20e%20Validado-brightgreen?style=for-the-badge';
+    reliabilityJustification = 'Acervo histórico completo e definitivo cobrindo toda a existência do periódico (1999–2015: 16 volumes, 97 edições). Todos os 466 artigos e ensaios científicos foram catalogados com hash SHA-256 e conferência individualizada. A preservação digital inclui a coleção integral de 1.765 arquivos históricos (HTML e PDFs originais) espelhados a partir do CEDAP/UFRGS e conferidos contra os registros do IBICT.';
+  } else if (repoName.includes('ebbc')) {
     reliabilityBadge = '🟡 **Fiel à Fonte (Cobertura Incompleta)**';
-    reliabilityJustification = 'Todos os artigos do portal oficial foram catalogados com 100% de paridade. A classificação amarela documenta lacunas na própria fonte primária original (ausência de DOIs e de anais históricos não digitalizados pela organização).';
+    reliabilityShield = 'https://img.shields.io/badge/Confiabilidade-Fiel%20%C3%A0%20Fonte%20(Incompleto)-yellow?style=for-the-badge';
+    reliabilityJustification = 'Todos os 643 artigos disponibilizados no portal oficial do evento (edições 3ª a 9ª, 2012–2024) foram catalogados com 100% de integridade e fidelidade aos dados públicos. A classificação amarela documenta lacunas na própria fonte primária original do evento — ausência de atribuição de DOIs na origem e anais das primeiras edições (1ª e 2ª edições) nunca digitalizados pela organização. Textos completos em processo de resgate documental independente.';
   } else if (repoName.includes('abec')) {
     reliabilityBadge = '🟠 **Em Averiguação**';
-    reliabilityJustification = 'Acervo extraído sob averiguação ativa de integridade, normalização de metadados e checagem de identificadores.';
+    reliabilityShield = 'https://img.shields.io/badge/Confiabilidade-Em%20Averigua%C3%A7%C3%A3o-orange?style=for-the-badge';
+    reliabilityJustification = 'Acervo com 259 artigos (2013–2025) e 257 PDFs em texto completo preservados (99,2% de cobertura). A classificação laranja documenta acervo extraído recentemente sob processo ativo de averiguação técnica pela curadoria, incluindo conferência cruzada de identificadores, desambiguação de autoria e validação estrita da integridade de metadados antes de ser promovido à classificação verde.';
   }
 
   let readmeContent = readFileSync(templateReadmePath, 'utf8');
@@ -147,6 +158,7 @@ function initEventReadme() {
     '{{CITE_KEY}}': citeKey,
     '{{YEAR}}': '2026',
     '{{RELIABILITY_BADGE}}': reliabilityBadge,
+    '{{RELIABILITY_SHIELD}}': reliabilityShield,
     '{{RELIABILITY_JUSTIFICATION}}': reliabilityJustification
   };
 

@@ -2,6 +2,7 @@
 
 <p align="center">
   <a href="https://doi.org/{{ZENODO_DOI}}"><img src="https://zenodo.org/badge/DOI/{{ZENODO_DOI}}.svg" alt="Zenodo DOI"></a>
+  <a href="#️-confiabilidade-e-governança"><img src="{{RELIABILITY_SHIELD}}" alt="Confiabilidade"></a>
   <a href="https://www.go-fair.org/fair-principles/"><img src="https://img.shields.io/badge/FAIR-Compliant-green.svg?style=for-the-badge" alt="FAIR Principles"></a>
   <a href="https://www.budapestopenaccessinitiative.org/"><img src="https://img.shields.io/badge/BOAI-Signatory-orange.svg?style=for-the-badge" alt="BOAI Signatory"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/Data_License-CC_BY--NC--SA_4.0-lightgrey.svg?style=for-the-badge" alt="CC BY-NC-SA 4.0"></a>
@@ -14,8 +15,13 @@
 
 ## 📊 Acervo em Números
 
+> [!NOTE]
+> **Status de Confiabilidade:** {{RELIABILITY_BADGE}}  
+> 📌 **Por que este acervo recebeu esta nota:** {{RELIABILITY_JUSTIFICATION}}
+
 | Métrica / Atributo | Detalhes do Acervo |
 | :--- | :--- |
+| **Confiabilidade dos Dados** | {{RELIABILITY_BADGE}} ([Ver critérios e auditoria](#️-confiabilidade-e-governança)) |
 | **Período Histórico** | {{YEAR_RANGE}} |
 | **Total de Artigos** | **{{TOTAL_RECORDS}} trabalhos científicos catalogados** |
 | **Textos Completos (PDF)** | {{PDF_COUNT_TEXT}} |
@@ -118,9 +124,21 @@ Se você utilizar estes dados em pesquisas acadêmicas, teses ou softwares, por 
 
 ## 🛡️ Confiabilidade e Governança
 
-- **Classificação**: {{RELIABILITY_BADGE}} — {{RELIABILITY_JUSTIFICATION}}
-- **Auditoria Independente**: Verificação e catalogação executada com rigor metodológico, conferência contra publicações e integridade criptográfica.
-- **Calendário de Curadoria**: Acompanhe os ciclos de atualização no repositório [BRAN-Org/.github](https://github.com/BRAN-Org/.github/blob/main/CALENDAR.md).
+<p align="center">
+  <a href="https://github.com/BRAN-Org/.github#níveis-de-confiabilidade-dos-dados">
+    <img src="{{RELIABILITY_SHIELD}}" alt="Selo de Confiabilidade">
+  </a>
+</p>
+
+| Dimensão de Governança | Avaliação da Curadoria Independente |
+| :--- | :--- |
+| **Classificação Oficial** | {{RELIABILITY_BADGE}} |
+| **Diagnóstico Técnico (Por que recebeu esta nota)** | {{RELIABILITY_JUSTIFICATION}} |
+| **Método de Auditoria** | Verificação independente com hash criptográfico SHA-256 por arquivo, conferência direta contra publicações originais e rastreabilidade estrita. |
+| **Ciclo de Atualização** | Acompanhe as revisões periódicas no repositório [BRAN-Org/.github](https://github.com/BRAN-Org/.github/blob/main/CALENDAR.md). |
+
+> [!IMPORTANT]
+> **Transparência da Curadoria:** A BRAN Org preserva a fidelidade estrita à fonte primária e não inventa dados ou metadados inexistentes. Lacunas ou inconsistências presentes na origem são documentadas tecnicamente para assegurar integridade em análises cienciométricas.
 
 ---
 
