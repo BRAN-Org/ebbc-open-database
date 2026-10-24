@@ -1,144 +1,129 @@
 # {{DATASET_TITLE}}
 
 <p align="center">
- <a href="{{ORG_URL}}"><img src="https://img.shields.io/badge/BRAN%20Org-Open%20Data-blue.svg?style=for-the-badge&logo=github" alt="BRAN Org"></a>
- <a href="https://www.budapestopenaccessinitiative.org/"><img src="https://img.shields.io/badge/BOAI-Signatory-orange.svg?style=for-the-badge" alt="BOAI Signatory"></a>
- <a href="https://www.go-fair.org/fair-principles/"><img src="https://img.shields.io/badge/FAIR-Compliant-green.svg?style=for-the-badge" alt="FAIR Principles"></a>
- <a href="LICENSE"><img src="https://img.shields.io/badge/Code_License-GPLv3-blue.svg?style=for-the-badge" alt="GPLv3"></a>
- <a href="LICENSE"><img src="https://img.shields.io/badge/Data_License-CC_BY--NC--SA_4.0-lightgrey.svg?style=for-the-badge" alt="CC BY-NC-SA 4.0"></a>
+  <a href="https://doi.org/{{ZENODO_DOI}}"><img src="https://zenodo.org/badge/DOI/{{ZENODO_DOI}}.svg" alt="Zenodo DOI"></a>
+  <a href="https://www.go-fair.org/fair-principles/"><img src="https://img.shields.io/badge/FAIR-Compliant-green.svg?style=for-the-badge" alt="FAIR Principles"></a>
+  <a href="https://www.budapestopenaccessinitiative.org/"><img src="https://img.shields.io/badge/BOAI-Signatory-orange.svg?style=for-the-badge" alt="BOAI Signatory"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/Data_License-CC_BY--NC--SA_4.0-lightgrey.svg?style=for-the-badge" alt="CC BY-NC-SA 4.0"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/Code_License-GPLv3-blue.svg?style=for-the-badge" alt="GPLv3"></a>
 </p>
 
 {{DATASET_DESCRIPTION}}
 
 ---
 
-## Visão Geral da Base de Dados
+## 📊 Acervo em Números
 
-- **Instituição / Evento**: {{INSTITUTION_NAME}}
-- **Entidade Principal**: `{{ENTITY_NAME}}`
-- **Total de Registros**: Configurado e indexado dinamicamente
-- **Licença dos Dados**: {{DATASET_LICENSE}}
-{{DOI_LINE}}
-- **Manutenção & Suporte**: [BRAN Org]({{ORG_URL}})
-
----
-
-## Portal Web Interativo & REST API
-
-Esta base de dados fornece tanto uma interface web interativa (Dashboard) quanto uma **API REST pública de alta performance** sem necessidade de chave de API.
-
-### Endpoints Principais
-
-| Método | Endpoint | Descrição |
-| :--- | :--- | :--- |
-| `GET` | `/api/v1/config` | Retorna os metadados e schema configurado da base |
-| `GET` | `/api/v1/{{ENTITY_NAME}}` | Lista registros com busca textual, facetas, ordenação e paginação |
-| `GET` | `/api/v1/{{ENTITY_NAME}}/:key` | Busca um registro exato por DOI ou ID |
-| `GET` | `/api/v1/{{ENTITY_NAME}}/stats` | Retorna métricas consolidadas (rankings, distribuições por ano) |
-| `GET` | `/api/v1/{{ENTITY_NAME}}/stats/temporal` | Análise de séries temporais empilhadas |
-| `GET` | `/api/v1/{{ENTITY_NAME}}/stats/correlations` | Matriz de coocorrência (ex: ferramentas vs fontes) |
-| `GET` | `/api/v1/{{ENTITY_NAME}}/export?format=csv` | Exporta o dataset completo em **CSV (UTF-8 BOM)** ou **JSON** |
+| Métrica / Atributo | Detalhes do Acervo |
+| :--- | :--- |
+| **Período Histórico** | {{YEAR_RANGE}} |
+| **Total de Artigos** | **{{TOTAL_RECORDS}} trabalhos científicos catalogados** |
+| **Textos Completos (PDF)** | {{PDF_COUNT_TEXT}} |
+| **Formatos Estruturados** | SQLite3 (`.sqlite`), CSV UTF-8 BOM, JSON, BibTeX (`.bib`), RIS (`.ris`) |
+| **Curadoria & Proveniência** | Curadoria independente com integridade criptográfica (hash SHA-256) pela [BRAN Org]({{ORG_URL}}) |
+| **Licença dos Dados** | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) (Uso acadêmico/não-comercial; vedada ingestão para IA comercial) |
+| **Licença do Código** | [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.html) |
 
 ---
 
-## Exemplo de Consumo da API
+## 📦 Onde Baixar (Pacote Completo no Zenodo)
 
-### cURL
+Todo o acervo bruto, o banco relacional completo e os arquivos individuais estão arquivados permanentemente no **CERN / Zenodo** sob DOI imutável. Você pode baixar todos os arquivos de uma só vez:
+
+- 🔗 **Registro Permanente**: [https://doi.org/{{ZENODO_DOI}}](https://doi.org/{{ZENODO_DOI}})
+- 📥 **Pacote Consolidado (.zip)**: Inclui o banco relacional SQLite3 (`{{PRIMARY_FILE_BASE}}.sqlite`), planilhas CSV consolidadas (`{{PRIMARY_FILE_BASE}}.csv`), metadados estruturados JSON, arquivos de referência BibTeX/RIS e a coleção de PDFs em texto completo.
+
+### Download direto via terminal (cURL / Wget)
 ```bash
-curl -X GET "http://localhost:3000/api/v1/{{ENTITY_NAME}}?q=ciencia&limit=5"
-```
-
-### JavaScript (Fetch)
-```javascript
-const response = await fetch('http://localhost:3000/api/v1/{{ENTITY_NAME}}?limit=10');
-const data = await response.json();
-console.log(`Carregados ${data.total} registros de {{DATASET_TITLE}}`);
-```
-
-### Python
-```python
-import requests
-
-url = "http://localhost:3000/api/v1/{{ENTITY_NAME}}"
-response = requests.get(url, params={"limit": 10})
-data = response.json()
-print(f"Total de registros: {data['total']}")
+# Baixar o pacote completo do Zenodo
+curl -LO "https://zenodo.org/records/{{ZENODO_RECORD_ID}}/files/{{ZENODO_BUNDLE_NAME}}"
+unzip {{ZENODO_BUNDLE_NAME}}
 ```
 
 ---
 
-## Como Rodar Localmente
+## ⚡ Como Usar os Dados
 
-### 1. Clonar o Repositório
+### 1. Python (Pandas)
+```python
+import pandas as pd
+
+# Carregar o dataset estruturado
+df = pd.read_json("data/{{PRIMARY_FILE_BASE}}.json")
+print(f"Total de registros: {len(df)}")
+print(df[["title", "year", "authors"]].head())
+```
+
+### 2. SQLite3 (SQL direto no terminal)
+```bash
+# Consultar distribuição temporal direto no banco relacional
+sqlite3 data/{{PRIMARY_FILE_BASE}}.sqlite "SELECT year, COUNT(*) as total FROM articles GROUP BY year ORDER BY year;"
+```
+
+---
+
+## 🌐 API REST Pública
+
+O repositório fornece uma API REST de alta performance, gratuita e sem necessidade de chave de autenticação (API Key):
+
+| Método | Endpoint | Finalidade |
+| :--- | :--- | :--- |
+| `GET` | `/api/v1/articles` | Lista registros com busca textual global (`?q=`), filtros facetados (`?year=`, `?author=`), ordenação e paginação |
+| `GET` | `/api/v1/articles/:key` | Consulta individual exata por DOI ou ID do artigo |
+| `GET` | `/api/v1/articles/stats` | Estatísticas agregadas (rankings de autores, tópicos e evolução temporal) |
+| `GET` | `/api/v1/articles/export?format=csv` | Download instantâneo dos registros filtrados em **CSV (BOM UTF-8)** |
+| `GET` | `/api/v1/articles/export?format=bibtex` | Download das referências bibliográficas filtradas em **BibTeX** |
+
+### Exemplo de Requisição (cURL)
+```bash
+curl -s "http://localhost:3000/api/v1/articles?q=informacao&limit=5"
+```
+
+---
+
+## 🚀 Como Executar o Portal Localmente
+
+Para rodar o portal interativo com gráficos dinâmicos, sandbox e explorador de artigos:
+
 ```bash
 git clone {{REPO_URL}}.git
 cd {{REPO_NAME}}
-```
-
-### 2. Instalar Dependências
-```bash
 npm install
-```
-
-### 3. Iniciar o Servidor
-```bash
-# Modo Desenvolvimento
-npm run dev
-
-# Modo Produção
 npm start
 ```
 Acesse no navegador: `http://localhost:3000`
 
 ---
 
-## Validação dos Dados
-Para testar a integridade do schema antes do deploy:
-```bash
-npm run data:validate
-```
+## 📖 Como Citar Este Dataset
 
----
-
-## Como Citar Este Dataset
-
-Se você utilizar estes dados em pesquisas acadêmicas ou software, por favor cite:
+Se você utilizar estes dados em pesquisas acadêmicas, teses ou softwares, por favor cite:
 
 ```bibtex
-@misc{{{ENTITY_NAME}}_{{YEAR}},
- author = {{{INSTITUTION_NAME}} and BRAN Org},
- title = {{{DATASET_TITLE}}},
- year = {{{YEAR}}},
- publisher = {Zenodo},
- doi = {{{DATASET_DOI}}},
- url = {{{DOI_URL}}}
+@misc{{{CITE_KEY}},
+  author       = {BRAN Org},
+  title        = {{{DATASET_TITLE}}},
+  year         = {{{YEAR}}},
+  howpublished = {Zenodo},
+  doi          = {{{ZENODO_DOI}}},
+  url          = {https://doi.org/{{ZENODO_DOI}}},
+  note         = {Base de dados bibliométrica aberta curada pela Brazilian Research Archive Network}
 }
 ```
 
----
-
-## Princípios e Licença
-
-- **[Princípios FAIR](https://www.go-fair.org/fair-principles/)**: Dados *Findable, Accessible, Interoperable, Reusable*.
-- **[BOAI](https://www.budapestopenaccessinitiative.org/)**: Livre acesso à informação e produção acadêmica.
-- **Licenciamento Duplo**:
- - **Código-fonte & Engine**: [GNU General Public License v3.0 (GPL-3.0)](https://www.gnu.org/licenses/gpl-3.0.html) — Garante Ciência Aberta e código livre livre de fechamentos proprietários.
- - **Dataset Científico & Metadados (`data/`)**: [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 (CC BY-NC-SA 4.0)](https://creativecommons.org/licenses/by-nc-sa/4.0/) — Permite uso e distribuição exclusivamente para pesquisa não-comercial, proibindo expressamente a raspagem ou ingestão para treinamento comercial de modelos de Inteligência Artificial sem autorização prévia.
+**ABNT:**
+> BRAN ORG. **{{DATASET_TITLE}}**. Genebra: CERN / Zenodo, {{YEAR}}. DOI: {{ZENODO_DOI}}. Disponível em: &lt;https://doi.org/{{ZENODO_DOI}}&gt;.
 
 ---
 
-## Confiabilidade e Auditagem dos Dados
+## 🛡️ Confiabilidade e Governança
 
-| Nível de Confiabilidade | Nota & Justificativa do Acervo |
-| :---: | :--- |
-| {{RELIABILITY_BADGE}} | {{RELIABILITY_JUSTIFICATION}} |
-
-> **Nota Metodológica Oficial:** 
-> *A BRAN preserva a fidelidade estrita à fonte de origem e nunca inventa dados inexistentes. Discrepâncias e lacunas identificadas nos portais oficiais são registradas nos relatórios de auditoria e tratadas via averiguação ativa e contato direto com as instituições organizadoras.*
+- **Classificação**: {{RELIABILITY_BADGE}} — {{RELIABILITY_JUSTIFICATION}}
+- **Auditoria Independente**: Verificação e catalogação executada com rigor metodológico, conferência contra publicações e integridade criptográfica.
+- **Calendário de Curadoria**: Acompanhe os ciclos de atualização no repositório [BRAN-Org/.github](https://github.com/BRAN-Org/.github/blob/main/CALENDAR.md).
 
 ---
 
 <p align="center">
- Mantido pela <strong><a href="https://github.com/BRAN-Org">BRAN Org</a></strong> e <strong>{{INSTITUTION_NAME}}</strong>
+  Curadoria e Preservação Digital por <strong><a href="{{ORG_URL}}">BRAN Org</a></strong>
 </p>
-
