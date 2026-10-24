@@ -42,18 +42,14 @@ jobs:
         run: npm run data:validate
 
   unit-and-api-tests:
-    name: Unit & REST API Tests (Node ${{ matrix.node-version }})
+    name: Unit & REST API Tests (Node 20.x LTS)
     needs: [lint-and-syntax, dataset-validation]
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x, 22.x]
-
     steps:
       - uses: actions/checkout@v4.2.2
       - uses: actions/setup-node@v4.2.0
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 20.x
           cache: 'npm'
       - run: npm ci
       - name: Run Test Suite

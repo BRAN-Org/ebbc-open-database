@@ -4,3 +4,11 @@ node_modules/
 *.log
 npm-debug.log*
 .vercel
+
+# Raw archives and scraped binaries
+data/pdfs/
+data/raw/
+*.zip
+*.sqlite
+*.sqlite3
+*.tar.gz

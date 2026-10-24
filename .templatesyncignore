@@ -3,7 +3,8 @@
 data/
 config/dataset.config.json
 README.md
-
-CHANGELOG.md
+package.json
+provenance.json
+.zenodo.json
 CITATION.cff
-mock/
+CHANGELOG.md
