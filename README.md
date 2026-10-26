@@ -1,7 +1,7 @@
 # EBBC Open Data - Acervo Histórico e Curadoria Metodológica
 
 <p align="center">
-  <a href="https://doi.org/10.5281/zenodo.23593513"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.23593513.svg" alt="Zenodo DOI"></a>
+  <a href="https://doi.org/10.5281/zenodo.23653261"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.23653261.svg" alt="Zenodo DOI"></a>
   <a href="#️-confiabilidade-e-governança"><img src="https://img.shields.io/badge/Confiabilidade-Fiel%20%C3%A0%20Fonte%20(Incompleto)-yellow?style=for-the-badge" alt="Confiabilidade"></a>
   <a href="https://www.go-fair.org/fair-principles/"><img src="https://img.shields.io/badge/FAIR-Compliant-green.svg?style=for-the-badge" alt="FAIR Principles"></a>
   <a href="https://www.budapestopenaccessinitiative.org/"><img src="https://img.shields.io/badge/BOAI-Signatory-orange.svg?style=for-the-badge" alt="BOAI Signatory"></a>
@@ -9,7 +9,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/Code_License-GPLv3-blue.svg?style=for-the-badge" alt="GPLv3"></a>
 </p>
 
-Base de dados aberta contendo todos os anais das edições do Encontro Brasileiro de Bibliometria e Cientometria (EBBC) de 2012 a 2024, com mapeamento detalhado de softwares, fontes de dados e etapas metodológicas aplicadas nas pesquisas cientométricas no Brasil.
+Base de dados aberta contendo todos os anais das edições do Encontro Brasileiro de Bibliometria e Cientometria (EBBC) de 2012 a 2026, com mapeamento detalhado de softwares, fontes de dados e etapas metodológicas aplicadas nas pesquisas cientométricas no Brasil.
 
 ---
 
@@ -17,14 +17,14 @@ Base de dados aberta contendo todos os anais das edições do Encontro Brasileir
 
 > [!NOTE]
 > **Status de Confiabilidade:** 🟡 **Fiel à Fonte (Cobertura Incompleta)**  
-> 📌 **Por que este acervo recebeu esta nota:** Todos os 643 artigos disponibilizados no portal oficial do evento (edições 3ª a 9ª, 2012–2024) foram catalogados com 100% de integridade e fidelidade aos dados públicos. A classificação amarela documenta lacunas na própria fonte primária original do evento — ausência de atribuição de DOIs na origem e anais das primeiras edições (1ª e 2ª edições) nunca digitalizados pela organização. Textos completos em processo de resgate documental independente.
+> 📌 **Por que este acervo recebeu esta nota:** Todos os 814 artigos disponibilizados no portal oficial do evento (edições 3ª a 10ª, 2012–2026) foram catalogados com 100% de integridade e fidelidade aos dados públicos. A classificação amarela documenta lacunas na própria fonte primária original do evento — ausência de atribuição de DOIs na origem e anais das primeiras edições (1ª e 2ª edições) nunca digitalizados pela organização. Textos completos em processo de resgate documental independente.
 
 | Métrica / Atributo | Detalhes do Acervo |
 | :--- | :--- |
 | **Confiabilidade dos Dados** | 🟡 **Fiel à Fonte (Cobertura Incompleta)** ([Ver critérios e auditoria](#️-confiabilidade-e-governança)) |
-| **Período Histórico** | 2012–2024 (Edições 3ª a 9ª) |
-| **Total de Artigos** | **643 trabalhos científicos catalogados** |
-| **Textos Completos (PDF)** | 643 artigos catalogados (textos completos em processo de resgate documental) |
+| **Período Histórico** | 2012–2026 (Edições 3ª a 10ª) |
+| **Total de Artigos** | **814 trabalhos científicos catalogados** |
+| **Textos Completos (PDF)** | 814 artigos catalogados (textos completos em processo de resgate documental) |
 | **Formatos Estruturados** | SQLite3 (`.sqlite`), CSV UTF-8 BOM, JSON, BibTeX (`.bib`), RIS (`.ris`) |
 | **Curadoria & Proveniência** | Curadoria independente com integridade criptográfica (hash SHA-256) pela [BRAN Org](https://github.com/BRAN-Org) |
 | **Licença dos Dados** | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) (Uso acadêmico/não-comercial; vedada ingestão para IA comercial) |
@@ -36,13 +36,13 @@ Base de dados aberta contendo todos os anais das edições do Encontro Brasileir
 
 Todo o acervo bruto, o banco relacional completo e os arquivos individuais estão arquivados permanentemente no **CERN / Zenodo** sob DOI imutável. Você pode baixar todos os arquivos de uma só vez:
 
-- 🔗 **Registro Permanente**: [https://doi.org/10.5281/zenodo.23593513](https://doi.org/10.5281/zenodo.23593513)
+- 🔗 **Registro Permanente**: [https://doi.org/10.5281/zenodo.23653261](https://doi.org/10.5281/zenodo.23653261)
 - 📥 **Pacote Consolidado (.zip)**: Inclui o banco relacional SQLite3 (`ebbc_articles.sqlite`), planilhas CSV consolidadas (`ebbc_articles.csv`), metadados estruturados JSON, arquivos de referência BibTeX/RIS e a coleção de PDFs em texto completo.
 
 ### Download direto via terminal (cURL / Wget)
 ```bash
 # Baixar o pacote completo do Zenodo
-curl -LO "https://zenodo.org/records/23593513/files/ebbc-open-database-zenodo.zip"
+curl -LO "https://zenodo.org/records/23653261/files/ebbc-open-database-zenodo.zip"
 unzip ebbc-open-database-zenodo.zip
 ```
 
@@ -111,14 +111,14 @@ Se você utilizar estes dados em pesquisas acadêmicas, teses ou softwares, por 
   title        = {EBBC Open Data - Acervo Histórico e Curadoria Metodológica},
   year         = {2026},
   howpublished = {Zenodo},
-  doi          = {10.5281/zenodo.23593513},
-  url          = {https://doi.org/10.5281/zenodo.23593513},
+  doi          = {10.5281/zenodo.23653261},
+  url          = {https://doi.org/10.5281/zenodo.23653261},
   note         = {Base de dados bibliométrica aberta curada pela Brazilian Research Archive Network}
 }
 ```
 
 **ABNT:**
-> BRAN ORG. **EBBC Open Data - Acervo Histórico e Curadoria Metodológica**. Genebra: CERN / Zenodo, 2026. DOI: 10.5281/zenodo.23593513. Disponível em: &lt;https://doi.org/10.5281/zenodo.23593513&gt;.
+> BRAN ORG. **EBBC Open Data - Acervo Histórico e Curadoria Metodológica**. Genebra: CERN / Zenodo, 2026. DOI: 10.5281/zenodo.23653261. Disponível em: &lt;https://doi.org/10.5281/zenodo.23653261&gt;.
 
 ---
 

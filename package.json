@@ -1,6 +1,6 @@
 {
   "name": "ebbc-open-database",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "API REST pública e Dashboard interativo para o acervo histórico do Encontro Brasileiro de Bibliometria e Cientometria (EBBC) - BRAN Org.",
   "main": "server.js",
   "type": "module",

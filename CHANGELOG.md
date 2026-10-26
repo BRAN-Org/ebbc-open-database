@@ -4,6 +4,20 @@ Registro de versões, auditorias e atualizações da base de dados do **Encontro
 
 ---
 
+## [1.6.0] - 2026-10-25 (Ingestão dos Anais do EBBC 10 2026 - UFPR & Expansão do Acervo)
+
+### Base de Dados & Coleta (Data/Feat)
+- **Ingestão Completa da 10ª Edição (EBBC 2026)**: Extração e catalogação de 171 novos trabalhos científicos apresentados na Universidade Federal do Paraná (UFPR).
+- **Expansão do Acervo Canônico**: Acervo ampliado de 643 para **814 artigos científicos** (período histórico 2012–2026, cobrindo as edições 3ª a 10ª).
+- **Curadoria Cientométrica Automatizada**: Identificação e mapeamento sistemático de softwares (VOSviewer, Bibliometrix, CiteSpace, Gephi, Python, R, Pajek), fontes de dados (SciELO, Web of Science, Scopus, Lattes, OpenAlex) e etapas metodológicas aplicadas.
+- **Harvester Robusto**: Atualização de `scripts/scrape_ebbc.py` com parser dedicado para Dublin Core e Google Scholar meta tags do portal OJS oficial.
+
+### Governança & Metadados (Chore/Docs)
+- **Atualização de Schemas e Proveniência**: Recálculo criptográfico de integridade (`provenance.json` com novo hash SHA-256 e 814 registros).
+- **Metadados de Publicação**: Sincronização de `.zenodo.json`, `CITATION.cff` e `config/dataset.config.json` para refletir a nova cobertura temporal e volumetria.
+
+---
+
 ## [1.5.0] - 2026-09-18 (Formatos de Intercâmbio Bibliográfico: BibTeX e RIS)
 
 ### Novas Funcionalidades (Feat)
