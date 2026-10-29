@@ -8,3 +8,4 @@ provenance.json
 .zenodo.json
 CITATION.cff
 CHANGELOG.md
+mock/
