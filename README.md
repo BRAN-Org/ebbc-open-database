@@ -2,46 +2,41 @@
 
 <p align="center">
   <a href="https://doi.org/10.5281/zenodo.23653261"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.23653261.svg" alt="Zenodo DOI"></a>
-  <a href="#️-confiabilidade-e-governança"><img src="https://img.shields.io/badge/Confiabilidade-Fiel%20%C3%A0%20Fonte%20(Incompleto)-yellow?style=for-the-badge" alt="Confiabilidade"></a>
-  <a href="https://www.go-fair.org/fair-principles/"><img src="https://img.shields.io/badge/FAIR-Compliant-green.svg?style=for-the-badge" alt="FAIR Principles"></a>
-  <a href="https://www.budapestopenaccessinitiative.org/"><img src="https://img.shields.io/badge/BOAI-Signatory-orange.svg?style=for-the-badge" alt="BOAI Signatory"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/Data_License-CC_BY--NC--SA_4.0-lightgrey.svg?style=for-the-badge" alt="CC BY-NC-SA 4.0"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/Code_License-GPLv3-blue.svg?style=for-the-badge" alt="GPLv3"></a>
+  <a href="#-síntese-do-acervo--governança"><img src="https://img.shields.io/badge/Confiabilidade-Fiel%20%C3%A0%20Fonte%20(Incompleto)-yellow" alt="Confiabilidade"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/Licen%C3%A7a-CC_BY--NC--SA_4.0-lightgrey.svg" alt="CC BY-NC-SA 4.0"></a>
+  <a href="#-como-usar-os-dados"><img src="https://img.shields.io/badge/Formatos-SQLite_%7C_CSV_%7C_JSON-blue.svg" alt="Formatos"></a>
 </p>
 
-Base de dados aberta contendo todos os anais das edições do Encontro Brasileiro de Bibliometria e Cientometria (EBBC) de 2012 a 2026, com mapeamento detalhado de softwares, fontes de dados e etapas metodológicas aplicadas nas pesquisas cientométricas no Brasil.
+Base de dados aberta contendo todos os anais das edições do Encontro Brasileiro de Bibliometria e Cientometria (EBBC, 2012–2026), com mapeamento detalhado de softwares, fontes de dados e etapas metodológicas aplicadas nas pesquisas cientométricas no Brasil, disponibilizada sob princípios FAIR e BOAI.
 
 ---
 
-## 📊 Acervo em Números
+## 📊 Síntese do Acervo & Governança
 
 > [!NOTE]
 > **Status de Confiabilidade:** 🟡 **Fiel à Fonte (Cobertura Incompleta)**  
-> 📌 **Por que este acervo recebeu esta nota:** Todos os 814 artigos disponibilizados no portal oficial do evento (edições 3ª a 10ª, 2012–2026) foram catalogados com 100% de integridade e fidelidade aos dados públicos. A classificação amarela documenta lacunas na própria fonte primária original do evento — ausência de atribuição de DOIs na origem e anais das primeiras edições (1ª e 2ª edições) nunca digitalizados pela organização. Textos completos em processo de resgate documental independente.
+> 📌 **Diagnóstico Metodológico:** Todos os 814 artigos disponibilizados no portal oficial do evento (edições 3ª a 10ª, 2012–2026) foram catalogados com 100% de integridade e fidelidade aos dados públicos. A classificação amarela documenta lacunas na própria fonte primária original do evento — ausência de atribuição de DOIs na origem e anais das primeiras edições (1ª e 2ª edições) nunca digitalizados pela organização. Textos completos em processo de resgate documental independente.
 
 | Métrica / Atributo | Detalhes do Acervo |
 | :--- | :--- |
-| **Confiabilidade dos Dados** | 🟡 **Fiel à Fonte (Cobertura Incompleta)** ([Ver critérios e auditoria](#️-confiabilidade-e-governança)) |
 | **Período Histórico** | 2012–2026 (Edições 3ª a 10ª) |
-| **Total de Artigos** | **814 trabalhos científicos catalogados** |
+| **Total de Trabalhos** | **814 artigos científicos catalogados** |
 | **Textos Completos (PDF)** | 814 artigos catalogados (textos completos em processo de resgate documental) |
-| **Formatos Estruturados** | SQLite3 (`.sqlite`), CSV UTF-8 BOM, JSON, BibTeX (`.bib`), RIS (`.ris`) |
-| **Curadoria & Proveniência** | Curadoria independente com integridade criptográfica (hash SHA-256) pela [BRAN Org](https://github.com/BRAN-Org) |
-| **Licença dos Dados** | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) (Uso acadêmico/não-comercial; vedada ingestão para IA comercial) |
-| **Licença do Código** | [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.html) |
+| **Integridade Criptográfica** | Hash SHA-256 por arquivo e rastreabilidade estrita (`provenance.json`) |
+| **Formatos Disponíveis** | SQLite3 (`.sqlite`), CSV (UTF-8 BOM), JSON, BibTeX (`.bib`), RIS (`.ris`) |
+| **Licença dos Dados** | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) (Uso acadêmico; vedada ingestão por IA comercial) |
 
 ---
 
-## 📦 Onde Baixar (Pacote Completo no Zenodo)
+## 📥 Download do Pacote Consolidado
 
-Todo o acervo bruto, o banco relacional completo e os arquivos individuais estão arquivados permanentemente no **CERN / Zenodo** sob DOI imutável. Você pode baixar todos os arquivos de uma só vez:
+O acervo bruto, o banco relacional completo e os arquivos individuais estão arquivados permanentemente no **CERN / Zenodo** sob DOI imutável:
 
-- 🔗 **Registro Permanente**: [https://doi.org/10.5281/zenodo.23653261](https://doi.org/10.5281/zenodo.23653261)
-- 📥 **Pacote Consolidado (.zip)**: Inclui o banco relacional SQLite3 (`ebbc_articles.sqlite`), planilhas CSV consolidadas (`ebbc_articles.csv`), metadados estruturados JSON, arquivos de referência BibTeX/RIS e a coleção de PDFs em texto completo.
+- 🔗 **DOI Permanente:** [https://doi.org/10.5281/zenodo.23653261](https://doi.org/10.5281/zenodo.23653261)
+- 📦 **Conteúdo do .zip:** Banco SQLite3 (`ebbc_articles.sqlite`), planilhas CSV consolidadas (`ebbc_articles.csv`), metadados estruturados JSON, referências BibTeX/RIS e documentação de fontes/ferramentas.
 
-### Download direto via terminal (cURL / Wget)
 ```bash
-# Baixar o pacote completo do Zenodo
+# Download direto do pacote completo via terminal
 curl -LO "https://zenodo.org/records/23653261/files/ebbc-open-database-zenodo.zip"
 unzip ebbc-open-database-zenodo.zip
 ```
@@ -50,19 +45,16 @@ unzip ebbc-open-database-zenodo.zip
 
 ## ⚡ Como Usar os Dados
 
-### 1. Python (Pandas)
+### Python (Pandas)
 ```python
 import pandas as pd
 
-# Carregar o dataset estruturado
 df = pd.read_json("data/ebbc_articles.json")
-print(f"Total de registros: {len(df)}")
-print(df[["title", "year", "authors"]].head())
+print(f"Total: {len(df)} artigos | Período: {df['year'].min()} a {df['year'].max()}")
 ```
 
-### 2. SQLite3 (SQL direto no terminal)
+### SQLite3 (SQL no terminal)
 ```bash
-# Consultar distribuição temporal direto no banco relacional
 sqlite3 data/ebbc_articles.sqlite "SELECT year, COUNT(*) as total FROM articles GROUP BY year ORDER BY year;"
 ```
 
@@ -70,40 +62,20 @@ sqlite3 data/ebbc_articles.sqlite "SELECT year, COUNT(*) as total FROM articles 
 
 ## 🌐 API REST Pública
 
-O repositório fornece uma API REST de alta performance, gratuita e sem necessidade de chave de autenticação (API Key):
+Endpoints públicos e gratuitos (sem necessidade de chave de autenticação):
 
 | Método | Endpoint | Finalidade |
 | :--- | :--- | :--- |
-| `GET` | `/api/v1/articles` | Lista registros com busca textual global (`?q=`), filtros facetados (`?year=`, `?author=`), ordenação e paginação |
-| `GET` | `/api/v1/articles/:key` | Consulta individual exata por DOI ou ID do artigo |
-| `GET` | `/api/v1/articles/stats` | Estatísticas agregadas (rankings de autores, tópicos e evolução temporal) |
-| `GET` | `/api/v1/articles/export?format=csv` | Download instantâneo dos registros filtrados em **CSV (BOM UTF-8)** |
-| `GET` | `/api/v1/articles/export?format=bibtex` | Download das referências bibliográficas filtradas em **BibTeX** |
+| `GET` | `/api/v1/articles` | Busca textual (`?q=`), filtros facetados (`?year=`, `?author=`) e paginação |
+| `GET` | `/api/v1/articles/:key` | Consulta individual por ID ou DOI |
+| `GET` | `/api/v1/articles/stats` | Métricas consolidadas, rankings de ferramentas metodológicas e autores |
+| `GET` | `/api/v1/articles/export?format=csv` | Download instantâneo dos dados filtrados em CSV (BOM UTF-8) |
 
-### Exemplo de Requisição (cURL)
-```bash
-curl -s "http://localhost:3000/api/v1/articles?q=informacao&limit=5"
-```
-
----
-
-## 🚀 Como Executar o Portal Localmente
-
-Para rodar o portal interativo com gráficos dinâmicos, sandbox e explorador de artigos:
-
-```bash
-git clone https://github.com/BRAN-Org/ebbc-open-database.git
-cd ebbc-open-database
-npm install
-npm start
-```
-Acesse no navegador: `http://localhost:3000`
+> **Executar localmente:** `npm install && npm start` (disponível em `http://localhost:3000`).
 
 ---
 
 ## 📖 Como Citar Este Dataset
-
-Se você utilizar estes dados em pesquisas acadêmicas, teses ou softwares, por favor cite:
 
 ```bibtex
 @misc{ebbc_open_database_2026,
@@ -112,36 +84,9 @@ Se você utilizar estes dados em pesquisas acadêmicas, teses ou softwares, por 
   year         = {2026},
   howpublished = {Zenodo},
   doi          = {10.5281/zenodo.23653261},
-  url          = {https://doi.org/10.5281/zenodo.23653261},
-  note         = {Base de dados bibliométrica aberta curada pela Brazilian Research Archive Network}
+  url          = {https://doi.org/10.5281/zenodo.23653261}
 }
 ```
 
 **ABNT:**
 > BRAN ORG. **EBBC Open Data - Acervo Histórico e Curadoria Metodológica**. Genebra: CERN / Zenodo, 2026. DOI: 10.5281/zenodo.23653261. Disponível em: &lt;https://doi.org/10.5281/zenodo.23653261&gt;.
-
----
-
-## 🛡️ Confiabilidade e Governança
-
-<p align="center">
-  <a href="https://github.com/BRAN-Org/.github#níveis-de-confiabilidade-dos-dados">
-    <img src="https://img.shields.io/badge/Confiabilidade-Fiel%20%C3%A0%20Fonte%20(Incompleto)-yellow?style=for-the-badge" alt="Selo de Confiabilidade">
-  </a>
-</p>
-
-| Dimensão de Governança | Avaliação da Curadoria Independente |
-| :--- | :--- |
-| **Classificação Oficial** | 🟡 **Fiel à Fonte (Cobertura Incompleta)** |
-| **Diagnóstico Técnico (Por que recebeu esta nota)** | Todos os 643 artigos disponibilizados no portal oficial do evento (edições 3ª a 9ª, 2012–2024) foram catalogados com 100% de integridade e fidelidade aos dados públicos. A classificação amarela documenta lacunas na própria fonte primária original do evento — ausência de atribuição de DOIs na origem e anais das primeiras edições (1ª e 2ª edições) nunca digitalizados pela organização. Textos completos em processo de resgate documental independente. |
-| **Método de Auditoria** | Verificação independente com hash criptográfico SHA-256 por arquivo, conferência direta contra publicações originais e rastreabilidade estrita. |
-| **Ciclo de Atualização** | Acompanhe as revisões periódicas no repositório [BRAN-Org/.github](https://github.com/BRAN-Org/.github/blob/main/CALENDAR.md). |
-
-> [!IMPORTANT]
-> **Transparência da Curadoria:** A BRAN Org preserva a fidelidade estrita à fonte primária e não inventa dados ou metadados inexistentes. Lacunas ou inconsistências presentes na origem são documentadas tecnicamente para assegurar integridade em análises cienciométricas.
-
----
-
-<p align="center">
-  Curadoria e Preservação Digital por <strong><a href="https://github.com/BRAN-Org">BRAN Org</a></strong>
-</p>
