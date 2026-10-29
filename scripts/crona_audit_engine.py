@@ -419,7 +419,7 @@ def update_provenance_file(provenance_path, doi_summary, raw_data_sha256=None):
 
 def main():
     parser = argparse.ArgumentParser(description="CRONA Audit & DOI Engine")
-    parser.add_argument("--file", help="Caminho do arquivo JSON de dataset (ex: data/ebbc_articles.json)")
+    parser.add_argument("--file", nargs="*", help="Caminho do arquivo JSON de dataset (ex: data/ebbc_articles.json)")
     parser.add_argument("--provenance", help="Caminho do provenance.json")
     parser.add_argument("--schema", help="Caminho do schema JSON para validação")
     parser.add_argument("--sample", type=int, help="Número máximo de DOIs para testar")
@@ -431,10 +431,20 @@ def main():
 
     args = parser.parse_args()
 
-    if not args.file or not os.path.exists(args.file):
-        print(f"❌ Erro: Arquivo {args.file} inexistente.")
+    target_file = None
+    if args.file:
+        for f in args.file:
+            if "_articles.json" in f:
+                target_file = f
+                break
+        if not target_file:
+            target_file = args.file[0]
+
+    if not target_file or not os.path.exists(target_file):
+        print(f"❌ Erro: Arquivo {target_file} inexistente.")
         sys.exit(1)
 
+    args.file = target_file
     print(f"🚀 CRONA: Lendo dataset {args.file}...")
     try:
         with open(args.file, "r", encoding="utf-8") as f:
