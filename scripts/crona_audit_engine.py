@@ -57,6 +57,16 @@ def resolve_doi(raw_doi, timeout=12, max_retries=2):
     Testa se um DOI resolve na DOI Foundation (https://doi.org/<doi>)
     ou na API da CrossRef.
     """
+    if not raw_doi or not isinstance(raw_doi, str) or raw_doi.strip().upper() in ("", "N/A", "NONE", "NULL"):
+        return {
+            "doi": raw_doi,
+            "clean_doi": None,
+            "status": "NO_DOI",
+            "http_code": None,
+            "target_url": None,
+            "error": "Sem DOI na fonte original"
+        }
+
     clean_doi = extract_clean_doi(raw_doi)
     if not clean_doi:
         return {
@@ -65,7 +75,7 @@ def resolve_doi(raw_doi, timeout=12, max_retries=2):
             "status": "INVALID_FORMAT",
             "http_code": None,
             "target_url": None,
-            "error": "Formato de DOI não reconhecido ou ausente"
+            "error": f"Sintaxe de DOI inválida ('{raw_doi}' não segue o padrão 10.xxxx/...)"
         }
 
     doi_url = f"https://doi.org/{clean_doi}"
@@ -243,61 +253,94 @@ def validate_json_schema_detailed(data, schema_path, raw_lines=None, rel_path=""
 
 
 def audit_dataset_dois(records, max_workers=6, sample_limit=None):
-    """Testa uma lista de artigos/registros contendo DOIs."""
-    if sample_limit and sample_limit < len(records):
-        records_to_check = records[:sample_limit]
-    else:
-        records_to_check = records
+    """
+    Testa uma lista de artigos/registros contendo DOIs.
+    Distingue estritamente entre:
+    1. Artigos com DOI atribuído (que devem ser testados na DOI Foundation/CrossRef).
+    2. Artigos sem DOI na fonte original (acervo histórico pré-DOI ou não indexado).
+    """
+    total_records = len(records)
+    records_with_doi = []
+    records_without_doi = []
 
-    total = len(records_to_check)
+    for r in records:
+        raw_doi = r.get("doi")
+        if raw_doi and isinstance(raw_doi, str) and raw_doi.strip() and raw_doi.strip().upper() not in ("N/A", "NONE", "NULL"):
+            records_with_doi.append(r)
+        else:
+            records_without_doi.append(r)
+
+    total_with_doi = len(records_with_doi)
+    no_doi_count = len(records_without_doi)
+    no_doi_with_link_count = sum(1 for r in records_without_doi if r.get("url") or r.get("pdf_url"))
+
+    if sample_limit and sample_limit < total_with_doi:
+        records_to_check = records_with_doi[:sample_limit]
+    else:
+        records_to_check = records_with_doi
+
+    total_checked = len(records_to_check)
     valid_count = 0
     broken_count = 0
     invalid_format_count = 0
     results = []
 
-    print(f"🔬 CRONA: Iniciando checagem de {total} DOIs (concorrência={max_workers})...")
+    if total_checked > 0:
+        print(f"🔬 CRONA: Iniciando checagem de {total_checked} DOIs ativos (de {total_with_doi} registros com DOI, concorrência={max_workers})...")
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            future_to_record = {
+                executor.submit(resolve_doi, rec.get("doi")): rec
+                for rec in records_to_check
+            }
 
-    with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        future_to_record = {
-            executor.submit(resolve_doi, rec.get("doi")): rec
-            for rec in records_to_check
-        }
+            for future in as_completed(future_to_record):
+                rec = future_to_record[future]
+                try:
+                    res = future.result()
+                except Exception as exc:
+                    res = {
+                        "doi": rec.get("doi"),
+                        "clean_doi": None,
+                        "status": "EXCEPTION",
+                        "http_code": None,
+                        "target_url": None,
+                        "error": str(exc)
+                    }
 
-        for future in as_completed(future_to_record):
-            rec = future_to_record[future]
-            try:
-                res = future.result()
-            except Exception as exc:
-                res = {
-                    "doi": rec.get("doi"),
-                    "clean_doi": None,
-                    "status": "EXCEPTION",
-                    "http_code": None,
-                    "target_url": None,
-                    "error": str(exc)
-                }
+                res["title"] = rec.get("title", "Sem título")
+                res["year"] = rec.get("year") or rec.get("publication_year")
+                res["url"] = rec.get("url")
+                res["pdf_url"] = rec.get("pdf_url")
+                results.append(res)
 
-            res["title"] = rec.get("title", "Sem título")
-            res["year"] = rec.get("year") or rec.get("publication_year")
-            results.append(res)
+                if res["status"] == "VALID":
+                    valid_count += 1
+                elif res["status"] == "INVALID_FORMAT":
+                    invalid_format_count += 1
+                    broken_count += 1
+                else:
+                    broken_count += 1
+    else:
+        print(f"ℹ️  CRONA: Nenhum registro com DOI para checagem de rede ({no_doi_count} registros históricos sem DOI na fonte original).")
 
-            if res["status"] == "VALID":
-                valid_count += 1
-            elif res["status"] == "INVALID_FORMAT":
-                invalid_format_count += 1
-                broken_count += 1
-            else:
-                broken_count += 1
+    if total_checked > 0:
+        resolution_rate = round(valid_count / total_checked, 4)
+    else:
+        resolution_rate = 1.0
 
-    resolution_rate = round(valid_count / total, 4) if total > 0 else 1.0
+    broken_items = [r for r in results if r["status"] not in ("VALID", "NO_DOI")]
 
     return {
-        "total_checked": total,
+        "total_records": total_records,
+        "total_with_doi": total_with_doi,
+        "no_doi_count": no_doi_count,
+        "no_doi_with_link_count": no_doi_with_link_count,
+        "total_checked": total_checked,
         "valid_count": valid_count,
         "broken_count": broken_count,
         "invalid_format_count": invalid_format_count,
         "resolution_rate": resolution_rate,
-        "broken_items": [r for r in results if r["status"] != "VALID"],
+        "broken_items": broken_items,
         "results": results
     }
 
@@ -306,7 +349,9 @@ def generate_pr_markdown_report(schema_status, doi_summary, file_path):
     """Gera o relatório formatado em Markdown com marcador sticky para o bot CRONA."""
     schema_valid = schema_status["valid"]
     dois_clean = doi_summary["broken_count"] == 0
-    
+    total_with_doi = doi_summary.get("total_with_doi", 0)
+    no_doi_count = doi_summary.get("no_doi_count", 0)
+
     if schema_valid and dois_clean:
         badge = "🟢 **APROVADO PELA CRONA (100% ÍNTEGRO)**"
     elif schema_valid and not dois_clean:
@@ -314,18 +359,26 @@ def generate_pr_markdown_report(schema_status, doi_summary, file_path):
     else:
         badge = "🔴 **REPROVADO PELA CRONA (ESQUEMA INVÁLIDO)**"
 
+    if total_with_doi > 0:
+        res_rate_str = f"`{doi_summary['resolution_rate'] * 100:.1f}%`"
+    else:
+        res_rate_str = "`N/A` *(Acervo histórico original sem emissão de DOIs)*"
+
     lines = [
         STICKY_MARKER,
         "### 🤖 Painel de Integridade de Dados — CRONA Bot",
         f"**Arquivo Auditado:** `{file_path}`",
         f"**Decisão da Revisão:** {badge}\n",
-        "| Métrica de Auditoria | Status / Valor |",
-        "| :--- | :--- |",
-        f"| **Conformidade Estrutural (Schema JSON)** | {'✅ Válido' if schema_valid else '❌ Inconsistente'} |",
-        f"| **Total de DOIs Verificados** | `{doi_summary['total_checked']}` |",
-        f"| **DOIs Ativos e Resolvidos (200 OK)** | `{doi_summary['valid_count']}` |",
-        f"| **DOIs Mortos / Inacessíveis** | `{doi_summary['broken_count']}` |",
-        f"| **Taxa de Integridade de Links** | `{doi_summary['resolution_rate'] * 100:.1f}%` |\n"
+        "| Métrica de Auditoria | Status / Valor | Detalhes |",
+        "| :--- | :--- | :--- |",
+        f"| **Conformidade Estrutural (Schema JSON)** | {'✅ Válido' if schema_valid else '❌ Inconsistente'} | {schema_status.get('message', '')} |",
+        f"| **Total de Artigos Catalogados** | `{doi_summary.get('total_records', doi_summary['total_checked'])}` | Total de registros |",
+        f"| **Artigos com DOI Declarado** | `{total_with_doi}` | Identificadores persistentes |",
+        f"| **Artigos sem DOI (Original de Época)** | `{no_doi_count}` | {doi_summary.get('no_doi_with_link_count', 0)} com links HTML/PDF preservados |",
+        f"| **DOIs Verificados em Rede** | `{doi_summary['total_checked']}` | Resolução via DOI Foundation / CrossRef |",
+        f"| **DOIs Ativos e Resolvidos (200 OK)** | `{doi_summary['valid_count']}` | Links primários funcionais |",
+        f"| **DOIs Mortos / Inacessíveis (404/500)** | `{doi_summary['broken_count']}` | Falhas de resolução na fonte |",
+        f"| **Taxa de Resolução de DOIs Existentes** | {res_rate_str} | Baseado nos DOIs atribuídos |\n"
     ]
 
     if not schema_valid:
@@ -343,6 +396,8 @@ def generate_pr_markdown_report(schema_status, doi_summary, file_path):
         if len(doi_summary["broken_items"]) > 25:
             lines.append(f"\n*(Mostrando 25 de {len(doi_summary['broken_items'])} links mortos na fonte)*")
         lines.append("\n> **Nota Científica:** Links mortos na fonte primária são documentados sem impedir o merge.")
+    elif no_doi_count > 0:
+        lines.append(f"> ℹ️ **Nota de Preservação:** Este acervo contém `{no_doi_count}` artigos históricos publicados originalmente sem atribuição de DOI pela editora/evento. Os links diretos e textos completos foram preservados.")
 
     lines.append("\n---")
     lines.append("*Auditoria automatizada por **CRONA Bot** (@crona-bot) da BRAN Org.*")
