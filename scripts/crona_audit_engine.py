@@ -242,7 +242,7 @@ def validate_json_schema_detailed(data, schema_path, raw_lines=None, rel_path=""
             inline_comments.append({
                 "path": rel_path,
                 "line": line_no,
-                "body": f"🤖 **CRONA (Erro de Schema)**: Inconsistência no campo `{path_str}`: {err.message}"
+                "body": f"Inconsistência no campo `{path_str}`: {err.message}"
             })
 
         summary_msg = f"{len(errors)} inconsistência(s) de schema encontrada(s)."
@@ -353,11 +353,14 @@ def generate_pr_markdown_report(schema_status, doi_summary, file_path):
     no_doi_count = doi_summary.get("no_doi_count", 0)
 
     if schema_valid and dois_clean:
-        badge = "🟢 **APROVADO PELA CRONA (100% ÍNTEGRO)**"
+        badge = "🟢 **Aprovado (100% íntegro — tudo pronto pro merge)**"
+        voice_quote = "Dei uma olhada em tudo... tá tudo no lugar e sem erros. Tudo pronto pro merge."
     elif schema_valid and not dois_clean:
-        badge = "🟡 **APROVADO COM RESSALVAS DE LINKS (DOIs INATIVOS NA ORIGEM)**"
+        badge = "🟡 **Aprovado com ressalvas (links inativos na fonte original)**"
+        voice_quote = "O schema tá certo, mas encontrei alguns links que não tão respondendo na fonte... listei abaixo pra conferência."
     else:
-        badge = "🔴 **REPROVADO PELA CRONA (ESQUEMA INVÁLIDO)**"
+        badge = "🔴 **Ajustes necessários (inconsistências de schema)**"
+        voice_quote = "Encontrei coisas fora do lugar... não sei lidar muito bem com erro de schema, dá uma olhada nas linhas marcadas pra gente arrumar."
 
     if total_with_doi > 0:
         res_rate_str = f"`{doi_summary['resolution_rate'] * 100:.1f}%`"
@@ -366,9 +369,10 @@ def generate_pr_markdown_report(schema_status, doi_summary, file_path):
 
     lines = [
         STICKY_MARKER,
-        "### 🤖 Painel de Integridade de Dados — CRONA Bot",
-        f"**Arquivo Auditado:** `{file_path}`",
-        f"**Decisão da Revisão:** {badge}\n",
+        "### Integridade e Validação do Acervo\n",
+        f"> *\"{voice_quote}\"*\n",
+        f"**Arquivo auditado:** `{file_path}`  ",
+        f"**Status da revisão:** {badge}\n",
         "| Métrica de Auditoria | Status / Valor | Detalhes |",
         "| :--- | :--- | :--- |",
         f"| **Conformidade Estrutural (Schema JSON)** | {'✅ Válido' if schema_valid else '❌ Inconsistente'} | {schema_status.get('message', '')} |",
@@ -382,12 +386,12 @@ def generate_pr_markdown_report(schema_status, doi_summary, file_path):
     ]
 
     if not schema_valid:
-        lines.append("#### ❌ Inconsistências de Schema Detectadas")
+        lines.append("#### Inconsistências de Schema")
         lines.append(f"> {schema_status['message']}")
-        lines.append("> *A CRONA inseriu comentários inline nas linhas do arquivo indicando os nós com erro.*\n")
+        lines.append("> *Comentários foram inseridos nas linhas correspondentes com detalhes do erro.*\n")
 
     if doi_summary["broken_items"]:
-        lines.append("#### 🔍 DOIs Não Resolvidos (Informativo / Soft Fail)")
+        lines.append("#### DOIs Não Resolvidos na Fonte (Informativo / Soft Fail)")
         lines.append("| Ano | DOI | Erro / Resposta HTTP | Título |")
         lines.append("| :--- | :--- | :--- | :--- |")
         for item in doi_summary["broken_items"][:25]:
@@ -395,36 +399,33 @@ def generate_pr_markdown_report(schema_status, doi_summary, file_path):
             lines.append(f"| {item.get('year') or '-'} | `{item.get('doi')}` | `{item.get('error') or item.get('status')}` | {title_clean} |")
         if len(doi_summary["broken_items"]) > 25:
             lines.append(f"\n*(Mostrando 25 de {len(doi_summary['broken_items'])} links mortos na fonte)*")
-        lines.append("\n> **Nota Científica:** Links mortos na fonte primária são documentados sem impedir o merge.")
+        lines.append("\n> **Nota:** Links mortos na fonte primária são documentados sem impedir o merge.")
     elif no_doi_count > 0:
-        lines.append(f"> ℹ️ **Nota de Preservação:** Este acervo contém `{no_doi_count}` artigos históricos publicados originalmente sem atribuição de DOI pela editora/evento. Os links diretos e textos completos foram preservados.")
+        lines.append(f"> **Nota de Preservação:** Este acervo contém `{no_doi_count}` artigos históricos publicados originalmente sem atribuição de DOI pela editora/evento. Os links diretos e textos completos foram preservados.")
 
-    lines.append("\n---")
-    lines.append("*Auditoria automatizada por **CRONA Bot** (@crona-bot) da BRAN Org.*")
     return "\n".join(lines)
 
 
 def generate_fatal_error_report(file_path, err_msg):
-    """Gera relatório crítico quando o arquivo JSON nem sequer parseia (Nível 1)."""
+    """Gera relatório quando o arquivo JSON nem sequer parseia (Nível 1)."""
     return f"""{STICKY_MARKER}
-### 🚨 Falha Crítica de Sintaxe JSON — CRONA Bot
+### Erro de Sintaxe JSON
 
-**Arquivo Auditado:** `{file_path}`  
-**Decisão:** ❌ **CANCELAMENTO DE PIPELINE (ARQUIVO CORROMPIDO)**
+> *"Não consegui ler o arquivo... tem algo quebrado na sintaxe e eu não sei lidar com isso."*
 
-O arquivo de dados não pôde ser interpretado pelo parser JSON da CRONA devido a um erro de sintaxe fundamental:
+**Arquivo auditado:** `{file_path}`  
+**Status:** ❌ **Arquivo corrompido ou mal formatado**
+
+O parser JSON não conseguiu ler o arquivo:
 
 ```text
 {err_msg}
 ```
 
-#### 🛠️ O que fazer:
-1. Verifique se não há vírgulas sobrando, aspas não fechadas ou chaves ausentes.
-2. Valide o arquivo localmente com `python3 -m json.tool {file_path}` ou linter JSON.
-3. Envie um novo commit nesta branch para reativar a auditoria automática.
-
----
-*Pipeline interrompido preventivamente por **CRONA Bot** (@crona-bot).*
+#### Como corrigir:
+1. Verifique se há vírgulas extras, aspas abertas ou chaves desbalanceadas.
+2. Valide localmente com `python3 -m json.tool {file_path}` ou um linter JSON.
+3. Suba um novo commit na branch para reexecutar a checagem.
 """
 
 
@@ -582,7 +583,7 @@ def main():
         }
         with open(args.output_review, "w", encoding="utf-8") as f:
             json.dump(review_payload, f, indent=2, ensure_ascii=False)
-        print(f"🔍 Review Payload salvo em {args.output_review} (Decisão: {review_event})")
+        print(f"Review Payload salvo em {args.output_review} (Decisão: {review_event})")
 
     # RELATÓRIO JSON GERAL
     if args.output_json:
