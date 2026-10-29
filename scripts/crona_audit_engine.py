@@ -416,17 +416,17 @@ def generate_pr_markdown_report(schema_status, doi_summary, file_path):
 
     if schema_valid and dois_clean and orphans_clean:
         badge = "🟢 **Aprovado (100% íntegro — tudo pronto pro merge)**"
-        voice_quote = "Tudo em ordem com o fluxo temporal! Nenhum paradoxo encontrado, pode dar merge."
+        voice_quote = "Dei uma olhada nos dados e na linha temporal... tudo em ordem e sem anomalias. Tudo pronto pro merge."
     elif schema_valid and (not dois_clean or not orphans_clean):
         if not orphans_clean:
             badge = "🟡 **Aprovado com ressalvas (artigos sem identificador detectados)**"
-            voice_quote = "O schema tá válido, mas encontrei artigos sem identificador... cuidado pra não perder a rastreabilidade da linha do tempo!"
+            voice_quote = "O schema tá válido, mas encontrei registros sem identificador único... precisamos ajustar pra não perder a rastreabilidade."
         else:
             badge = "🟡 **Aprovado com ressalvas (links inativos na fonte original)**"
-            voice_quote = "O schema tá limpo, mas encontrei alguns links que não tão respondendo na fonte... listei abaixo pra não nos perdermos no tempo."
+            voice_quote = "O schema tá íntegro, mas encontrei alguns links inativos na fonte original... listei abaixo para conferência."
     else:
         badge = "🔴 **Ajustes necessários (inconsistências de schema)**"
-        voice_quote = "Detectei uma anomalia temporal no schema! Tem dados fora do lugar, dá uma olhada nas linhas marcadas pra gente ajustar."
+        voice_quote = "Detectei anomalias no schema nas linhas marcadas... dá uma olhada nos comentários inline pra gente ajustar."
 
     if total_with_doi > 0:
         res_rate_str = f"`{doi_summary['resolution_rate'] * 100:.1f}%` ({doi_summary['valid_count']}/{doi_summary['total_checked']})"
@@ -479,7 +479,7 @@ def generate_fatal_error_report(file_path, err_msg):
     return f"""{STICKY_MARKER}
 ### Erro de Sintaxe JSON
 
-> *"Paradoxo temporal crítico! O arquivo tá corrompido e nem a Revoada Bronze conseguiu ler essa sintaxe."*
+> *"Erro crítico na leitura do arquivo... a sintaxe JSON está corrompida. Corrija a formatação para prosseguir com a auditoria."*
 
 **Arquivo auditado:** `{file_path}`  
 **Status:** ❌ **Arquivo corrompido ou mal formatado**
@@ -493,7 +493,7 @@ O parser JSON não conseguiu ler o arquivo:
 #### Como corrigir:
 1. Verifique se há vírgulas extras, aspas abertas ou chaves desbalanceadas.
 2. Valide localmente com `python3 -m json.tool {file_path}` ou um linter JSON.
-3. Suba um novo commit na branch para restabelecer a linha do tempo.
+3. Suba um novo commit na branch para atualizar o PR.
 """
 
 
