@@ -14,6 +14,7 @@
     "data:convert": "node scripts/convert_csv_to_json.js",
     "data:validate": "node scripts/validate_dataset.js",
     "data:audit": "python3 scripts/crona_audit_engine.py --file data/*.json --schema schemas/article.v1.schema.json",
+    "data:bundle": "python3 scripts/crona_zenodo_sync.py",
     "init:event": "node scripts/init_event.js"
   },
   "keywords": [

@@ -13,7 +13,14 @@ on:
       - 'data/**'
       - 'provenance.json'
       - 'schemas/**'
+  release:
+    types: [ published ]
   workflow_dispatch:
+    inputs:
+      sync_zenodo:
+        description: 'Sincronizar com Zenodo'
+        type: boolean
+        default: false
 
 jobs:
   crona-guard:
@@ -21,6 +28,8 @@ jobs:
     with:
       data_file: 'data/ebbc_articles.json'
       sample_size: 25
+      sync_zenodo: ${{ inputs.sync_zenodo || false }}
     secrets:
       CRONA_APP_ID: ${{ secrets.CRONA_APP_ID }}
       CRONA_PRIVATE_KEY: ${{ secrets.CRONA_PRIVATE_KEY }}
+      ZENODO_TOKEN: ${{ secrets.ZENODO_TOKEN }}
