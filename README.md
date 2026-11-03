@@ -2,6 +2,8 @@
 
 <p align="center">
   <a href="https://doi.org/10.5281/zenodo.23653261"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.23653261.svg" alt="Zenodo DOI"></a>
+  <a href="provenance.json"><img src="https://img.shields.io/badge/Identifica%C3%A7%C3%A3o-100%25-brightgreen.svg" alt="Identificação"></a>
+  <a href="schemas/article.v1.schema.json"><img src="https://img.shields.io/badge/Schema-article.v1-blue.svg" alt="Schema"></a>
   <a href="#-síntese-do-acervo--governança"><img src="https://img.shields.io/badge/Confiabilidade-Fiel%20%C3%A0%20Fonte%20(Incompleto)-yellow" alt="Confiabilidade"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/Licen%C3%A7a-CC_BY--NC--SA_4.0-lightgrey.svg" alt="CC BY-NC-SA 4.0"></a>
   <a href="#-como-usar-os-dados"><img src="https://img.shields.io/badge/Formatos-SQLite_%7C_CSV_%7C_JSON-blue.svg" alt="Formatos"></a>
