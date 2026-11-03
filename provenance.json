@@ -10,11 +10,11 @@
   "missing_doi_count": 0,
   "missing_abstract_count": 0,
   "notes": "Acervo de anais e conferências EBBC (2012-2026, edições 3ª a 10ª) resgatados e padronizados no formato BRAN Org v1. Classificação Amarela (100% Fiel à Fonte com Limitações da Origem) devida à ausência nativa dos primeiros anais históricos não digitalizados online pela organização original.",
-  "doi_resolution_rate": 0.0,
+  "doi_resolution_rate": 0.3796,
   "global_identification_rate": 1.0,
   "identifiers_breakdown": {
-    "DOI_RESOLVED": 0,
-    "DOI_UNRESOLVED": 10,
+    "DOI_RESOLVED": 309,
+    "DOI_UNRESOLVED": 505,
     "OJS_INTERNAL_ID": 0,
     "CANONICAL_SLUG": 0,
     "HANDLE_SYSTEM": 0,
@@ -23,7 +23,7 @@
     "PERMALINK_URI": 0,
     "ORPHAN_UNIDENTIFIED": 0
   },
-  "last_audit_at": "2026-11-03T09:29:07.379172+00:00",
+  "last_audit_at": "2026-11-03T09:32:48.715466+00:00",
   "audit_history": [
     {
       "timestamp": "2026-11-03T09:29:07.379172+00:00",
@@ -37,6 +37,27 @@
       "identifiers_breakdown": {
         "DOI_RESOLVED": 0,
         "DOI_UNRESOLVED": 10,
+        "OJS_INTERNAL_ID": 0,
+        "CANONICAL_SLUG": 0,
+        "HANDLE_SYSTEM": 0,
+        "UUID_IDENTIFIER": 0,
+        "CONTENT_HASH": 0,
+        "PERMALINK_URI": 0,
+        "ORPHAN_UNIDENTIFIED": 0
+      }
+    },
+    {
+      "timestamp": "2026-11-03T09:32:48.715466+00:00",
+      "auditor": "crona-bot[bot]",
+      "total_records": 814,
+      "total_checked": 814,
+      "valid_count": 309,
+      "broken_count": 505,
+      "resolution_rate": 0.3796,
+      "global_identification_rate": 1.0,
+      "identifiers_breakdown": {
+        "DOI_RESOLVED": 309,
+        "DOI_UNRESOLVED": 505,
         "OJS_INTERNAL_ID": 0,
         "CANONICAL_SLUG": 0,
         "HANDLE_SYSTEM": 0,
