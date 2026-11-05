@@ -64,14 +64,38 @@ sqlite3 data/ebbc_articles.sqlite "SELECT year, COUNT(*) as total FROM articles 
 
 ## 🌐 API REST Pública
 
-Endpoints públicos e gratuitos (sem necessidade de chave de autenticação):
+Endpoints públicos e gratuitos (sem necessidade de chave de autenticação), servidos com alta disponibilidade e CORS global habilitado:
+
+- 🔗 **URL Base em Produção:** `https://ebbc-open-database.vercel.app/api/v1`
+- 📑 **Guia Técnico Completo:** Consulte o [Guia Detalhado da API (docs/API.md)](docs/API.md) com parâmetros, schemas e receitas.
+- 📋 **Especificação OpenAPI 3.0:** [`/api/v1/openapi.json`](https://ebbc-open-database.vercel.app/api/v1/openapi.json) (compatível com Swagger, Postman e Insomnia).
 
 | Método | Endpoint | Finalidade |
 | :--- | :--- | :--- |
-| `GET` | `/api/v1/articles` | Busca textual (`?q=`), filtros facetados (`?year=`, `?author=`) e paginação |
-| `GET` | `/api/v1/articles/:key` | Consulta individual por ID ou DOI |
-| `GET` | `/api/v1/articles/stats` | Métricas consolidadas, rankings de ferramentas metodológicas e autores |
-| `GET` | `/api/v1/articles/export?format=csv` | Download instantâneo dos dados filtrados em CSV (BOM UTF-8) |
+| `GET` | `/api/v1/articles` | Busca textual (`?q=`), filtros facetados (`?year=`, `?author=`, `?tool=`), ordenação e paginação |
+| `GET` | `/api/v1/articles/:key` | Consulta individual por ID canônico (`ebbc-2022-441`) ou DOI (`10.22477.01`) |
+| `GET` | `/api/v1/articles/export` | Download do acervo completo ou filtrado em **JSON**, **CSV** (BOM UTF-8), **BibTeX** (`.bib`) ou **RIS** (`.ris`) |
+| `GET` | `/api/v1/articles/stats` | Métricas consolidadas, rankings de softwares, fontes bibliográficas e autores |
+| `GET` | `/api/v1/articles/stats/correlations` | Matriz de coocorrência 2D entre metadados curados (ideal para redes e heatmaps) |
+| `GET` | `/api/v1/articles/stats/temporal` | Séries temporais normalizadas ano a ano para visualizações 100% empilhadas |
+| `GET` | `/api/v1/articles/stats/pareto` | Frequências e percentuais acumulados para testes de Bradford e Pareto |
+| `GET` | `/api/v1/articles/stats/scatter` | Coordenadas de dispersão e coeficientes da reta de regressão linear |
+| `GET` | `/api/v1/config` | Configuração estruturada do acervo, esquemas de busca e metadados institucionais |
+| `GET` | `/api/v1/openapi.json` | Contrato formal OpenAPI 3.0.3 machine-readable |
+
+### Ingestão Rápida em Python (Pandas)
+```python
+import pandas as pd
+df = pd.read_json("https://ebbc-open-database.vercel.app/api/v1/articles/export?format=json")
+print(f"Total: {len(df)} artigos | PDFs diretos: {df['pdf_url'].notna().sum()}/{len(df)}")
+```
+
+### Ingestão em R para Bibliometria (Bibliometrix)
+```R
+download.file("https://ebbc-open-database.vercel.app/api/v1/articles/export?format=ris", destfile = "ebbc.ris")
+library(bibliometrix)
+df <- convert2df("ebbc.ris", dbsource = "isi", format = "ris")
+```
 
 > **Executar localmente:** `npm install && npm start` (disponível em `http://localhost:3000`).
 

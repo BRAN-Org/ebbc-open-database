@@ -123,4 +123,13 @@ describe('Integration Tests - REST API Endpoints', () => {
     assert.ok(Array.isArray(exportedItems));
     assert.strictEqual(exportedItems.length, dataAll.total);
   });
+
+  test('GET /api/v1/openapi.json deve retornar especificação OpenAPI 3.0 válida', async () => {
+    const res = await fetchApi('/api/v1/openapi.json');
+    assert.strictEqual(res.status, 200);
+    const spec = await res.json();
+    assert.strictEqual(spec.openapi, '3.0.3');
+    assert.ok(spec.info && spec.info.title);
+    assert.ok(spec.paths['/articles']);
+  });
 });

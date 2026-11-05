@@ -9,6 +9,8 @@ Registro de versões, auditorias e atualizações da base de dados do **Encontro
 ### Feat
 - **Harvester OAI-PMH Oficial**: Reimplementação de `scripts/scrape_ebbc.py` utilizando o endpoint OAI-PMH do OJS (`/ojs/index.php/ebbc/oai`), garantindo extração padronizada de metadados Dublin Core com deduplicação rigorosa de registros.
 - **Exportação Bibliográfica Enriquecida**: Inclusão de campos `L1` (link direto para PDF) e `UR` no exportador RIS, além de `eprint` e `url` no gerador BibTeX em `src/exportEngine.js`.
+- **Contrato OpenAPI 3.0 Machine-Readable**: Endpoint `/api/v1/openapi.json` gerando especificação OpenAPI 3.0.3 dinâmica para integração direta com Swagger, Postman e Insomnia.
+- **Playground Interativo Aprimorado**: Suporte a todos os endpoints analíticos, tratamento nativo de formatos de texto (CSV, BibTeX, RIS) e geração dinâmica de código em cURL, Python (Requests/Pandas), R (httr/jsonlite), JavaScript e Node.js.
 
 ### Fix
 - **Integridade Estrita de Identificadores (Zero DOIs Inventados)**: Remoção total de sintetizadores de DOI legados. 583 DOIs legítimos preservados da fonte e 225 artigos sem DOI de origem explicitamente anotados como `doi: "N/A"` sob chaves canônicas unívocas.
@@ -17,11 +19,13 @@ Registro de versões, auditorias e atualizações da base de dados do **Encontro
 - **Suporte a Separador de Ponto em Schema DOI**: Ajuste do padrão regex em `schemas/article.v1.schema.json` para validar DOIs com notação por ponto (`10.22477.xxx`) utilizados pelo OJS do EBBC.
 
 ### Docs
+- **Guia Completo de Referência da API (`docs/API.md`)**: Manual técnico profundo cobrindo visão geral, protocolos, parâmetros, respostas de erro, dicionário de dados do schema de artigo e receitas reproduzíveis em Python e R.
+- **Reformulação da Interface de Documentação Web**: Aba de documentação no portal com tabelas detalhadas de parâmetros, schemas JSON, códigos de status e callouts metodológicos.
 - **Atualização de Síntese e Métricas**: Sincronização do acervo consolidado com 808 artigos, 100% de cobertura de PDFs e URLs em `README.md`, `CITATION.cff`, `.zenodo.json` e `config/dataset.config.json`.
 - **Status de Governança e Proveniência**: Atualização de `provenance.json` com status `HIGH_FIDELITY` e hash SHA-256 (`421e6bcf979b0f9c731d6deb4aea9653555324f44f1f532b27ad524dac6100d1`).
 
 ### Chore / Test
-- **Suite de Testes de Integração**: Validação de 33 testes cobrindo rotas da API, conformidade com schema JSON, integridade de hashes e integridade referencial.
+- **Testes Automatizados para OpenAPI e Exportações**: Validação de 23 testes automatizados cobrindo contrato OpenAPI 3.0, rotas analíticas, conformidade de schemas e exportação integral.
 
 ---
 

@@ -19,10 +19,15 @@ export function getDoiStatus(rawDoi) {
     return { isValid: false, isPresent: false, statusText: 'Sem DOI' };
   }
 
+  // DOIs must strictly start with prefix 10.
+  if (!clean.startsWith('10.')) {
+    return { isValid: false, isPresent: false, statusText: 'Sem DOI' };
+  }
+
   const rawUrl = rawDoi.startsWith('http') ? rawDoi : `https://doi.org/${clean}`;
 
   // Check if DOI starts with 10. and has a slash / (standard CrossRef DOI format)
-  if (clean.startsWith('10.') && /^10\.\d{4,9}\/.+$/.test(clean)) {
+  if (/^10\.\d{4,9}\/.+$/.test(clean)) {
     return {
       isValid: true,
       isPresent: true,
@@ -33,21 +38,21 @@ export function getDoiStatus(rawDoi) {
     };
   }
 
-  // If DOI has dot instead of slash (e.g. 10.22477.109) or non-standard syntax issued on EBBC platform
+  // Non-standard DOI syntax (e.g. 10.22477.109 with dot instead of slash)
   return {
     isValid: false,
     isPresent: true,
     cleanDoi: clean,
     doiUrl: rawUrl,
-    statusText: 'DOI Original (Não Registrado no CrossRef)',
-    badgeHtml: '<span class="badge-doi-status warning" title="DOI original extraído da plataforma EBBC, porém não registrado no CrossRef"><i class="fa-solid fa-triangle-exclamation"></i> DOI Não Registrado</span>'
+    statusText: 'DOI Não Registrado no CrossRef',
+    badgeHtml: '<span class="badge-doi-status warning" title="DOI informado no registro, porém não registrado no CrossRef"><i class="fa-solid fa-triangle-exclamation"></i> DOI Não Registrado</span>'
   };
 }
 
 export function resolveArticleUrl(item) {
   if (!item) return null;
 
-  const doiInfo = getDoiStatus(item.doi || item.id);
+  const doiInfo = getDoiStatus(item.doi);
   if (doiInfo.isPresent) {
     return doiInfo.doiUrl;
   }
@@ -373,12 +378,15 @@ function populateSidebarOptions(stats) {
     const years = Object.keys(stats.breakdowns.yearDistribution.data).sort((a, b) => b - a);
     yearContainer.innerHTML = '';
 
+    const eventPrefix = appConfig?.dataset?.acronym || '';
+
     years.forEach(yr => {
       const label = document.createElement('label');
       label.className = 'checkbox-item';
+      const labelText = eventPrefix ? `${eventPrefix} ${yr}` : `${yr}`;
       label.innerHTML = `
         <input type="checkbox" class="year-filter-cb" value="${yr}" checked>
-        <span>EBBC ${yr}</span>
+        <span>${escapeHtml(labelText)}</span>
       `;
       label.querySelector('input').addEventListener('change', () => {
         currentOffset = 0;
@@ -635,21 +643,21 @@ function renderArticleCards(items) {
       badgesHtml += `<span class="badge-source">${escapeHtml(item.section)}</span> `;
     }
 
-    // Ferramentas / Softwares (EBBC)
+    // Ferramentas / Softwares
     if (Array.isArray(item.tools)) {
       item.tools.forEach(t => {
         if (t && t !== 'N/A') badgesHtml += `<span class="badge-tool"><i class="fa-solid fa-wrench"></i> ${escapeHtml(t)}</span> `;
       });
     }
 
-    // Fontes de Dados (EBBC)
+    // Fontes de Dados
     if (Array.isArray(item.data_sources)) {
       item.data_sources.forEach(s => {
         if (s && s !== 'N/A') badgesHtml += `<span class="badge-source"><i class="fa-solid fa-database"></i> ${escapeHtml(s)}</span> `;
       });
     }
 
-    // Etapas Metodológicas (EBBC)
+    // Etapas Metodológicas
     if (Array.isArray(item.usage_stages)) {
       item.usage_stages.forEach(st => {
         if (st && st !== 'N/A') badgesHtml += `<span class="badge-year"><i class="fa-solid fa-diagram-project"></i> ${escapeHtml(st)}</span> `;
@@ -663,18 +671,19 @@ function renderArticleCards(items) {
       });
     }
 
-    const doiInfo = getDoiStatus(item.doi || item.id);
-    const pdfUrl = (item.pdf_url && item.pdf_url !== 'N/A') ? item.pdf_url : null;
+    const doiInfo = getDoiStatus(item.doi);
+    const pdfUrl = (item.pdf_url && typeof item.pdf_url === 'string' && item.pdf_url.startsWith('http') && item.pdf_url !== 'N/A') ? item.pdf_url.trim() : null;
+    const officialUrl = (item.url && typeof item.url === 'string' && item.url.startsWith('http') && item.url !== 'N/A') ? item.url.trim() : null;
 
     let linksHeaderHtml = '';
     if (doiInfo.isPresent) {
       if (doiInfo.isValid) {
         linksHeaderHtml += `<a href="${escapeHtml(doiInfo.doiUrl)}" target="_blank" onclick="event.stopPropagation();" class="card-action-link" title="DOI Verificado no CrossRef"><i class="fa-solid fa-link"></i> DOI Verificado</a> `;
       } else {
-        linksHeaderHtml += `<a href="${escapeHtml(doiInfo.doiUrl)}" target="_blank" onclick="event.stopPropagation();" class="card-action-link warning" title="DOI Original EBBC (Não registrado no CrossRef)"><i class="fa-solid fa-triangle-exclamation"></i> DOI Não Registrado</a> `;
+        linksHeaderHtml += `<a href="${escapeHtml(doiInfo.doiUrl)}" target="_blank" onclick="event.stopPropagation();" class="card-action-link warning" title="DOI Não Registrado no CrossRef"><i class="fa-solid fa-triangle-exclamation"></i> DOI Não Registrado</a> `;
       }
-    } else if (item.url && item.url.startsWith('http')) {
-      linksHeaderHtml += `<a href="${escapeHtml(item.url)}" target="_blank" onclick="event.stopPropagation();" class="card-action-link" title="Acessar Publicação"><i class="fa-solid fa-arrow-up-right-from-square"></i> Publicação</a> `;
+    } else if (officialUrl) {
+      linksHeaderHtml += `<a href="${escapeHtml(officialUrl)}" target="_blank" onclick="event.stopPropagation();" class="card-action-link" title="Acessar Fonte Oficial"><i class="fa-solid fa-arrow-up-right-from-square"></i> Fonte Oficial</a> `;
     }
 
     if (pdfUrl) {
@@ -699,7 +708,6 @@ function renderArticleCards(items) {
 
 let currentModalItem = null;
 let currentCitationFmt = 'bibtex';
-let currentCitationMode = 'item'; // 'item' or 'dataset'
 let currentDatasetCitationFmt = 'bibtex';
 
 function openArticleModal(item) {
@@ -817,14 +825,19 @@ function openArticleModal(item) {
     }
   }
 
-  // 6. DOI Text Container e Link
-  const doiInfo = getDoiStatus(item.doi || item.id);
+  // 6. DOI & Links de Acesso
+  const doiInfo = getDoiStatus(item.doi);
+  const officialUrl = (item.url && typeof item.url === 'string' && item.url.startsWith('http')) ? item.url.trim() : null;
   const doiTextContainer = document.getElementById('modal-doi-text-container');
   const doiLink = document.getElementById('modal-doi-link');
+  const sourceLink = document.getElementById('modal-source-link');
 
   if (doiTextContainer) {
     if (doiInfo.isPresent) {
       doiTextContainer.innerHTML = `<i class="fa-solid fa-link"></i> DOI: <a href="${escapeHtml(doiInfo.doiUrl)}" target="_blank" style="color: var(--text-primary); text-decoration: underline; word-break: break-all;">https://doi.org/${escapeHtml(doiInfo.cleanDoi)}</a> ${doiInfo.badgeHtml}`;
+    } else if (officialUrl) {
+      const platformLabel = item.source_platform ? ` (${escapeHtml(item.source_platform)})` : '';
+      doiTextContainer.innerHTML = `<span style="font-size: 12px; color: var(--text-secondary);"><i class="fa-solid fa-globe"></i> Fonte Oficial${platformLabel} &nbsp;|&nbsp; <i class="fa-solid fa-circle-info"></i> Sem DOI atribuído</span>`;
     } else {
       doiTextContainer.innerHTML = '<span style="font-size: 12px; color: var(--text-secondary);"><i class="fa-solid fa-circle-info"></i> Sem DOI cadastrado</span>';
     }
@@ -834,18 +847,31 @@ function openArticleModal(item) {
     if (doiInfo.isPresent) {
       doiLink.href = doiInfo.doiUrl;
       doiLink.style.display = 'inline-block';
+      doiLink.className = 'btn btn-primary';
       if (doiInfo.isValid) {
         doiLink.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square"></i> Acessar DOI (CrossRef)`;
       } else {
-        doiLink.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square"></i> Acessar DOI (Original EBBC)`;
+        doiLink.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square"></i> Acessar DOI`;
       }
-    } else if (item.url && item.url.startsWith('http')) {
-      doiLink.href = item.url;
-      doiLink.style.display = 'inline-block';
-      doiLink.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square"></i> Acessar Publicação`;
     } else {
       doiLink.style.display = 'none';
     }
+  }
+
+  if (sourceLink) {
+    if (officialUrl) {
+      sourceLink.href = officialUrl;
+      sourceLink.style.display = 'inline-block';
+      sourceLink.className = doiInfo.isPresent ? 'btn btn-secondary' : 'btn btn-primary';
+      sourceLink.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square"></i> Acessar Fonte Oficial`;
+    } else {
+      sourceLink.style.display = 'none';
+    }
+  } else if (!doiInfo.isPresent && officialUrl && doiLink) {
+    doiLink.href = officialUrl;
+    doiLink.style.display = 'inline-block';
+    doiLink.className = 'btn btn-primary';
+    doiLink.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square"></i> Acessar Fonte Oficial`;
   }
 
   const pdfLink = document.getElementById('modal-pdf-link');
@@ -858,38 +884,57 @@ function openArticleModal(item) {
     }
   }
 
-  // Reset modal citation mode to item
-  currentCitationMode = 'item';
-  const btnCiteModeItem = document.getElementById('btn-cite-mode-item');
-  const btnCiteModeDataset = document.getElementById('btn-cite-mode-dataset');
-  if (btnCiteModeItem && btnCiteModeDataset) {
-    btnCiteModeItem.classList.add('active');
-    btnCiteModeItem.style.background = 'rgba(255,255,255,0.08)';
-    btnCiteModeItem.style.color = 'var(--text-primary)';
-    btnCiteModeDataset.classList.remove('active');
-    btnCiteModeDataset.style.background = 'transparent';
-    btnCiteModeDataset.style.color = 'var(--text-secondary)';
-  }
-
-  const rawZenodoDoi = appConfig?.dataset?.zenodoDoi
-    || (appConfig?.dataset?.doi && appConfig.dataset.doi.toLowerCase().includes('zenodo') ? appConfig.dataset.doi : '')
-    || (appConfig?.organization?.doiUrl && appConfig.organization.doiUrl.toLowerCase().includes('zenodo') ? appConfig.organization.doiUrl.replace(/^https?:\/\/doi\.org\//i, '') : '');
-  const cleanZenodoDoi = rawZenodoDoi ? rawZenodoDoi.replace(/^https?:\/\/doi\.org\//i, '').trim() : '';
-  const zenodoUrl = appConfig?.dataset?.zenodoUrl
-    || (cleanZenodoDoi ? `https://doi.org/${cleanZenodoDoi}` : '');
-
-  const modalZenodoNote = document.getElementById('modal-zenodo-archive-note');
-  const modalZenodoLink = document.getElementById('modal-zenodo-archive-link');
-  if (cleanZenodoDoi && modalZenodoNote && modalZenodoLink) {
-    modalZenodoLink.href = zenodoUrl;
-    modalZenodoLink.textContent = `DOI: ${cleanZenodoDoi}`;
-    modalZenodoNote.style.display = 'block';
-  } else if (modalZenodoNote) {
-    modalZenodoNote.style.display = 'none';
-  }
-
-  updateCitationBox();
   modal.classList.add('active');
+  try {
+    updateCitationBox();
+  } catch (err) {
+    console.error('⚠️ Falha ao renderizar citação no modal:', err);
+  }
+}
+
+export function formatItemCitation(item, config, fmt = 'bibtex') {
+  if (!item) return '';
+  const authors = Array.isArray(item.authors) ? item.authors : (item.authors ? [item.authors] : ['Autor Desconhecido']);
+  const year = item.year || item.ano || '2024';
+  const title = item.title || item.titulo || 'Sem título';
+  const rawDoi = (item.doi && item.doi !== 'N/A') ? item.doi : '';
+  const doiInfo = getDoiStatus(rawDoi);
+  const articleUrl = resolveArticleUrl(item) || '';
+  const citeKey = item.id ? String(item.id).replace(/[^a-zA-Z0-9_-]/g, '_') : (doiInfo.isPresent ? doiInfo.cleanDoi.replace(/[^a-zA-Z0-9_-]/g, '_') : 'item_' + year);
+
+  if (fmt === 'bibtex') {
+    let bib = `@article{${citeKey},\n  title     = {${title}},\n  author    = {${authors.join(' and ')}},\n  year      = {${year}}`;
+    if (doiInfo.isValid) {
+      bib += `,\n  doi       = {${doiInfo.cleanDoi}}`;
+    }
+    if (articleUrl) {
+      bib += `,\n  url       = {${articleUrl}}`;
+    }
+    bib += `\n}`;
+    return bib;
+  } else if (fmt === 'apa') {
+    let apa = `${authors.join(', ')} (${year}). ${title}.`;
+    if (doiInfo.isValid) {
+      apa += ` https://doi.org/${doiInfo.cleanDoi}`;
+    } else if (articleUrl) {
+      apa += ` ${articleUrl}`;
+    }
+    return apa;
+  } else if (fmt === 'abnt') {
+    const abntAuthors = authors.map(a => {
+      const parts = String(a).trim().split(/\s+/);
+      const last = parts.pop().toUpperCase();
+      return `${last}, ${parts.join(' ')}`;
+    }).join('; ');
+    let abnt = `${abntAuthors}. ${title}. ${year}.`;
+    if (doiInfo.isValid) {
+      abnt += ` DOI: https://doi.org/${doiInfo.cleanDoi}.`;
+    } else if (articleUrl) {
+      abnt += ` Disponível em: <${articleUrl}>.`;
+    }
+    return abnt;
+  }
+  return '';
 }
 
 export function generateDatasetCitation(config, zenodoDoi, zenodoUrl, fmt = 'bibtex') {
@@ -919,70 +964,9 @@ function renderDatasetCitation(config, zenodoDoi, zenodoUrl) {
 
 function updateCitationBox() {
   if (!currentModalItem) return;
-  const item = currentModalItem;
   const citationEl = document.getElementById('citation-content');
   if (!citationEl) return;
-
-  const rawZenodoDoi = appConfig?.dataset?.zenodoDoi
-    || (appConfig?.dataset?.doi && appConfig.dataset.doi.toLowerCase().includes('zenodo') ? appConfig.dataset.doi : '')
-    || (appConfig?.organization?.doiUrl && appConfig.organization.doiUrl.toLowerCase().includes('zenodo') ? appConfig.organization.doiUrl.replace(/^https?:\/\/doi\.org\//i, '') : '');
-  const cleanZenodoDoi = rawZenodoDoi ? rawZenodoDoi.replace(/^https?:\/\/doi\.org\//i, '').trim() : '';
-  const zenodoUrl = appConfig?.dataset?.zenodoUrl
-    || (cleanZenodoDoi ? `https://doi.org/${cleanZenodoDoi}` : '')
-    || (appConfig?.organization?.doiUrl && appConfig.organization.doiUrl.toLowerCase().includes('zenodo') ? appConfig.organization.doiUrl : '');
-
-  // Mode: Cite Dataset on Zenodo
-  if (currentCitationMode === 'dataset') {
-    citationEl.textContent = generateDatasetCitation(appConfig, cleanZenodoDoi, zenodoUrl, currentCitationFmt);
-    return;
-  }
-
-  // Mode: Cite Item
-  const authors = Array.isArray(item.authors) ? item.authors : (item.authors ? [item.authors] : ['Autor Desconhecido']);
-  const year = item.year || item.ano || '2024';
-  const title = item.title || item.titulo || 'Sem título';
-  const rawDoi = (item.doi && item.doi !== 'N/A') ? item.doi : (item.id && item.id !== 'N/A' ? item.id : '');
-  const doiInfo = getDoiStatus(rawDoi);
-  const doiUrl = resolveArticleUrl(item) || (doiInfo.isPresent ? doiInfo.doiUrl : (cleanZenodoDoi ? zenodoUrl : ''));
-  const doiKey = rawDoi ? rawDoi.replace(/[^a-zA-Z0-9]/g, '_') : 'item_' + year;
-
-  if (currentCitationFmt === 'bibtex') {
-    let bib = `@article{${doiKey},\n  title     = {${title}},\n  author    = {${authors.join(' and ')}},\n  year      = {${year}}`;
-    if (doiInfo.isValid) {
-      bib += `,\n  doi       = {${doiInfo.cleanDoi}}`;
-    } else if (cleanZenodoDoi) {
-      bib += `,\n  doi       = {${cleanZenodoDoi}}`;
-    }
-    if (doiUrl) {
-      bib += `,\n  url       = {${doiUrl}}`;
-    }
-    if (cleanZenodoDoi) {
-      bib += `,\n  note      = {Acervo completo preservado no CERN/Zenodo sob DOI ${cleanZenodoDoi}}`;
-    }
-    bib += `\n}`;
-    citationEl.textContent = bib;
-  } else if (currentCitationFmt === 'apa') {
-    let apa = `${authors.join(', ')} (${year}). ${title}.`;
-    if (doiUrl) apa += ` ${doiUrl}`;
-    if (!doiInfo.isValid && cleanZenodoDoi) {
-      apa += ` (Zenodo Archive: ${cleanZenodoDoi})`;
-    }
-    citationEl.textContent = apa;
-  } else if (currentCitationFmt === 'abnt') {
-    const abntAuthors = authors.map(a => {
-      const parts = String(a).trim().split(' ');
-      const last = parts.pop().toUpperCase();
-      return `${last}, ${parts.join(' ')}`;
-    }).join('; ');
-    let abnt = `${abntAuthors}. ${title}. ${year}.`;
-    if (doiUrl) {
-      abnt += ` Disponível em: <${doiUrl}>.`;
-    }
-    if (cleanZenodoDoi) {
-      abnt += ` Preservado no Zenodo sob DOI: ${cleanZenodoDoi}.`;
-    }
-    citationEl.textContent = abnt;
-  }
+  citationEl.textContent = formatItemCitation(currentModalItem, appConfig, currentCitationFmt);
 }
 
 function initModal() {
@@ -993,34 +977,6 @@ function initModal() {
     closeBtn.addEventListener('click', () => modal.classList.remove('active'));
     modal.addEventListener('click', (e) => {
       if (e.target === modal) modal.classList.remove('active');
-    });
-  }
-
-  // Citation mode buttons (Artigo vs Dataset no Zenodo)
-  const btnCiteModeItem = document.getElementById('btn-cite-mode-item');
-  const btnCiteModeDataset = document.getElementById('btn-cite-mode-dataset');
-
-  if (btnCiteModeItem && btnCiteModeDataset) {
-    btnCiteModeItem.addEventListener('click', () => {
-      currentCitationMode = 'item';
-      btnCiteModeItem.classList.add('active');
-      btnCiteModeItem.style.background = 'rgba(255,255,255,0.08)';
-      btnCiteModeItem.style.color = 'var(--text-primary)';
-      btnCiteModeDataset.classList.remove('active');
-      btnCiteModeDataset.style.background = 'transparent';
-      btnCiteModeDataset.style.color = 'var(--text-secondary)';
-      updateCitationBox();
-    });
-
-    btnCiteModeDataset.addEventListener('click', () => {
-      currentCitationMode = 'dataset';
-      btnCiteModeDataset.classList.add('active');
-      btnCiteModeDataset.style.background = 'rgba(255,255,255,0.08)';
-      btnCiteModeDataset.style.color = 'var(--text-primary)';
-      btnCiteModeItem.classList.remove('active');
-      btnCiteModeItem.style.background = 'transparent';
-      btnCiteModeItem.style.color = 'var(--text-secondary)';
-      updateCitationBox();
     });
   }
 
@@ -1196,7 +1152,7 @@ function initSandbox() {
         const res = await fetch(path);
         const t1 = performance.now();
         const latency = Math.round(t1 - t0);
-        const data = await res.json();
+        const contentType = res.headers.get('content-type') || '';
 
         if (badgeEl) {
           badgeEl.className = 'playground-status';
@@ -1204,7 +1160,13 @@ function initSandbox() {
         }
 
         if (codeEl) {
-          codeEl.textContent = JSON.stringify(data, null, 2);
+          if (contentType.includes('application/json')) {
+            const data = await res.json();
+            codeEl.textContent = JSON.stringify(data, null, 2);
+          } else {
+            const text = await res.text();
+            codeEl.textContent = text;
+          }
         }
       } catch (err) {
         if (badgeEl) {
@@ -1219,6 +1181,8 @@ function initSandbox() {
         executeBtn.innerHTML = '<i class="fa-solid fa-play"></i> Executar Requisição';
       }
     });
+
+    endpointSelect.addEventListener('change', updateSandboxCode);
   }
 
   const langSelect = document.getElementById('sandbox-lang');
@@ -1257,25 +1221,53 @@ function initSandbox() {
 
 function updateSandboxCode() {
   if (!appConfig) return;
-  const entity = appConfig.dataset?.entityName || 'articles';
   const baseUrl = window.location.origin;
-
+  const endpointSelect = document.getElementById('playground-endpoint-select');
+  const selectedPath = endpointSelect ? endpointSelect.value : '/api/v1/articles?limit=10';
   const lang = document.getElementById('sandbox-lang')?.value || 'curl';
-  const targetUrl = `${baseUrl}/api/v1/${entity}?limit=10`;
+  const targetUrl = `${baseUrl}${selectedPath}`;
 
   const codeEl = document.getElementById('sandbox-code');
   if (!codeEl) return;
 
+  const isExport = selectedPath.includes('/export');
+  const isBib = selectedPath.includes('format=bib');
+  const isRis = selectedPath.includes('format=ris');
+  const isCsv = selectedPath.includes('format=csv');
+
   if (lang === 'curl') {
-    codeEl.textContent = `curl -X GET "${targetUrl}" \\\n  -H "Accept: application/json"`;
+    if (isCsv || isBib || isRis) {
+      const ext = isCsv ? 'csv' : (isRis ? 'ris' : 'bib');
+      codeEl.textContent = `curl -s -L "${targetUrl}" -o "export_${ext}.${ext}"`;
+    } else {
+      codeEl.textContent = `curl -X GET "${targetUrl}" \\\n  -H "Accept: application/json"`;
+    }
   } else if (lang === 'javascript') {
-    codeEl.textContent = `// Requisição em JavaScript (Fetch API)\nfetch("${targetUrl}")\n  .then(response => response.json())\n  .then(data => console.log(data));`;
+    if (isCsv || isBib || isRis) {
+      codeEl.textContent = `// Requisição em JavaScript (Download de Texto/Arquivo)\nfetch("${targetUrl}")\n  .then(response => response.text())\n  .then(content => {\n    console.log(content.slice(0, 500) + '...');\n  });`;
+    } else {
+      codeEl.textContent = `// Requisição em JavaScript (Fetch API)\nfetch("${targetUrl}")\n  .then(response => response.json())\n  .then(data => console.log(data));`;
+    }
   } else if (lang === 'python') {
-    codeEl.textContent = `# Requisição em Python (Requests)\nimport requests\n\nurl = "${targetUrl}"\nresponse = requests.get(url)\ndata = response.json()\nprint(data)`;
+    if (isCsv) {
+      codeEl.textContent = `# Requisição em Python (Pandas direto)\nimport pandas as pd\n\nurl = "${targetUrl}"\ndf = pd.read_csv(url)\nprint(df.head())`;
+    } else if (isBib || isRis) {
+      const ext = isRis ? 'ris' : 'bib';
+      codeEl.textContent = `# Requisição em Python (Requests)\nimport requests\n\nurl = "${targetUrl}"\nres = requests.get(url)\nwith open("exportacao.${ext}", "w", encoding="utf-8") as f:\n    f.write(res.text)\nprint("Arquivo salvo com sucesso!")`;
+    } else {
+      codeEl.textContent = `# Requisição em Python (Requests)\nimport requests\n\nurl = "${targetUrl}"\nresponse = requests.get(url)\ndata = response.json()\nprint(data)`;
+    }
   } else if (lang === 'node') {
     codeEl.textContent = `// Requisição em Node.js (Axios)\nconst axios = require('axios');\n\naxios.get("${targetUrl}")\n  .then(response => console.log(response.data))\n  .catch(error => console.error(error));`;
   } else if (lang === 'r') {
-    codeEl.textContent = `# Requisição em R (httr & jsonlite)\nlibrary(httr)\nlibrary(jsonlite)\n\nres <- GET("${targetUrl}")\ndata <- fromJSON(content(res, "text"))\nprint(data)`;
+    if (isCsv) {
+      codeEl.textContent = `# Requisição em R (read.csv direto)\nurl <- "${targetUrl}"\ndf <- read.csv(url, encoding = "UTF-8")\nhead(df)`;
+    } else if (isBib || isRis) {
+      const ext = isRis ? 'ris' : 'bib';
+      codeEl.textContent = `# Requisição em R (download de arquivo bibliográfico)\nurl <- "${targetUrl}"\ndownload.file(url, destfile = "export.${ext}", mode = "wb")\ncat("Download concluído!\\n")`;
+    } else {
+      codeEl.textContent = `# Requisição em R (httr & jsonlite)\nlibrary(httr)\nlibrary(jsonlite)\n\nres <- GET("${targetUrl}")\ndata <- fromJSON(content(res, "text", encoding = "UTF-8"))\nprint(data)`;
+    }
   }
 }
 
