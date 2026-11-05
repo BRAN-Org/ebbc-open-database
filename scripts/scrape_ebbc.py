@@ -70,7 +70,7 @@ def sanitize_doi(raw_doi):
         return "N/A"
     cleaned = re.sub(r"^https?://(dx\.)?doi\.org/", "", cleaned, flags=re.IGNORECASE)
     cleaned = re.sub(r"^doi:\s*", "", cleaned, flags=re.IGNORECASE).strip()
-    if re.match(r"^10\.\d{4,9}/[-._;()/:,A-Za-z0-9]+$", cleaned):
+    if re.match(r"^10\.\d{4,9}[/.][-_;()/:,.A-Za-z0-9]+$", cleaned):
         return f"https://doi.org/{cleaned}"
     return "N/A"
 
@@ -297,8 +297,6 @@ def merge_with_existing(harvested, existing_path):
         # Se houver metadados mais completos no legado (ex: resumo ausente no OAI)
         legacy = existing_map.get(norm_title)
         if legacy:
-            if h["doi"] == "N/A" and legacy.get("doi"):
-                h["doi"] = sanitize_doi(legacy["doi"])
             if not h["abstract"] and legacy.get("abstract"):
                 h["abstract"] = legacy["abstract"]
                 tools, sources = extract_scientometric_facets(h["abstract"])
