@@ -4,7 +4,7 @@
   <a href="https://doi.org/10.5281/zenodo.23653261"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.23653261.svg" alt="Zenodo DOI"></a>
   <a href="provenance.json"><img src="https://img.shields.io/badge/Identifica%C3%A7%C3%A3o-100%25-brightgreen.svg" alt="Identificação"></a>
   <a href="schemas/article.v1.schema.json"><img src="https://img.shields.io/badge/Schema-article.v1-blue.svg" alt="Schema"></a>
-  <a href="#-síntese-do-acervo--governança"><img src="https://img.shields.io/badge/Confiabilidade-Fiel%20%C3%A0%20Fonte%20(Incompleto)-yellow" alt="Confiabilidade"></a>
+  <a href="#-síntese-do-acervo--governança"><img src="https://img.shields.io/badge/Confiabilidade-Alta%20Fidelidade%20(OAI--PMH)-brightgreen" alt="Confiabilidade"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/Licen%C3%A7a-CC_BY--NC--SA_4.0-lightgrey.svg" alt="CC BY-NC-SA 4.0"></a>
   <a href="#-como-usar-os-dados"><img src="https://img.shields.io/badge/Formatos-SQLite_%7C_CSV_%7C_JSON-blue.svg" alt="Formatos"></a>
 </p>
@@ -16,14 +16,14 @@ Base de dados aberta contendo todos os anais das edições do Encontro Brasileir
 ## 📊 Síntese do Acervo & Governança
 
 > [!NOTE]
-> **Status de Confiabilidade:** 🟡 **Fiel à Fonte (Cobertura Incompleta)**  
-> 📌 **Diagnóstico Metodológico:** Todos os 814 artigos disponibilizados no portal oficial do evento (edições 3ª a 10ª, 2012–2026) foram catalogados com 100% de integridade e fidelidade aos dados públicos. A classificação amarela documenta lacunas na própria fonte primária original do evento — ausência de atribuição de DOIs na origem e anais das primeiras edições (1ª e 2ª edições) nunca digitalizados pela organização. Textos completos em processo de resgate documental independente.
+> **Status de Confiabilidade:** 🟢 **Alta Fidelidade (OAI-PMH Oficial)**  
+> 📌 **Diagnóstico Metodológico:** Todos os 808 artigos disponibilizados no portal oficial do evento (edições 3ª a 10ª, 2012–2026) foram catalogados via harvester OAI-PMH oficial com 100% de integridade, 100% de links diretos para PDFs originais (808/808) e URLs canônicas. Fidelidade estrita aos metadados de origem: 583 trabalhos possuem DOI original do evento e 225 trabalhos sem atribuição de DOI na origem são preservados como `doi: "N/A"` sob identificadores canônicos, com zero inventividade sintética.
 
 | Métrica / Atributo | Detalhes do Acervo |
 | :--- | :--- |
 | **Período Histórico** | 2012–2026 (Edições 3ª a 10ª) |
-| **Total de Trabalhos** | **814 artigos científicos catalogados** |
-| **Textos Completos (PDF)** | 814 artigos catalogados (textos completos em processo de resgate documental) |
+| **Total de Trabalhos** | **808 artigos científicos catalogados** |
+| **Textos Completos (PDF)** | **808 artigos com PDF oficial e direto (100% de cobertura)** |
 | **Integridade Criptográfica** | Hash SHA-256 por arquivo e rastreabilidade estrita (`provenance.json`) |
 | **Formatos Disponíveis** | SQLite3 (`.sqlite`), CSV (UTF-8 BOM), JSON, BibTeX (`.bib`), RIS (`.ris`) |
 | **Licença dos Dados** | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) (Uso acadêmico; vedada ingestão por IA comercial) |

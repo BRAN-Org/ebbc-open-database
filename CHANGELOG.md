@@ -4,6 +4,27 @@ Registro de versões, auditorias e atualizações da base de dados do **Encontro
 
 ---
 
+## [1.7.0] - 2026-11-05 (Coleta OAI-PMH de Alta Fidelidade, Integridade de Metadados e Correções na API)
+
+### Feat
+- **Harvester OAI-PMH Oficial**: Reimplementação de `scripts/scrape_ebbc.py` utilizando o endpoint OAI-PMH do OJS (`/ojs/index.php/ebbc/oai`), garantindo extração padronizada de metadados Dublin Core com deduplicação rigorosa de registros.
+- **Exportação Bibliográfica Enriquecida**: Inclusão de campos `L1` (link direto para PDF) e `UR` no exportador RIS, além de `eprint` e `url` no gerador BibTeX em `src/exportEngine.js`.
+
+### Fix
+- **Integridade Estrita de Identificadores (Zero DOIs Inventados)**: Remoção total de sintetizadores de DOI legados. 583 DOIs legítimos preservados da fonte e 225 artigos sem DOI de origem explicitamente anotados como `doi: "N/A"` sob chaves canônicas unívocas.
+- **Resolução de Colisão em `getItemByKey`**: Refatoração em `src/dataManager.js` com estratégia em dois passos (Passo 1: correspondência estrita em ID, DOI e Título; Passo 2: fallback difuso apenas quando inexistir correspondência exata).
+- **Exportação Sem Limite de Paginação**: Correção em `src/dataManager.js` onde `limit: 0` avaliava como falsy e impunha corte indevido de 20 registros na rota `/api/v1/articles/export`.
+- **Suporte a Separador de Ponto em Schema DOI**: Ajuste do padrão regex em `schemas/article.v1.schema.json` para validar DOIs com notação por ponto (`10.22477.xxx`) utilizados pelo OJS do EBBC.
+
+### Docs
+- **Atualização de Síntese e Métricas**: Sincronização do acervo consolidado com 808 artigos, 100% de cobertura de PDFs e URLs em `README.md`, `CITATION.cff`, `.zenodo.json` e `config/dataset.config.json`.
+- **Status de Governança e Proveniência**: Atualização de `provenance.json` com status `HIGH_FIDELITY` e hash SHA-256 (`421e6bcf979b0f9c731d6deb4aea9653555324f44f1f532b27ad524dac6100d1`).
+
+### Chore / Test
+- **Suite de Testes de Integração**: Validação de 33 testes cobrindo rotas da API, conformidade com schema JSON, integridade de hashes e integridade referencial.
+
+---
+
 ## [1.6.0] - 2026-10-25 (Ingestão dos Anais do EBBC 10 2026 - UFPR & Expansão do Acervo)
 
 ### Base de Dados & Coleta (Data/Feat)

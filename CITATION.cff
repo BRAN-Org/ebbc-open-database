@@ -1,8 +1,8 @@
 cff-version: 1.2.0
 message: "If you use this dataset or software, please cite it as below."
 title: "EBBC Open Database: Anais Abertos do Encontro Brasileiro de Bibliometria e Cientometria (2012-2026)"
-version: 1.6.0
-date-released: 2026-10-25
+version: 1.7.0
+date-released: 2026-11-05
 doi: "10.5281/zenodo.23653261"
 url: "https://github.com/BRAN-Org/ebbc-open-database"
 repository-code: "https://github.com/BRAN-Org/ebbc-open-database"
