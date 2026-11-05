@@ -13,3 +13,7 @@ data/raw/
 *.sqlite3
 *.tar.gz
 zenodo_dist/
+
+# Local agent rules
+AGENTS.md
+GEMINI.md
