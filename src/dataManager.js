@@ -188,21 +188,37 @@ export function getItemByKey(rawKey) {
   }
 
   const normKey = normalizeString(cleanKey);
+  const bareKey = cleanKey.replace(/^https?:\/\/(dx\.)?doi\.org\//i, '').replace(/^doi:\s*/i, '').trim().toLowerCase();
 
-  return items.find(item => {
-    // 1. Checa ID
-    if (item.id && normalizeString(item.id) === normKey) return true;
-
-    // 2. Checa DOI (apenas se for DOI válido, não N/A)
-    if (item.doi && item.doi.trim().toUpperCase() !== 'N/A' && item.doi.trim().toUpperCase() !== 'NONE') {
-      const normDoi = normalizeString(item.doi);
-      if (normDoi === normKey) return true;
-      if (normKey.length >= 7 && (normDoi.includes(normKey) || normKey.includes(normDoi))) return true;
+  // 1. Passada exata prioritária (ID, DOI ou Título Exato)
+  for (const item of items) {
+    if (item.id && (item.id === cleanKey || normalizeString(item.id) === normKey)) {
+      return item;
     }
 
-    // 3. Checa Título exato/normalizado
-    if (item.title && normalizeString(item.title) === normKey) return true;
+    if (item.doi && item.doi.trim().toUpperCase() !== 'N/A' && item.doi.trim().toUpperCase() !== 'NONE') {
+      const bareDoi = item.doi.replace(/^https?:\/\/(dx\.)?doi\.org\//i, '').replace(/^doi:\s*/i, '').trim().toLowerCase();
+      if (bareDoi === bareKey || item.doi.toLowerCase() === cleanKey.toLowerCase()) {
+        return item;
+      }
+    }
 
-    return false;
-  }) || null;
+    if (item.title && normalizeString(item.title) === normKey) {
+      return item;
+    }
+  }
+
+  // 2. Passada secundária (Fuzzy / Containment apenas se não houver match exato)
+  if (bareKey.length >= 7) {
+    for (const item of items) {
+      if (item.doi && item.doi.trim().toUpperCase() !== 'N/A' && item.doi.trim().toUpperCase() !== 'NONE') {
+        const bareDoi = item.doi.replace(/^https?:\/\/(dx\.)?doi\.org\//i, '').replace(/^doi:\s*/i, '').trim().toLowerCase();
+        if (bareDoi.includes(bareKey) || bareKey.includes(bareDoi)) {
+          return item;
+        }
+      }
+    }
+  }
+
+  return null;
 }
