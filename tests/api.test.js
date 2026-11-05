@@ -110,4 +110,17 @@ describe('Integration Tests - REST API Endpoints', () => {
     const item = await res.json();
     assert.ok(item);
   });
+
+  test('GET /api/v1/articles/export?format=json deve exportar 100% dos registros sem limitação indevida', async () => {
+    const resAll = await fetchApi('/api/v1/articles?limit=0');
+    assert.strictEqual(resAll.status, 200);
+    const dataAll = await resAll.json();
+    assert.strictEqual(dataAll.results.length, dataAll.total);
+
+    const resExport = await fetchApi('/api/v1/articles/export?format=json');
+    assert.strictEqual(resExport.status, 200);
+    const exportedItems = await resExport.json();
+    assert.ok(Array.isArray(exportedItems));
+    assert.strictEqual(exportedItems.length, dataAll.total);
+  });
 });

@@ -153,12 +153,16 @@ export function queryItems(params = {}) {
   });
 
   // 4. Paginação
-  const limit = params.limit ? parseInt(params.limit, 10) : 20;
-  const offset = params.offset ? parseInt(params.offset, 10) : 0;
+  const limit = (params.limit !== undefined && params.limit !== null && params.limit !== '')
+    ? parseInt(params.limit, 10)
+    : 20;
+  const offset = (params.offset !== undefined && params.offset !== null && params.offset !== '')
+    ? parseInt(params.offset, 10)
+    : 0;
 
   const paginatedResults = (limit > 0)
     ? items.slice(offset, offset + limit)
-    : items;
+    : (offset > 0 ? items.slice(offset) : items);
 
   return {
     total: getAllItems().length,
@@ -189,11 +193,11 @@ export function getItemByKey(rawKey) {
     // 1. Checa ID
     if (item.id && normalizeString(item.id) === normKey) return true;
 
-    // 2. Checa DOI
-    if (item.doi) {
+    // 2. Checa DOI (apenas se for DOI válido, não N/A)
+    if (item.doi && item.doi.trim().toUpperCase() !== 'N/A' && item.doi.trim().toUpperCase() !== 'NONE') {
       const normDoi = normalizeString(item.doi);
       if (normDoi === normKey) return true;
-      if (normDoi.includes(normKey) || normKey.includes(normDoi)) return true;
+      if (normKey.length >= 7 && (normDoi.includes(normKey) || normKey.includes(normDoi))) return true;
     }
 
     // 3. Checa Título exato/normalizado
