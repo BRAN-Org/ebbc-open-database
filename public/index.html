@@ -1009,13 +1009,7 @@ curl -s "https://ebbc-open-database.vercel.app/api/v1/articles/export?format=jso
 
       <!-- Gerador de Citações Científicas -->
       <div class="modal-section citation-section">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;">
-          <h4 style="margin: 0;"><i class="fa-solid fa-quote-left"></i> Citar este Trabalho</h4>
-          <div style="display: flex; gap: 0.35rem; font-size: 0.75rem;">
-            <button class="citation-mode-btn active" id="btn-cite-mode-item" style="background: rgba(255,255,255,0.08); border: 1px solid var(--border-color); border-radius: 4px; padding: 2px 8px; color: var(--text-primary); cursor: pointer;">Artigo</button>
-            <button class="citation-mode-btn" id="btn-cite-mode-dataset" style="background: transparent; border: 1px solid transparent; border-radius: 4px; padding: 2px 8px; color: var(--text-secondary); cursor: pointer;">Base (Zenodo)</button>
-          </div>
-        </div>
+        <h4 style="margin: 0 0 0.5rem 0;"><i class="fa-solid fa-quote-left"></i> Citar este Trabalho</h4>
         <div class="citation-tabs">
           <button class="citation-tab active" data-fmt="bibtex">BibTeX</button>
           <button class="citation-tab" data-fmt="apa">APA 7th</button>
@@ -1025,18 +1019,18 @@ curl -s "https://ebbc-open-database.vercel.app/api/v1/articles/export?format=jso
           <button class="copy-btn" id="btn-copy-citation"><i class="fa-regular fa-copy"></i> Copiar Citação</button>
           <pre><code id="citation-content"></code></pre>
         </div>
-        <div id="modal-zenodo-archive-note" style="margin-top: 0.5rem; font-size: 0.76rem; color: var(--text-secondary); display: none;">
-          <i class="fa-solid fa-box-archive" style="color: #60a5fa;"></i> Dados brutos, SQLite3 e textos completos preservados no Zenodo: <a href="#" id="modal-zenodo-archive-link" target="_blank" style="color: #93c5fd; text-decoration: underline;"></a>
-        </div>
       </div>
 
       <div class="modal-section" style="margin-top: 24px; display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; justify-content: space-between;">
         <div id="modal-doi-text-container" style="font-family: var(--font-mono); font-size: 13px; color: var(--text-secondary);">
-          <!-- Ex: DOI: https://doi.org/10.22477/ix.ebbc.260 -->
+          <!-- Ex: DOI: https://doi.org/10.5281/zenodo.1234567 -->
         </div>
-        <div style="display: flex; gap: 0.75rem;">
-          <a href="#" id="modal-doi-link" target="_blank" class="btn btn-primary" style="display: inline-block; text-decoration: none;">
-            <i class="fa-solid fa-arrow-up-right-from-square"></i> Acessar Publicação
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+          <a href="#" id="modal-doi-link" target="_blank" class="btn btn-primary" style="display: none; text-decoration: none;">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Acessar DOI
+          </a>
+          <a href="#" id="modal-source-link" target="_blank" class="btn btn-primary" style="display: none; text-decoration: none;">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Acessar Fonte Oficial
           </a>
           <a href="#" id="modal-pdf-link" target="_blank" class="btn btn-secondary" style="display: none; text-decoration: none; background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.4); color: #f87171;">
             <i class="fa-solid fa-file-pdf"></i> Baixar PDF

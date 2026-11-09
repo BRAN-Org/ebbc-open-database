@@ -12,7 +12,6 @@ data/raw/
 *.sqlite
 *.sqlite3
 *.tar.gz
-zenodo_dist/
 
 # Local agent rules
 AGENTS.md

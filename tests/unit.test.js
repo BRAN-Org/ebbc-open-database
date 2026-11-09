@@ -8,7 +8,7 @@ import {
   calculateScatterData, 
   calculateParetoData 
 } from '../src/statsEngine.js';
-import { getDoiStatus, generateDatasetCitation } from '../public/js/app.js';
+import { getDoiStatus, resolveArticleUrl, generateDatasetCitation, formatItemCitation } from '../public/js/app.js';
 
 describe('Unit Tests - DataManager & StatsEngine', () => {
   test('normalizeString deve remover acentos e converter para caixa baixa', () => {
@@ -92,6 +92,21 @@ describe('Unit Tests - DataManager & StatsEngine', () => {
     const invalid = getDoiStatus('N/A');
     assert.strictEqual(invalid.isValid, false);
     assert.strictEqual(invalid.isPresent, false);
+
+    const nonDoiSlug = getDoiStatus('cbbd-2022-2446');
+    assert.strictEqual(nonDoiSlug.isValid, false);
+    assert.strictEqual(nonDoiSlug.isPresent, false);
+  });
+
+  test('resolveArticleUrl deve priorizar DOI, depois URL oficial, depois PDF', () => {
+    const withDoi = { doi: '10.22477/ix.ebbc.260', url: 'https://example.com/art', pdf_url: 'https://example.com/art.pdf' };
+    assert.strictEqual(resolveArticleUrl(withDoi), 'https://doi.org/10.22477/ix.ebbc.260');
+
+    const withoutDoiWithUrl = { id: 'cbbd-2022-123', doi: null, url: 'https://portal.febab.org.br/artigo/123', pdf_url: 'https://portal.febab.org.br/pdf/123' };
+    assert.strictEqual(resolveArticleUrl(withoutDoiWithUrl), 'https://portal.febab.org.br/artigo/123');
+
+    const withPdfOnly = { id: 'cbbd-2022-123', doi: null, url: null, pdf_url: 'https://portal.febab.org.br/pdf/123' };
+    assert.strictEqual(resolveArticleUrl(withPdfOnly), 'https://portal.febab.org.br/pdf/123');
   });
 
   test('generateDatasetCitation deve formatar citação do Zenodo em BibTeX, APA e ABNT', () => {
@@ -113,5 +128,36 @@ describe('Unit Tests - DataManager & StatsEngine', () => {
     const abnt = generateDatasetCitation(dummyConfig, doi, url, 'abnt');
     assert.ok(abnt.includes('BRAN ORG. EBBC Open Data:'));
     assert.ok(abnt.includes('DOI: 10.5281/zenodo.23593513'));
+  });
+
+  test('formatItemCitation deve formatar citação de item em BibTeX, APA e ABNT sem erros', () => {
+    const sampleItem = {
+      id: 'cbbd-2024-101',
+      title: 'A Biblioteca Escolar como espaço de educação antirracista',
+      authors: ['Leoneide Maria Brito Martins'],
+      year: 2024,
+      url: 'https://portal.febab.org.br/cbbd2024/article/view/101',
+      pdf_url: 'https://portal.febab.org.br/files/original/101.pdf'
+    };
+    const dummyConfig = {
+      dataset: { title: 'CBBD Open Data', zenodoDoi: '10.5281/zenodo.123' },
+      organization: { name: 'BRAN Org' }
+    };
+
+    const bibtex = formatItemCitation(sampleItem, dummyConfig, 'bibtex');
+    assert.ok(bibtex.includes('@article{cbbd-2024-101'));
+    assert.ok(bibtex.includes('A Biblioteca Escolar'));
+    assert.ok(bibtex.includes('url       = {https://portal.febab.org.br/cbbd2024/article/view/101}'));
+    assert.strictEqual(bibtex.toLowerCase().includes('zenodo'), false, 'BibTeX do artigo não deve conter referências ao Zenodo');
+
+    const apa = formatItemCitation(sampleItem, dummyConfig, 'apa');
+    assert.ok(apa.includes('Leoneide Maria Brito Martins (2024). A Biblioteca Escolar'));
+    assert.ok(apa.includes('https://portal.febab.org.br/cbbd2024/article/view/101'));
+    assert.strictEqual(apa.toLowerCase().includes('zenodo'), false, 'APA do artigo não deve conter referências ao Zenodo');
+
+    const abnt = formatItemCitation(sampleItem, dummyConfig, 'abnt');
+    assert.ok(abnt.includes('MARTINS, Leoneide Maria Brito'));
+    assert.ok(abnt.includes('Disponível em: <https://portal.febab.org.br/cbbd2024/article/view/101>'));
+    assert.strictEqual(abnt.toLowerCase().includes('zenodo'), false, 'ABNT do artigo não deve conter referências ao Zenodo');
   });
 });
