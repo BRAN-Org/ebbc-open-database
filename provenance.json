@@ -67,5 +67,11 @@
         "ORPHAN_UNIDENTIFIED": 0
       }
     }
-  ]
+  ],
+  "last_audited_at": "2026-11-09T13:23:59.440174+00:00",
+  "checksums": {
+    "ebbc_articles.json": "421e6bcf979b0f9c731d6deb4aea9653555324f44f1f532b27ad524dac6100d1",
+    "ebbc_articles.csv": "4f28281e773d8ace1eed721ebc7924c6db0ab40b768be6958acb4d08ace7166d",
+    "ebbc_articles.sqlite": "7c07eca8fad74fead3cac9aaa05e237c4e829acd34ec21d05b7e56f5c2fd4ecb"
+  }
 }
